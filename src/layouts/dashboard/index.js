@@ -60,9 +60,62 @@ import { lineChartOptionsDashboard } from "layouts/dashboard/data/lineChartOptio
 import { barChartDataDashboard } from "layouts/dashboard/data/barChartData";
 import { barChartOptionsDashboard } from "layouts/dashboard/data/barChartOptions";
 
+import { useEffect, useState } from "react";
+import { supabase } from "lib/supabase";
+
 function Dashboard() {
   const { gradients } = colors;
   const { cardContent } = gradients;
+  const [stocks,setStocks] = useState([]);
+
+
+  const fetchStockData = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('price')
+        .select('*')
+
+
+      if (error) throw error;
+      if (data) setStocks(data);
+    } catch (error) {
+      console.log('Error fetching stocks:', error);
+    }
+  };
+
+  
+  useEffect(() => {
+    console.log('price',stocks);
+      fetchStockData();
+
+      console.log("Stocks component rendered");
+
+    const channel = supabase
+      .channel('price-channel')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'price' }, (payload) => {
+        console.log('Real-time update:', payload);
+
+        setStocks((prevStocks) => {
+          const { eventType, new: newStock, old: oldStock } = payload;
+
+          switch (eventType) {
+            case 'INSERT':
+              return [...prevStocks, newStock];
+            case 'UPDATE':
+              return prevStocks.map((stock) => stock.id === newStock.id ? newStock : stock);
+            case 'DELETE':
+              return prevStocks.filter((stock) => stock.id !== oldStock.id);
+            default:
+              return prevStocks;
+          }
+        });
+      })
+      .subscribe((status) => console.log('Subscription status:', status));
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []); 
 
   return (
     <DashboardLayout>
@@ -72,7 +125,7 @@ function Dashboard() {
           <Grid container spacing={3}>
             <Grid item xs={12} md={6} xl={3}>
               <MiniStatisticsCard
-                title={{ text: "today's money", fontWeight: "regular" }}
+                title={{ text: "Company Name", fontWeight: "regular" }}
                 count="$53,000"
                 percentage={{ color: "success", text: "+55%" }}
                 icon={{ color: "info", component: <IoWallet size="22px" color="white" /> }}

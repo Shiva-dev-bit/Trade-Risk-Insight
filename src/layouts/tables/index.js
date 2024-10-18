@@ -37,6 +37,8 @@ function Tables() {
   const { columns, rows } = authorsTableData;
   const { columns: prCols, rows: prRows } = projectsTableData;
 
+
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
