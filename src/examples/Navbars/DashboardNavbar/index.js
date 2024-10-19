@@ -56,7 +56,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
         .select("*")
         .or(`company_name.ilike.%${query}%,symbol.ilike.%${query}%`);
 
-      console.log("data", data);
+      console.log("fetchSearchData data's", data);
       if (error) throw error;
       setFilteredData(data || []); // Set only the relevant data
     } catch (error) {
