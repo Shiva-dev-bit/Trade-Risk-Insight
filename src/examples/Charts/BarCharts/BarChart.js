@@ -38,7 +38,6 @@ class BarChart extends Component {
   }
 
   render() {
-
     const { chartData, chartOptions } = this.state;
     if (!chartData.length || !Object.keys(chartOptions).length) {
       return <div>Loading...</div>;
