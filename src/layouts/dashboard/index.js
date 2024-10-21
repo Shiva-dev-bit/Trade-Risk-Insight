@@ -46,11 +46,11 @@ import ReferralTracking from "layouts/dashboard/components/ReferralTracking";
 
 // React icons
 import { IoIosRocket } from "react-icons/io";
-import { IoGlobe } from "react-icons/io5";
+import { IoGlobe, IoStatsChart } from "react-icons/io5";
 import { IoBuild } from "react-icons/io5";
 import { IoWallet } from "react-icons/io5";
 import { IoDocumentText } from "react-icons/io5";
-import { FaShoppingCart } from "react-icons/fa";
+import { FaMoneyBillWave, FaShoppingCart } from "react-icons/fa";
 
 // Data
 import LineChart from "examples/Charts/LineCharts/LineChart";
@@ -66,7 +66,26 @@ import { supabase } from "lib/supabase";
 function Dashboard() {
   const { gradients } = colors;
   const { cardContent } = gradients;
-  const [stocks,setStocks] = useState([]);
+  const [stocks, setStocks] = useState([]);
+
+  let [stockData, setStockData] = useState({
+    id: 29181,
+    symbol: "1TSL",
+    company_name: "LS 1x Tesla Tracker ETC",
+    currency: "USD",
+    exchange: "LSE",
+    mic_code: "XLON",
+    country: "United Kingdom",
+    type: "Common Stock",
+    is_deleted: false,
+    updated_at: "2024-10-17T10:21:23.579+00:00",
+  });
+
+  const handleClickStock = (getStock) => {
+    setStockData(getStock);
+  };
+
+  console.log(stockData);
 
 
   const fetchStockData = async () => {
@@ -83,17 +102,17 @@ function Dashboard() {
     }
   };
 
-  
-  useEffect(() => {
-    console.log('price',stocks);
-      fetchStockData();
 
-      console.log("Stocks component rendered");
+  console.log('price', stocks);
+  useEffect(() => {
+    fetchStockData();
+
+    console.log("Stocks component rendered");
 
     const channel = supabase
       .channel('price-channel')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'price' }, (payload) => {
-        console.log('Real-time update:', payload);
+        // console.log('Real-time update:', payload);
 
         setStocks((prevStocks) => {
           const { eventType, new: newStock, old: oldStock } = payload;
@@ -115,44 +134,59 @@ function Dashboard() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []); 
+  }, []);
+
+  const getIcon = (title) => {
+    switch (title) {
+      case "Currency & Exchange":
+        return <FaMoneyBillWave size="22px" color="white" />;
+      case "MIC Code & Country":
+        return <IoGlobe size="22px" color="white" />;
+      case "Type of Stock":
+        return <IoStatsChart size="22px" color="white" />;
+      default:
+        return <IoWallet size="22px" color="white" />;
+    }
+  };
+
+  const price = stocks[0]?.price;
 
   return (
     <DashboardLayout>
-      <DashboardNavbar />
+      <DashboardNavbar handleClickStock={handleClickStock} />
       <VuiBox py={3}>
         <VuiBox mb={3}>
           <Grid container spacing={3}>
-            <Grid item xs={12} md={6} xl={3}>
+            <Grid item xs={12} md={6} lg={3}>
               <MiniStatisticsCard
-                title={{ text: "Company Name", fontWeight: "regular" }}
-                count="$53,000"
-                percentage={{ color: "success", text: "+55%" }}
-                icon={{ color: "info", component: <IoWallet size="22px" color="white" /> }}
+                title={{ text: stockData.company_name, fontWeight: "regular" }}
+                count={price}
+                percentage={{ color: "success", text: "+2%" }}
+                icon={{ color: "info", component: getIcon(stockData.company_name) }}
               />
             </Grid>
-            <Grid item xs={12} md={6} xl={3}>
+
+            <Grid item xs={12} md={6} lg={3}>
               <MiniStatisticsCard
-                title={{ text: "today's users" }}
-                count="2,300"
-                percentage={{ color: "success", text: "+3%" }}
-                icon={{ color: "info", component: <IoGlobe size="22px" color="white" /> }}
+                title={{ text: "Currency & Exchange" }}
+                count={`${stockData.currency} / ${stockData.exchange}`}
+                icon={{ color: "info", component: getIcon("Currency & Exchange") }}
               />
             </Grid>
-            <Grid item xs={12} md={6} xl={3}>
+
+            <Grid item xs={12} md={6} lg={3}>
               <MiniStatisticsCard
-                title={{ text: "new clients" }}
-                count="+3,462"
-                percentage={{ color: "error", text: "-2%" }}
-                icon={{ color: "info", component: <IoDocumentText size="22px" color="white" /> }}
+                title={{ text: "symbol & Country" }}
+                count={`${stockData.symbol}, ${stockData.country}`}
+                icon={{ color: "info", component: getIcon("MIC Code & Country") }}
               />
             </Grid>
-            <Grid item xs={12} md={6} xl={3}>
+
+            <Grid item xs={12} md={6} lg={3}>
               <MiniStatisticsCard
-                title={{ text: "total sales" }}
-                count="$103,430"
-                percentage={{ color: "success", text: "+5%" }}
-                icon={{ color: "info", component: <FaShoppingCart size="20px" color="white" /> }}
+                title={{ text: "Type of Stock" }}
+                count={stockData.type}
+                icon={{ color: "info", component: getIcon("Type of Stock") }}
               />
             </Grid>
           </Grid>

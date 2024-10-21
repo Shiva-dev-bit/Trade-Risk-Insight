@@ -1,45 +1,18 @@
-/*!
-
-=========================================================
-* Risk Protect AI React - v1.0.0
-=========================================================
-
-* Product Page: https://www.riskprotec.ai/product/riskprotect-ai
-* Copyright 2021 RiskProtec AI (https://www.riskprotec.ai/)
-* Licensed under MIT (https://github.com/riskprotectai/riskprotect-ai/blob/master LICENSE.md)
-
-* Design and Coded by Simmmple & RiskProtec AI
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-
 import { useState, useEffect } from "react";
-
-// react-router components
 import { useLocation, Link } from "react-router-dom";
-
-// prop-types is a library for typechecking of props.
 import PropTypes from "prop-types";
-
-// @material-ui core components
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import Icon from "@mui/material/Icon";
-
 // UI Risk LENS AI Dashboard React components
 import VuiBox from "components/VuiBox";
 import VuiTypography from "components/VuiTypography";
 import VuiInput from "components/VuiInput";
-
 // UI Risk LENS AI Dashboard React example components
 import Breadcrumbs from "examples/Breadcrumbs";
 import NotificationItem from "examples/Items/NotificationItem";
-
 // Custom styles for DashboardNavbar
 import {
   navbar,
@@ -48,7 +21,6 @@ import {
   navbarIconButton,
   navbarMobileMenu,
 } from "examples/Navbars/DashboardNavbar/styles";
-
 // UI Risk LENS AI Dashboard React context
 import {
   useVisionUIController,
@@ -56,49 +28,81 @@ import {
   setMiniSidenav,
   setOpenConfigurator,
 } from "context";
-
 // Images
 import team2 from "assets/images/team-2.jpg";
 import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
+import { Box, List, ListItem, ListItemText, TextField, Typography } from "@mui/material";
+import { supabase } from "lib/supabase";
 
-function DashboardNavbar({ absolute, light, isMini }) {
+
+function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
+
+
   const [navbarType, setNavbarType] = useState();
   const [controller, dispatch] = useVisionUIController();
   const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator } = controller;
   const [openMenu, setOpenMenu] = useState(false);
   const route = useLocation().pathname.split("/").slice(1);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredData, setFilteredData] = useState([]);
+
+
+  const handleOnClickStock = (item) => {
+    handleClickStock(item);
+    setSearchTerm("");
+  };
+
+  
+  const fetchSearchData = async (query) => {
+    try {
+      const { data, error } = await supabase
+        .from("stocks")
+        .select("*")
+        .or(`company_name.ilike.%${query}%,symbol.ilike.%${query}%`);
+      console.log("data", data);
+      if (error) throw error;
+      setFilteredData(data || []); // Set only the relevant data
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setFilteredData([]);
+    }
+  };
 
   useEffect(() => {
-    // Setting the navbar type
+    const debounceTimer = setTimeout(() => {
+      if (searchTerm.trim() !== "") {
+        fetchSearchData(searchTerm);
+      } else {
+        setFilteredData([]);
+      }
+    }, 300);
+    return () => clearTimeout(debounceTimer);
+  }, [searchTerm]);
+
+
+  useEffect(() => {
     if (fixedNavbar) {
       setNavbarType("sticky");
     } else {
       setNavbarType("static");
     }
-
-    // A function that sets the transparent state of the navbar.
     function handleTransparentNavbar() {
       setTransparentNavbar(dispatch, (fixedNavbar && window.scrollY === 0) || !fixedNavbar);
     }
-
-    /** 
-     The event listener that's calling the handleTransparentNavbar function when 
-     scrolling the window.
-    */
     window.addEventListener("scroll", handleTransparentNavbar);
-
-    // Call the handleTransparentNavbar function to set the state with the initial value.
     handleTransparentNavbar();
-
-    // Remove event listener on cleanup
     return () => window.removeEventListener("scroll", handleTransparentNavbar);
-  }, [dispatch, fixedNavbar]);
+  }, [
+    dispatch,
+    fixedNavbar,
+    // searchTerm
+  ]);
+
 
   const handleMiniSidenav = () => setMiniSidenav(dispatch, !miniSidenav);
   const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
   const handleOpenMenu = (event) => setOpenMenu(event.currentTarget);
   const handleCloseMenu = () => setOpenMenu(false);
-
   // Render the notifications menu
   const renderMenu = () => (
     <Menu
@@ -137,7 +141,6 @@ function DashboardNavbar({ absolute, light, isMini }) {
       />
     </Menu>
   );
-
   return (
     <AppBar
       position={absolute ? "absolute" : navbarType}
@@ -151,19 +154,95 @@ function DashboardNavbar({ absolute, light, isMini }) {
         {isMini ? null : (
           <VuiBox sx={(theme) => navbarRow(theme, { isMini })}>
             <VuiBox pr={1}>
-              <VuiInput
-                placeholder="Type here..."
-                icon={{ component: "search", direction: "left" }}
+              <Box
                 sx={({ breakpoints }) => ({
-                  [breakpoints.down("sm")]: {
-                    maxWidth: "80px",
-                  },
-                  [breakpoints.only("sm")]: {
-                    maxWidth: "80px",
-                  },
                   backgroundColor: "info.main !important",
+                  width: "300px",
+                  position: "relative",
+                  [breakpoints.down("sm")]: { maxWidth: "80px" },
                 })}
-              />
+              >
+                {/* Search Input */}
+                <VuiInput
+                  type="search"
+                  size="large"
+                  placeholder="Search..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  icon={{
+                    component: (
+                      <span role="img" aria-label="search">
+                        🔍
+                      </span>
+                    ),
+                    direction: "left",
+                  }}
+                  sx={({ breakpoints }) => ({
+                    [breakpoints.down("sm")]: {
+                      maxWidth: "80px",
+                    },
+                    [breakpoints.only("sm")]: {
+                      maxWidth: "80px",
+                    },
+                    // width: "100%",
+                    // [breakpoints.down("sm")]: { maxWidth: "80%" },
+                    backgroundColor: "white !important",
+                  })}
+                />
+                {/* Search Results */}
+                {searchTerm && (
+                  <List
+                    sx={{
+                      marginTop: 2,
+                      backgroundColor: "#012654",
+                      borderRadius: 2,
+                      position: "absolute",
+                      width: "35rem",
+                      height: "20rem",
+                      zIndex: 10,
+                      left: "-50%",
+                      overflow: "scroll",
+                    }}
+                  >
+                    {filteredData.length > 0 ? (
+                      filteredData.map((item, index) => (
+                        <Box
+                          key={`${item.symbol}-${index}`}
+                          sx={{ p: 1, color: "white !important", fontSize: "16px" }}
+                        >
+                          <Box
+                            sx={{ cursor: "pointer", borderBottom: "1px solid white", pb: 2 }}
+                            onClick={() => {
+                              handleOnClickStock(item);
+                            }}
+                          >
+                            <Box
+                              sx={{ display: "flex", justifyContent: "space-between", gap: "5rem" }}
+                            >
+                              <Box sx={{ fontWeight: 900 }}>{item.company_name}</Box>
+                              <Box>{item.exchange}</Box>
+                            </Box>
+                            <Box
+                              sx={{ display: "flex", justifyContent: "space-between", gap: "5rem" }}
+                            >
+                              <Box
+                                sx={{ background: "grey", padding: "0.4rem", borderRadius: "10px" }}
+                              >
+                                {item.symbol}
+                              </Box>
+                              <Box>{item.mic_code}</Box>
+                            </Box>
+                          </Box>
+                        </Box>
+                      ))
+                    ) : (
+                      <Typography sx={{ padding: 2, textAlign: "center", color: "gray" }}>
+                        No results found.
+                      </Typography>
+                    )}
+                  </List>
+                )}
+              </Box>
             </VuiBox>
             <VuiBox color={light ? "white" : "inherit"}>
               <Link to="/authentication/sign-in">
@@ -219,19 +298,27 @@ function DashboardNavbar({ absolute, light, isMini }) {
     </AppBar>
   );
 }
-
 // Setting default values for the props of DashboardNavbar
 DashboardNavbar.defaultProps = {
   absolute: false,
   light: false,
   isMini: false,
+  // handleClickStock : ()=>void
 };
-
 // Typechecking props for the DashboardNavbar
 DashboardNavbar.propTypes = {
   absolute: PropTypes.bool,
   light: PropTypes.bool,
   isMini: PropTypes.bool,
 };
-
 export default DashboardNavbar;
+
+
+
+
+
+
+
+
+
+
