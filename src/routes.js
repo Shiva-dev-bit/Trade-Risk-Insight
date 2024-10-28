@@ -46,6 +46,7 @@ import RTL from "layouts/rtl";
 import Profile from "layouts/profile";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
+import Portfolio from "layouts/portfolio";
 
 // UI Risk LENS AI Dashboard React icons
 import { IoRocketSharp } from "react-icons/io5";
@@ -57,6 +58,7 @@ import { IoStatsChart } from "react-icons/io5";
 import { IoHome } from "react-icons/io5";
 import ResetPassword from "layouts/authentication/reset-password";
 import ForgotPassword from "layouts/authentication/forget-password";
+import { BusinessCenterOutlined } from "@mui/icons-material";
 
 const routes = [
   {
@@ -105,6 +107,15 @@ const routes = [
     component: Profile,
     noCollapse: true,
     authenticated: true
+  },
+  {
+    type: "collapse",
+    name: "Portfolio",
+    key: "portfolio",
+    route: "/portfolio",
+    icon: <BusinessCenterOutlined size="15px" color="inherit" />,
+    component: Portfolio,
+    noCollapse: true,
   },
   {
     type: "collapse",
