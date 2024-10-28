@@ -6,13 +6,16 @@ import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import Icon from "@mui/material/Icon";
+
 // UI Risk LENS AI Dashboard React components
 import VuiBox from "components/VuiBox";
 import VuiTypography from "components/VuiTypography";
 import VuiInput from "components/VuiInput";
+
 // UI Risk LENS AI Dashboard React example components
 import Breadcrumbs from "examples/Breadcrumbs";
 import NotificationItem from "examples/Items/NotificationItem";
+
 // Custom styles for DashboardNavbar
 import {
   navbar,
@@ -21,6 +24,7 @@ import {
   navbarIconButton,
   navbarMobileMenu,
 } from "examples/Navbars/DashboardNavbar/styles";
+
 // UI Risk LENS AI Dashboard React context
 import {
   useVisionUIController,
@@ -28,6 +32,7 @@ import {
   setMiniSidenav,
   setOpenConfigurator,
 } from "context";
+
 // Images
 import team2 from "assets/images/team-2.jpg";
 import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
@@ -37,51 +42,12 @@ import { BsChevronDown } from "react-icons/bs";
 import StockPrice from "./StockPrice";
 import axios from "axios";
 
-
 function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
-
-
   const [navbarType, setNavbarType] = useState();
   const [controller, dispatch] = useVisionUIController();
   const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator } = controller;
   const [openMenu, setOpenMenu] = useState(false);
   const route = useLocation().pathname.split("/").slice(1);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredData, setFilteredData] = useState([]);
-
-
-  const handleOnClickStock = (item) => {
-    handleClickStock(item);
-    setSearchTerm("");
-  };
-
-  
-  const fetchSearchData = async (query) => {
-    try {
-      const { data, error } = await supabase
-        .from("stocks")
-        .select("*")
-        .or(`company_name.ilike.%${query}%,symbol.ilike.%${query}%`);
-      console.log("data", data);
-      if (error) throw error;
-      setFilteredData(data || []); // Set only the relevant data
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setFilteredData([]);
-    }
-  };
-
-  useEffect(() => {
-    const debounceTimer = setTimeout(() => {
-      if (searchTerm.trim() !== "") {
-        fetchSearchData(searchTerm);
-      } else {
-        setFilteredData([]);
-      }
-    }, 300);
-    return () => clearTimeout(debounceTimer);
-  }, [searchTerm]);
-
 
   useEffect(() => {
     if (fixedNavbar) {
@@ -89,6 +55,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
     } else {
       setNavbarType("static");
     }
+
     function handleTransparentNavbar() {
       setTransparentNavbar(dispatch, (fixedNavbar && window.scrollY === 0) || !fixedNavbar);
     }
@@ -97,11 +64,11 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
     return () => window.removeEventListener("scroll", handleTransparentNavbar);
   }, [dispatch, fixedNavbar]);
 
-
   const handleMiniSidenav = () => setMiniSidenav(dispatch, !miniSidenav);
   const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
   const handleOpenMenu = (event) => setOpenMenu(event.currentTarget);
   const handleCloseMenu = () => setOpenMenu(false);
+
   // Render the notifications menu
   const renderMenu = () => (
     <Menu
@@ -140,6 +107,235 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
       />
     </Menu>
   );
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredData, setFilteredData] = useState([]);
+  const [isDefaultActive, setIsDefaultActive] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const [selectedFilters, setSelectedFilters] = useState({
+    countries: [],
+    exchanges: [],
+    currencies: [],
+    types: [],
+  });
+
+  const filterCategories = {
+    countries: { label: "Countries", key: "country" },
+    exchanges: { label: "Exchanges", key: "exchange" },
+    currencies: { label: "Currencies", key: "currency" },
+    types: { label: "Financial Assets Types", key: "type" },
+  };
+
+  const normalizeStockData = (data, source) => {
+    if (!Array.isArray(data)) return [];
+
+    return data.map((item) => ({
+      company_name: item.company_name || "",
+      symbol: item.symbol || "",
+      exchange: item.exchange || "",
+      currency: item.currency || "",
+      country: item.country || "",
+      type: item.type || "",
+      mic_code: item.mic_code || "",
+      price: source === "api" ? item.price : "",
+      close: source === "api" ? item.close : "",
+      percent_change: source === "api" ? item.percent_change : "",
+      source,
+    }));
+  };
+
+  const removeDuplicates = (apiData, supabaseData) => {
+    const seen = new Set();
+    const combined = [...supabaseData];
+
+    apiData.forEach((apiItem) => {
+      const key = `${apiItem.symbol}-${apiItem.exchange}`;
+      if (!seen.has(key)) {
+        const existsInSupabase = supabaseData.some(
+          (dbItem) => dbItem.symbol === apiItem.symbol && dbItem.exchange === apiItem.exchange
+        );
+        if (!existsInSupabase) {
+          combined.push(apiItem);
+        }
+      }
+      seen.add(key);
+    });
+
+    return combined;
+  };
+
+  const fetchSupabaseData = async (query) => {
+    if (!query.trim()) return [];
+
+    try {
+      const { data, error } = await supabase
+        .from("stocks")
+        .select("*")
+        .or(`company_name.ilike.%${query}%,symbol.ilike.%${query}%`);
+
+      if (error) throw error;
+      return normalizeStockData(data || [], "supabase");
+    } catch (error) {
+      console.error("Supabase fetch error:", error);
+      return [];
+    }
+  };
+
+  const fetchApiData = async (query) => {
+    if (!query.trim()) return [];
+
+    try {
+      const response = await axios.get(
+        `https://ad8b-2401-4900-8827-63c1-d8eb-cc77-3b8f-6853.ngrok-free.app/search/${query}`,
+        { headers: { Accept: "application/json" } }
+      );
+
+      if (response.headers["content-type"]?.includes("application/json")) {
+        console.log("response", response.data);
+        return normalizeStockData(response.data || [], "api");
+      } else {
+        console.error("Unexpected content type:", response.data);
+        return [];
+      }
+    } catch (error) {
+      console.error("API fetch error:", error.message);
+      return [];
+    }
+  };
+
+  const handleSearch = async (value) => {
+    setSearchTerm(value);
+    setShowDropdown(true);
+
+    if (!value.trim()) {
+      setFilteredData([]);
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      let results = [];
+
+      if (!isDefaultActive) {
+        // Fetch from both sources when advance search is not active
+        const [supabaseData, apiData] = await Promise.all([
+          fetchSupabaseData(value),
+          fetchApiData(value),
+        ]);
+        results = removeDuplicates(apiData, supabaseData);
+      } else {
+        // Only fetch from Supabase when advance search is active
+        results = await fetchSupabaseData(value);
+      }
+
+      // Apply filters
+      Object.entries(selectedFilters).forEach(([category, selectedValues]) => {
+        if (selectedValues.length > 0) {
+          const key = filterCategories[category].key;
+          results = results.filter((item) => selectedValues.includes(item[key]));
+        }
+      });
+
+      setFilteredData(
+        results.sort((a, b) => (a.company_name || "").localeCompare(b.company_name || ""))
+      );
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setError("Failed to fetch data. Please try again.");
+      setFilteredData([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const debounceTimer = setTimeout(() => {
+      if (searchTerm.trim()) {
+        handleSearch(searchTerm);
+      } else {
+        setShowDropdown(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(debounceTimer);
+  }, [searchTerm, selectedFilters, isDefaultActive]);
+
+  const getUniqueValues = (data, key) => {
+    return [...new Set(data.map((item) => item[key]).filter(Boolean))].sort();
+  };
+
+  const getCounts = (data, key) => {
+    return data.reduce((acc, item) => {
+      if (item[key]) {
+        acc[item[key]] = (acc[item[key]] || 0) + 1;
+      }
+      return acc;
+    }, {});
+  };
+
+  const handleFilterChange = (category, value) => {
+    setSelectedFilters((prev) => ({
+      ...prev,
+      [category]: prev[category].includes(value)
+        ? prev[category].filter((v) => v !== value)
+        : [...prev[category], value],
+    }));
+  };
+
+  const handleDefaultChange = () => {
+    setIsDefaultActive(!isDefaultActive);
+    setSelectedFilters({
+      countries: !isDefaultActive ? ["India"] : [],
+      exchanges: !isDefaultActive ? ["NSE"] : [],
+      currencies: [],
+      types: [],
+    });
+
+    if (searchTerm.trim()) {
+      handleSearch(searchTerm);
+    }
+  };
+
+  const FilterSection = ({ category }) => {
+    const key = filterCategories[category].key;
+    const uniqueValues = getUniqueValues(filteredData, key);
+    const counts = getCounts(filteredData, key);
+
+    return (
+      <FormGroup row>
+        {uniqueValues.map((value) => (
+          <FormControlLabel
+            key={value}
+            sx={{ display: "flex", flexDirection: "row" }}
+            control={
+              <Checkbox
+                checked={selectedFilters[category].includes(value)}
+                onChange={() => handleFilterChange(category, value)}
+                disabled={isDefaultActive}
+                sx={{
+                  color: "white",
+                  "&.Mui-checked": { color: "white" },
+                  border: "1px solid grey",
+                }}
+              />
+            }
+            label={
+              <Typography sx={{ color: "#fff", fontSize: "0.875rem", padding: "3px" }}>
+                {value} ({counts[value] || 0})
+              </Typography>
+            }
+          />
+        ))}
+      </FormGroup>
+    );
+  };
+
   return (
     <AppBar
       position={absolute ? "absolute" : navbarType}
@@ -180,8 +376,8 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
                     backgroundColor: "white !important",
                   })}
                 />
-                {/* Search Results */}
-                {searchTerm && (
+
+                {showDropdown && (
                   <List
                     sx={{
                       mt: 2,
@@ -247,12 +443,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
                             setShowDropdown(false);
                           }}
                         >
-                          <Box
-                            sx={{ cursor: "pointer", borderBottom: "1px solid white", pb: 2 }}
-                            onClick={() => {
-                              handleOnClickStock(item);
-                            }}
-                          >
+                          <Box sx={{ cursor: "pointer", borderBottom: "0.2px solid grey", py: 2 }}>
                             <Box
                               sx={{ display: "flex", justifyContent: "space-between", gap: "5rem" }}
                             >
@@ -356,26 +547,19 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
     </AppBar>
   );
 }
+
 // Setting default values for the props of DashboardNavbar
 DashboardNavbar.defaultProps = {
   absolute: false,
   light: false,
   isMini: false,
 };
+
 // Typechecking props for the DashboardNavbar
 DashboardNavbar.propTypes = {
   absolute: PropTypes.bool,
   light: PropTypes.bool,
   isMini: PropTypes.bool,
 };
+
 export default DashboardNavbar;
-
-
-
-
-
-
-
-
-
-
