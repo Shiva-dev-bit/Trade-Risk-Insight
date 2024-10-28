@@ -31,8 +31,11 @@ import {
 // Images
 import team2 from "assets/images/team-2.jpg";
 import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
-import { Box, List, ListItem, ListItemText, TextField, Typography } from "@mui/material";
+import { Box, Checkbox, FormControlLabel, FormGroup, List, Typography } from "@mui/material";
 import { supabase } from "lib/supabase";
+import { BsChevronDown } from "react-icons/bs";
+import StockPrice from "./StockPrice";
+import axios from "axios";
 
 
 function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
@@ -92,11 +95,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
     window.addEventListener("scroll", handleTransparentNavbar);
     handleTransparentNavbar();
     return () => window.removeEventListener("scroll", handleTransparentNavbar);
-  }, [
-    dispatch,
-    fixedNavbar,
-    // searchTerm
-  ]);
+  }, [dispatch, fixedNavbar]);
 
 
   const handleMiniSidenav = () => setMiniSidenav(dispatch, !miniSidenav);
@@ -155,20 +154,19 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
           <VuiBox sx={(theme) => navbarRow(theme, { isMini })}>
             <VuiBox pr={1}>
               <Box
-                sx={({ breakpoints }) => ({
+                sx={(theme) => ({
                   backgroundColor: "info.main !important",
-                  width: "300px",
+                  width: "820px",
                   position: "relative",
-                  [breakpoints.down("sm")]: { maxWidth: "80px" },
+                  [theme.breakpoints.down("sm")]: { maxWidth: "80px" },
                 })}
               >
-                {/* Search Input */}
                 <VuiInput
                   type="search"
                   size="large"
                   placeholder="Search..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => handleSearch(e.target.value)}
                   icon={{
                     component: (
                       <span role="img" aria-label="search">
@@ -177,15 +175,8 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
                     ),
                     direction: "left",
                   }}
-                  sx={({ breakpoints }) => ({
-                    [breakpoints.down("sm")]: {
-                      maxWidth: "80px",
-                    },
-                    [breakpoints.only("sm")]: {
-                      maxWidth: "80px",
-                    },
-                    // width: "100%",
-                    // [breakpoints.down("sm")]: { maxWidth: "80%" },
+                  sx={(theme) => ({
+                    [theme.breakpoints.down("sm")]: { maxWidth: "80px" },
                     backgroundColor: "white !important",
                   })}
                 />
@@ -193,22 +184,68 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
                 {searchTerm && (
                   <List
                     sx={{
-                      marginTop: 2,
-                      backgroundColor: "#012654",
+                      mt: 2,
+                      bgcolor: "#012654",
                       borderRadius: 2,
                       position: "absolute",
-                      width: "35rem",
+                      width: "100%",
                       height: "20rem",
                       zIndex: 10,
-                      left: "-50%",
-                      overflow: "scroll",
+                      overflow: "auto",
                     }}
                   >
-                    {filteredData.length > 0 ? (
+                    <FormControlLabel
+                      sx={{ display: "flex", p: 1 }}
+                      control={
+                        <Checkbox
+                          checked={isDefaultActive}
+                          onChange={handleDefaultChange}
+                          sx={{ color: "white", "&.Mui-checked": { color: "white" }, ml: 3 }}
+                        />
+                      }
+                      label={
+                        <Typography sx={{ color: "#fff", fontSize: "14px" }}>
+                          Advance search
+                        </Typography>
+                      }
+                    />
+
+                    <Box sx={{ px: 2, pb: 1, borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
+                      <Box display="flex" justifyContent="space-between" alignItems="center">
+                        {Object.entries(filterCategories).map(([key, { label }]) => (
+                          <Typography
+                            key={key}
+                            variant="subtitle2"
+                            sx={{ color: "white", cursor: "pointer" }}
+                            onClick={() => setActiveDropdown(activeDropdown === key ? null : key)}
+                          >
+                            {label}
+                            <BsChevronDown style={{ marginLeft: "5px", fontSize: "12px" }} />
+                          </Typography>
+                        ))}
+                      </Box>
+
+                      {activeDropdown && <FilterSection category={activeDropdown} />}
+                    </Box>
+
+                    {isLoading ? (
+                      <Typography sx={{ padding: 2, textAlign: "center", color: "gray" }}>
+                        Loading...
+                      </Typography>
+                    ) : error ? (
+                      <Typography sx={{ padding: 2, textAlign: "center", color: "red" }}>
+                        {error}
+                      </Typography>
+                    ) : filteredData.length > 0 ? (
                       filteredData.map((item, index) => (
                         <Box
                           key={`${item.symbol}-${index}`}
-                          sx={{ p: 1, color: "white !important", fontSize: "16px" }}
+                          sx={{ px: 1, py: 0.1, color: "white !important" }}
+                          onClick={() => {
+                            handleClickStock(item);
+                            setSearchTerm("");
+                            setShowDropdown(false);
+                          }}
                         >
                           <Box
                             sx={{ cursor: "pointer", borderBottom: "1px solid white", pb: 2 }}
@@ -219,25 +256,46 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
                             <Box
                               sx={{ display: "flex", justifyContent: "space-between", gap: "5rem" }}
                             >
-                              <Box sx={{ fontWeight: 900 }}>{item.company_name}</Box>
-                              <Box>{item.exchange}</Box>
-                            </Box>
-                            <Box
-                              sx={{ display: "flex", justifyContent: "space-between", gap: "5rem" }}
-                            >
-                              <Box
-                                sx={{ background: "grey", padding: "0.4rem", borderRadius: "10px" }}
-                              >
-                                {item.symbol}
+                              <Box sx={{ fontWeight: 900, fontSize: "15px" }}>
+                                {item.company_name}
                               </Box>
-                              <Box>{item.mic_code}</Box>
+                              <Box sx={{ display: "flex", gap: "2rem" }}>
+                                <Box sx={{ fontSize: "13px" }}>{item.exchange}</Box>
+                                <Box sx={{ fontSize: "13px" }}>
+                                  {isDefaultActive && item.currency === "INR" ? "" : item.currency}
+                                </Box>
+                              </Box>
+                            </Box>
+                            <Box>
+                              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                                <Box
+                                  sx={{
+                                    background: "#81878c",
+                                    padding: "0.1rem 0.1rem",
+                                    borderRadius: "10px",
+                                    letterSpacing: "0.4px",
+                                    fontSize: "16px",
+                                    fontWeight: 400,
+                                  }}
+                                >
+                                  {item.symbol}
+                                </Box>
+                                <StockPrice
+                                  symbol={item.symbol}
+                                  mic_code={item.mic_code}
+                                  supabase={supabase}
+                                  percent_change={item.percent_change}
+                                  close={item.close}
+                                  source={item.source} // "api" or "supabase"
+                                />
+                              </Box>
                             </Box>
                           </Box>
                         </Box>
                       ))
                     ) : (
                       <Typography sx={{ padding: 2, textAlign: "center", color: "gray" }}>
-                        No results found.
+                        No results found
                       </Typography>
                     )}
                   </List>
@@ -303,7 +361,6 @@ DashboardNavbar.defaultProps = {
   absolute: false,
   light: false,
   isMini: false,
-  // handleClickStock : ()=>void
 };
 // Typechecking props for the DashboardNavbar
 DashboardNavbar.propTypes = {

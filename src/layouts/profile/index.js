@@ -1,23 +1,3 @@
-/*!
-
-=========================================================
-* Risk Protect AI React - v1.0.0
-=========================================================
-
-* Product Page: https://www.riskprotec.ai/product/riskprotect-ai
-* Copyright 2021 RiskProtec AI (https://www.riskprotec.ai/)
-* Licensed under MIT (https://github.com/riskprotectai/riskprotect-ai/blob/master LICENSE.md)
-
-* Design and Coded by Simmmple & RiskProtec AI
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-
-// @mui material components
-// @mui icons
 import FacebookIcon from "@mui/icons-material/Facebook";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import TwitterIcon from "@mui/icons-material/Twitter";
@@ -44,11 +24,35 @@ import Header from "layouts/profile/components/Header";
 import PlatformSettings from "layouts/profile/components/PlatformSettings";
 import Welcome from "../profile/components/Welcome/index";
 import CarInformations from "./components/CarInformations";
+import StockList from "./components/StockList";
+import { supabase } from "lib/supabase";
+import { useEffect, useState } from "react";
 
 function Overview() {
+  const [stocks, setStocks] = useState([]);
+  const userId = 1;
+
+  const fetchUserStocks = async () => {
+    const { data, error } = await supabase
+      .from("userPortfolio")
+      .select("portfolio_id, stock_id, quantity, average_price, is_deleted_yn, stocks(*), users(*)")
+      .eq("user_id", userId)
+      .eq("is_deleted_yn", false);
+
+    if (error) {
+      console.error("Error fetching stocks:", error);
+    } else {
+      setStocks(data);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserStocks();
+  }, []);
+
   return (
     <DashboardLayout>
-      <Header />
+      <Header username={stocks[0]?.users?.username} email={stocks[0]?.users?.email} />
       <VuiBox mt={5} mb={3}>
         <Grid
           container
@@ -71,7 +75,10 @@ function Overview() {
               },
             })}
           >
-            <Welcome />
+            <Welcome
+              username={stocks.length > 0 && stocks[0]?.users?.username}
+              email={stocks.length > 0 && stocks[0]?.users?.email}
+            />
           </Grid>
           <Grid
             item
@@ -84,7 +91,7 @@ function Overview() {
               },
             })}
           >
-            <CarInformations />
+            <CarInformations userdata={stocks.length > 0 && stocks[0]?.users} />
           </Grid>
           <Grid
             item
@@ -99,11 +106,13 @@ function Overview() {
           >
             <ProfileInfoCard
               title="profile information"
-              description="Hi, I’m Mark Johnson, Decisions: If you can’t decide, the answer is no. If two equally difficult paths, choose the one more painful in the short term (pain avoidance is creating an illusion of equality)."
+              description={`Hi, I’m ${
+                stocks.length > 0 && stocks[0]?.users?.username
+              }, Decisions: If you can’t decide, the answer is no. If two equally difficult paths, choose the one more painful in the short term (pain avoidance is creating an illusion of equality).`}
               info={{
-                fullName: "Mark Johnson",
+                fullName: `${stocks.length > 0 && stocks[0]?.users?.username}`,
                 mobile: "(44) 123 1234 123",
-                email: "mark@simmmple.com",
+                email: `${stocks.length > 0 && stocks[0]?.users?.email}`,
                 location: "United States",
               }}
               social={[
@@ -127,6 +136,9 @@ function Overview() {
           </Grid>
         </Grid>
       </VuiBox>
+
+      <StockList stocks={stocks} fetchUserStocks={fetchUserStocks} />
+
       <Grid container spacing={3} mb="30px">
         <Grid item xs={12} xl={3} height="100%">
           <PlatformSettings />

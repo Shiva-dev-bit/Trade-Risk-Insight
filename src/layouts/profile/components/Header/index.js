@@ -1,21 +1,3 @@
-/*!
-
-=========================================================
-* Risk Protect AI React - v1.0.0
-=========================================================
-
-* Product Page: https://www.riskprotec.ai/product/riskprotect-ai
-* Copyright 2021 RiskProtec AI (https://www.riskprotec.ai/)
-* Licensed under MIT (https://github.com/riskprotectai/riskprotect-ai/blob/master LICENSE.md)
-
-* Design and Coded by Simmmple & RiskProtec AI
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-
 import AppBar from "@mui/material/AppBar";
 // @mui material components
 import Card from "@mui/material/Card";
@@ -38,7 +20,7 @@ import { IoBuild } from "react-icons/io5";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import { useEffect, useState } from "react";
 
-function Header() {
+function Header({ username, email }) {
   const [tabsOrientation, setTabsOrientation] = useState("horizontal");
   const [tabValue, setTabValue] = useState(0);
 
@@ -127,10 +109,10 @@ function Header() {
               })}
             >
               <VuiTypography variant="lg" color="white" fontWeight="bold">
-                Mark Johnson
+                {username}
               </VuiTypography>
               <VuiTypography variant="button" color="text" fontWeight="regular">
-                mark@simmmple.com
+                {email}
               </VuiTypography>
             </VuiBox>
           </Grid>

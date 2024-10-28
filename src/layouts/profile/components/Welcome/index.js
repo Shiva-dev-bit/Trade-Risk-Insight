@@ -1,28 +1,9 @@
-/*!
-
-=========================================================
-* Risk Protect AI React - v1.0.0
-=========================================================
-
-* Product Page: https://www.riskprotec.ai/product/riskprotect-ai
-* Copyright 2021 RiskProtec AI (https://www.riskprotec.ai/)
-* Licensed under MIT (https://github.com/riskprotectai/riskprotect-ai/blob/master LICENSE.md)
-
-* Design and Coded by Simmmple & RiskProtec AI
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-
-import React from "react";
-import { Card, Icon } from "@mui/material";
+import { Card, Icon, Typography } from "@mui/material";
 import welcome from "assets/images/welcome-profile.png";
 import VuiTypography from "components/VuiTypography/index";
 import VuiBox from "components/VuiBox/index";
 
-const Welcome = () => {
+const Welcome = ({ username, email }) => {
   return (
     <Card
       sx={({ breakpoints }) => ({
@@ -40,10 +21,16 @@ const Welcome = () => {
           <VuiTypography color="white" variant="h3" fontWeight="bold" mb="3px">
             Welcome back!
           </VuiTypography>
-          <VuiTypography color="white" variant="button" fontWeight="regular">
-            Nice to see you, Mark Johnson!
-          </VuiTypography>
+          <Typography
+            color="#fff"
+            textTransform={"capitalize"}
+            variant="button"
+            fontWeight="regular"
+          >
+            Nice to see you, {username}
+          </Typography>
         </VuiBox>
+
         <VuiBox justifySelf="flex-end">
           <VuiTypography
             component="a"
