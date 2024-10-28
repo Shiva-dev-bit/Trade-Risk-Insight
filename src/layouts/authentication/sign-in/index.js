@@ -1,49 +1,72 @@
-/*!
-
-=========================================================
-* Risk Protect AI React - v1.0.0
-=========================================================
-
-* Product Page: https://www.riskprotec.ai/product/riskprotect-ai
-* Copyright 2021 RiskProtec AI (https://www.riskprotec.ai/)
-* Licensed under MIT (https://github.com/riskprotectai/riskprotect-ai/blob/master LICENSE.md)
-
-* Design and Coded by Simmmple & RiskProtec AI
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-
 import { useState } from "react";
-
-// react-router-dom components
 import { Link } from "react-router-dom";
-
-// UI Risk LENS AI Dashboard React components
 import VuiBox from "components/VuiBox";
 import VuiTypography from "components/VuiTypography";
 import VuiInput from "components/VuiInput";
 import VuiButton from "components/VuiButton";
 import VuiSwitch from "components/VuiSwitch";
 import GradientBorder from "examples/GradientBorder";
-
-// UI Risk LENS AI Dashboard assets
 import radialGradient from "assets/theme/functions/radialGradient";
 import palette from "assets/theme/base/colors";
 import borders from "assets/theme/base/borders";
-
-// Authentication layout components
 import CoverLayout from "layouts/authentication/components/CoverLayout";
-
-// Images
 import bgSignIn from "assets/images/signInImage.png";
+import { supabase } from "lib/supabase";
+import { useHistory } from 'react-router-dom';
 
 function SignIn() {
   const [rememberMe, setRememberMe] = useState(true);
+  const [signIn, setSignIn] = useState({ email: '', password: '' });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const history = useHistory();
 
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
+
+  const handleSignIn = (e) => {
+    const { name, value } = e.target;
+    setSignIn(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+
+  const validateFields = () => {
+    if (!signIn.email) return "Email is required.";
+    if (!signIn.password) return "Password is required.";
+    return null; 
+  };
+
+  const signInWithEmail = async (e) => {
+    e.preventDefault();
+    setError(''); 
+    const validationError = validateFields();
+    
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
+    setLoading(true); 
+
+    const { email, password } = signIn;
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    setLoading(false); 
+
+    if (error) {
+      console.error('Error signing in:', error.message);
+      setError(error.message); 
+    } else {
+      console.log('Sign in successful! User data:', data);
+      history.push('/dashboard');
+    }
+  };
 
   return (
     <CoverLayout
@@ -55,9 +78,14 @@ function SignIn() {
       image={bgSignIn}
     >
       <VuiBox component="form" role="form">
+        {error && (
+          <VuiTypography variant="body2" color="error" textAlign="center" mb={2}>
+            {error}
+          </VuiTypography>
+        )}
         <VuiBox mb={2}>
           <VuiBox mb={1} ml={0.5}>
-            <VuiTypography component="label" variant="button" color="white" fontWeight="medium">
+            <VuiTypography component="label" variant="button" color="white" fontWeight="medium" name="email">
               Email
             </VuiTypography>
           </VuiBox>
@@ -71,12 +99,12 @@ function SignIn() {
               palette.gradients.borderLight.angle
             )}
           >
-            <VuiInput type="email" placeholder="Your email..." fontWeight="500" />
+            <VuiInput type="email" placeholder="Your email..." fontWeight="500" name="email" onChange={handleSignIn} />
           </GradientBorder>
         </VuiBox>
         <VuiBox mb={2}>
           <VuiBox mb={1} ml={0.5}>
-            <VuiTypography component="label" variant="button" color="white" fontWeight="medium">
+            <VuiTypography component="label" variant="button" color="white" fontWeight="medium" name="password">
               Password
             </VuiTypography>
           </VuiBox>
@@ -96,6 +124,8 @@ function SignIn() {
               sx={({ typography: { size } }) => ({
                 fontSize: size.sm,
               })}
+              name="password"
+              onChange={handleSignIn}
             />
           </GradientBorder>
         </VuiBox>
@@ -111,9 +141,19 @@ function SignIn() {
             &nbsp;&nbsp;&nbsp;&nbsp;Remember me
           </VuiTypography>
         </VuiBox>
+        <VuiTypography
+          component={Link}
+          to="/authentication/forget-password"
+          variant="button"
+          color="white"
+          fontWeight="medium"
+          sx={{ cursor: "pointer" }}
+        >
+          Forgot Password?
+        </VuiTypography>
         <VuiBox mt={4} mb={1}>
-          <VuiButton color="info" fullWidth>
-            SIGN IN
+          <VuiButton color="info" fullWidth onClick={signInWithEmail} disabled={loading}>
+            {loading ? 'Signing in...' : 'SIGN IN'}
           </VuiButton>
         </VuiBox>
         <VuiBox mt={3} textAlign="center">

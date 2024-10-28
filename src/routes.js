@@ -55,6 +55,8 @@ import { IoBuild } from "react-icons/io5";
 import { BsCreditCardFill } from "react-icons/bs";
 import { IoStatsChart } from "react-icons/io5";
 import { IoHome } from "react-icons/io5";
+import ResetPassword from "layouts/authentication/reset-password";
+import ForgotPassword from "layouts/authentication/forget-password";
 
 const routes = [
   {
@@ -121,6 +123,19 @@ const routes = [
     component: SignUp,
     noCollapse: true,
   },
+  {
+    type: "route",
+    key: "forget-password",
+    route: "/authentication/forget-password",
+    component: ForgotPassword, 
+  },
+  {
+    type: "route",
+    key: "reset-password",
+    route: "/authentication/reset-password",
+    component: ResetPassword, 
+  },
+  
 ];
 
 export default routes;

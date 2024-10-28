@@ -100,11 +100,16 @@ export default function App() {
       if (route.collapse) {
         return getRoutes(route.collapse);
       }
-
+  
+      // Check for the custom route type
+      if (route.route && route.type === "route") {
+        return <Route exact path={route.route} component={route.component} key={route.key} />;
+      }
+  
       if (route.route) {
         return <Route exact path={route.route} component={route.component} key={route.key} />;
       }
-
+  
       return null;
     });
 
