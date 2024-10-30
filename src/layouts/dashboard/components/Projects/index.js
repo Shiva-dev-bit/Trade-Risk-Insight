@@ -34,6 +34,7 @@ import Table from "examples/Tables/Table";
 
 // Data
 import data from "layouts/dashboard/components/Projects/data";
+import { Box } from "@mui/material";
 
 function Projects() {
   const { columns, rows } = data();
@@ -72,14 +73,8 @@ function Projects() {
       <VuiBox display="flex" justifyContent="space-between" alignItems="center" mb="32px">
         <VuiBox mb="auto">
           <VuiTypography color="white" variant="lg" mb="6px" gutterBottom>
-            Projects
+            Top Stock Market News
           </VuiTypography>
-          <VuiBox display="flex" alignItems="center" lineHeight={0}>
-            <BsCheckCircleFill color="green" size="15px" />
-            <VuiTypography variant="button" fontWeight="regular" color="text" ml="5px">
-              &nbsp;<strong>30 done</strong> this month
-            </VuiTypography>
-          </VuiBox>
         </VuiBox>
         <VuiBox color="text" px={2}>
           <Icon sx={{ cursor: "pointer", fontWeight: "bold" }} fontSize="small" onClick={openMenu}>
@@ -102,7 +97,9 @@ function Projects() {
           },
         }}
       >
-        <Table columns={columns} rows={rows} />
+        <Box sx={{ overflowX: "auto", maxHeight: "500px" }}>
+          <Table columns={columns} rows={rows} />
+        </Box>
       </VuiBox>
     </Card>
   );

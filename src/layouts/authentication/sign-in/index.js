@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import VuiBox from "components/VuiBox";
 import VuiTypography from "components/VuiTypography";
@@ -13,14 +13,38 @@ import CoverLayout from "layouts/authentication/components/CoverLayout";
 import bgSignIn from "assets/images/signInImage.png";
 import { supabase } from "lib/supabase";
 import { useHistory } from 'react-router-dom';
+import { AuthContext } from "context/Authcontext";
 
 function SignIn() {
   const [rememberMe, setRememberMe] = useState(true);
   const [signIn, setSignIn] = useState({ email: '', password: '' });
-  const [error, setError] = useState('');
+  const [err, setErr] = useState('');
   const [loading, setLoading] = useState(false);
+  const [user,setUser] = useState([]);
 
+  console.log('signIn',signIn.email)
   const history = useHistory();
+
+   const fetchUser = async () => {
+    try {
+      const { data,error } = await supabase.from('users').select('*').ilike('email',signIn?.email)
+
+      if(data){
+         setUser(data)
+      }
+      else{
+        console.log('error',error.message);
+      }
+    }catch(error){
+      console.log(error);
+    }
+   }
+
+  useEffect(() => {
+     fetchUser()
+  },[signIn?.email])
+
+  console.log('user',user);
 
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
 
@@ -30,28 +54,17 @@ function SignIn() {
       ...prevState,
       [name]: value
     }));
-  };
-
-  const validateFields = () => {
-    if (!signIn.email) return "Email is required.";
-    if (!signIn.password) return "Password is required.";
-    return null; 
+    setErr('');
   };
 
   const signInWithEmail = async (e) => {
     e.preventDefault();
-    setError(''); 
-    const validationError = validateFields();
-    
-    if (validationError) {
-      setError(validationError);
-      return;
-    }
-
+    setErr(''); 
+ 
     setLoading(true); 
 
     const { email, password } = signIn;
-
+    
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -59,9 +72,12 @@ function SignIn() {
 
     setLoading(false); 
 
-    if (error) {
+    if(user.length <= 0){
+      setErr('User not exist Please SignUp');
+    }
+    else if (error) {
       console.error('Error signing in:', error.message);
-      setError(error.message); 
+      setErr(error.message); 
     } else {
       console.log('Sign in successful! User data:', data);
       history.push('/dashboard');
@@ -78,9 +94,9 @@ function SignIn() {
       image={bgSignIn}
     >
       <VuiBox component="form" role="form">
-        {error && (
+        {err && (
           <VuiTypography variant="body2" color="error" textAlign="center" mb={2}>
-            {error}
+            {err}
           </VuiTypography>
         )}
         <VuiBox mb={2}>
@@ -99,7 +115,7 @@ function SignIn() {
               palette.gradients.borderLight.angle
             )}
           >
-            <VuiInput type="email" placeholder="Your email..." fontWeight="500" name="email" onChange={handleSignIn} />
+            <VuiInput type="email" placeholder="Your email..." fontWeight="500" name="email" onChange={handleSignIn} value={signIn.email}/>
           </GradientBorder>
         </VuiBox>
         <VuiBox mb={2}>
@@ -126,6 +142,7 @@ function SignIn() {
               })}
               name="password"
               onChange={handleSignIn}
+              value={signIn.password}
             />
           </GradientBorder>
         </VuiBox>

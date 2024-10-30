@@ -60,33 +60,37 @@ import { lineChartOptionsDashboard } from "layouts/dashboard/data/lineChartOptio
 import { barChartDataDashboard } from "layouts/dashboard/data/barChartData";
 import { barChartOptionsDashboard } from "layouts/dashboard/data/barChartOptions";
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "context/Authcontext";
 import { supabase } from "lib/supabase";
+
 
 function Dashboard() {
   const { gradients } = colors;
   const { cardContent } = gradients;
   const [stocks, setStocks] = useState([]);
   const [stocksPercent,setStocksPercent] = useState([]);
+  const { storeStockData } = useContext(AuthContext);
+
 
   let [stockData, setStockData] = useState({
-      id: 352,
-      symbol: "TATAMOTORS",
-      company_name: "Tata Motors Limited",
-      currency: "INR",
-      exchange: "NSE",
-      mic_code: "XNSE",
-      country: "India",
-      type: "Common Stock",
-      created_at: "2024-10-22T08:32:08.093318+00:00",
-      updated_at: "2024-10-22T08:32:08.02+00:00"
-  });
+    id: 352,
+    symbol: "TATAMOTORS",
+    company_name: "Tata Motors Limited",
+    currency: "INR",
+    exchange: "NSE",
+    mic_code: "XNSE",
+    country: "India",
+    type: "Common Stock",
+    created_at: "2024-10-22T08:32:08.093318+00:00",
+    updated_at: "2024-10-22T08:32:08.02+00:00"
+});
 
-  const handleClickStock = (getStock) => {
-    setStockData(getStock);
-  };
+const handleClickStock = (getStock) => {
+  setStockData(getStock);
+};
 
-  console.log(stockData);
+storeStockData(stockData);
 
  var today = new Date();
  var dd = String(today.getDate()).padStart(2, '0');
@@ -115,6 +119,7 @@ function Dashboard() {
       const { data, error } = await supabase
       .from('stock_daily_summary')
       .select('*')
+      .eq('trading_date',today);
 
 
       if (error) throw error;
@@ -123,6 +128,7 @@ function Dashboard() {
       console.log('Error fetching stocks:', error);
     }
   };
+
 
   console.log('price', stocks);
   console.log('pricePercent', stocksPercent);
@@ -151,6 +157,7 @@ function Dashboard() {
   useEffect(() => {
     fetchStockData();
     fetchDailyStock();
+
 
     console.log("Stocks component rendered");
 
@@ -233,7 +240,7 @@ function Dashboard() {
                 }}
                 count={
                   <span style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
-                    {price_percent[0]?.close_price.toFixed(2)}
+                    {New_price?.price?.toFixed(2)}
                   </span> 
                 }
                 percentage={{ color: percentageColor, text: (

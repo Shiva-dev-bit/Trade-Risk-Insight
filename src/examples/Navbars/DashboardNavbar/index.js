@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useLocation, Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import AppBar from "@mui/material/AppBar";
@@ -36,11 +36,13 @@ import {
 // Images
 import team2 from "assets/images/team-2.jpg";
 import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
-import { Box, Checkbox, FormControlLabel, FormGroup, List, Typography } from "@mui/material";
+import { Box, Checkbox, FormControlLabel, FormGroup, List, ListItemIcon, MenuItem, Typography } from "@mui/material";
 import { supabase } from "lib/supabase";
 import { BsChevronDown } from "react-icons/bs";
 import StockPrice from "./StockPrice";
 import axios from "axios";
+import { AuthContext } from "context/Authcontext";
+import { Logout } from "@mui/icons-material";
 
 function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
   const [navbarType, setNavbarType] = useState();
@@ -48,6 +50,36 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
   const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator } = controller;
   const [openMenu, setOpenMenu] = useState(false);
   const route = useLocation().pathname.split("/").slice(1);
+  const [user, setUser] = useState([]);
+
+
+
+  const { session } = useContext(AuthContext);
+
+  const userEmail = session?.user?.email;
+
+  console.log('user', user);
+
+
+  const fetchUser = async (userMail) => {
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq("email", userMail);
+
+      if (error) throw error;
+      if (data) setUser(data);
+    } catch (error) {
+      console.log('Error fetching stocks:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUser(userEmail);
+  }, [userEmail])
+
+
 
   useEffect(() => {
     if (fixedNavbar) {
@@ -190,7 +222,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
 
     try {
       const response = await axios.get(
-        `https://ad8b-2401-4900-8827-63c1-d8eb-cc77-3b8f-6853.ngrok-free.app/search/${query}`,
+        `https://4fdf-223-178-80-57.ngrok-free.app/search/${query}`,
         { headers: { Accept: "application/json" } }
       );
 
@@ -302,10 +334,38 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
     }
   };
 
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = async () => {
+    try{
+      const { error } = await supabase.auth.signOut()
+
+      if (!error) {
+        console.log("User logged out");
+      }
+    }
+    catch(error){
+      console.log('Signout',error);
+    }
+    handleClose();
+  };
+
+
   const FilterSection = ({ category }) => {
     const key = filterCategories[category].key;
     const uniqueValues = getUniqueValues(filteredData, key);
     const counts = getCounts(filteredData, key);
+
+
 
     return (
       <FormGroup row>
@@ -494,24 +554,64 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
               </Box>
             </VuiBox>
             <VuiBox color={light ? "white" : "inherit"}>
-              <Link to="/authentication/sign-in">
-                <IconButton sx={navbarIconButton} size="small">
-                  <Icon
-                    sx={({ palette: { dark, white } }) => ({
-                      color: light ? white.main : dark.main,
-                    })}
+              {!user[0]?.username ? (
+                <Link to="/authentication/sign-in">
+                  <IconButton sx={navbarIconButton} size="small">
+                    <Icon
+                      sx={({ palette: { dark, white } }) => ({
+                        color: light ? white.main : dark.main,
+                      })}
+                    >
+                      account_circle
+                    </Icon>
+                    <VuiTypography
+                      variant="button"
+                      fontWeight="medium"
+                      color={light ? "white" : "dark"}
+                    >
+                      Sign in
+                    </VuiTypography>
+                  </IconButton>
+                </Link>
+              ) : (
+                <>
+                  <IconButton sx={{ ml: 2 }} size="small" onClick={handleClick}>
+                    <Icon
+                      sx={({ palette: { white } }) => ({
+                        color: light ? white.main : white.main,
+                        mx: 0.5,
+                      })}
+                    >
+                      account_circle
+                    </Icon>
+                    <VuiTypography
+                      variant="button"
+                      fontWeight="medium"
+                      color={"white"}
+                    >
+                      {user[0]?.username}
+                    </VuiTypography>
+                  </IconButton>
+
+                  <Menu
+                    anchorEl={anchorEl}
+                    id="logout-menu"
+                    open={open}
+                    onClose={handleClose}
+                    transformOrigin={{ horizontal: 'left', vertical: 'top' }}
+                    anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
                   >
-                    account_circle
-                  </Icon>
-                  <VuiTypography
-                    variant="button"
-                    fontWeight="medium"
-                    color={light ? "white" : "dark"}
-                  >
-                    Sign in
-                  </VuiTypography>
-                </IconButton>
-              </Link>
+                    <MenuItem onClick={handleLogout} sx={{ color: "#fff" }} fontSize="bold">
+                      <ListItemIcon >
+                        <Logout fontSize="small" sx={{ color: "#fff" }}/>
+                      </ListItemIcon>
+                      Logout
+                    </MenuItem>
+                  </Menu>
+
+                </>
+              )}
+
               <IconButton
                 size="small"
                 color="inherit"
@@ -520,6 +620,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
               >
                 <Icon className={"text-white"}>{miniSidenav ? "menu_open" : "menu"}</Icon>
               </IconButton>
+
               <IconButton
                 size="small"
                 color="inherit"
@@ -528,6 +629,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
               >
                 <Icon>settings</Icon>
               </IconButton>
+
               <IconButton
                 size="small"
                 color="inherit"
@@ -539,8 +641,10 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
               >
                 <Icon className={light ? "text-white" : "text-dark"}>notifications</Icon>
               </IconButton>
+
               {renderMenu()}
             </VuiBox>
+
           </VuiBox>
         )}
       </Toolbar>

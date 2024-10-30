@@ -16,7 +16,7 @@
 
 */
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useContext } from "react";
 
 // react-router components
 import { Route, Switch, Redirect, useLocation } from "react-router-dom";
@@ -47,6 +47,7 @@ import routes from "routes";
 
 // UI Risk LENS AI Dashboard React contexts
 import { useVisionUIController, setMiniSidenav, setOpenConfigurator } from "context";
+import { AuthContext } from "context/Authcontext";
 
 export default function App() {
   const [controller, dispatch] = useVisionUIController();
@@ -54,6 +55,8 @@ export default function App() {
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const [rtlCache, setRtlCache] = useState(null);
   const { pathname } = useLocation();
+  const { session } = useContext(AuthContext)
+
 
   // Cache for the rtl
   useMemo(() => {
@@ -95,6 +98,20 @@ export default function App() {
     document.scrollingElement.scrollTop = 0;
   }, [pathname]);
 
+  console.log("Session: ", session)
+  
+  let routesNew
+  if(session?.
+    refresh_token
+    ){
+     routesNew = routes.filter((route) => route.name !== "Sign Up" && route.name !== "Sign In")
+    console.log("Routes after filtered: ", routesNew)
+  }
+  else {
+    routesNew  = routes.filter((route) => route.name !== "Profile" && route.name !== "Portfolio");
+  }
+
+ 
   const getRoutes = (allRoutes) =>
     allRoutes.map((route) => {
       if (route.collapse) {
@@ -147,7 +164,7 @@ export default function App() {
               color={sidenavColor}
               brand=""
               brandName="Risk Protect AI"
-              routes={routes}
+              routes={routesNew} 
               onMouseEnter={handleOnMouseEnter}
               onMouseLeave={handleOnMouseLeave}
             />
@@ -157,33 +174,33 @@ export default function App() {
         )}
         {layout === "vr" && <Configurator />}
         <Switch>
-          {getRoutes(routes)}
+          {getRoutes(routesNew)} 
           <Redirect from="*" to="/dashboard" />
         </Switch>
       </ThemeProvider>
     </CacheProvider>
   ) : (
-    <><ThemeProvider theme={theme}>
-        <CssBaseline />
-        {layout === "dashboard" && (
-          <>
-            <Sidenav
-              color={sidenavColor}
-              brand=""
-              brandName="Risk Protect AI"
-              routes={routes}
-              onMouseEnter={handleOnMouseEnter}
-              onMouseLeave={handleOnMouseLeave} />
-            <Configurator />
-            {configsButton}
-          </>
-        )}
-        {layout === "vr" && <Configurator />}
-        <Switch>
-          {getRoutes(routes)}
-          <Redirect from="*" to="/dashboard" />
-        </Switch>
-      </ThemeProvider>
-      </>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      {layout === "dashboard" && (
+        <>
+          <Sidenav
+            color={sidenavColor}
+            brand=""
+            brandName="Risk Protect AI"
+            routes={routesNew}  // Use routesNew here
+            onMouseEnter={handleOnMouseEnter}
+            onMouseLeave={handleOnMouseLeave} />
+          <Configurator />
+          {configsButton}
+        </>
+      )}
+      {layout === "vr" && <Configurator />}
+      <Switch>
+        {getRoutes(routesNew)}  // Use routesNew here
+        <Redirect from="*" to="/dashboard" />
+      </Switch>
+    </ThemeProvider>
   );
+  
 }

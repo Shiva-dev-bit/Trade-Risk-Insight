@@ -106,7 +106,7 @@ const routes = [
     icon: <BsFillPersonFill size="15px" color="inherit" />,
     component: Profile,
     noCollapse: true,
-    authenticated: true
+    
   },
   {
     type: "collapse",
@@ -125,7 +125,7 @@ const routes = [
     icon: <IoIosDocument size="15px" color="inherit" />,
     component: SignIn,
     noCollapse: true,
-    authenticated: false
+    
   },
   {
     type: "collapse",
@@ -135,7 +135,7 @@ const routes = [
     icon: <IoRocketSharp size="15px" color="inherit" />,
     component: SignUp,
     noCollapse: true,
-    authenticated: false
+    
   },
   {
     type: "route",

@@ -17,12 +17,13 @@
 */
 
 import React from "react";
-import { createRoot} from "react-dom/client";
+import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "App";
 
 // UI Risk LENS AI Dashboard React Context Provider
 import { VisionUIControllerProvider } from "context";
+import { AuthProvider } from "context/Authcontext";
 
 const rootElement = document.getElementById('root');
 const root = createRoot(rootElement);
@@ -30,7 +31,9 @@ const root = createRoot(rootElement);
 
 root.render(<BrowserRouter>
   <VisionUIControllerProvider>
-    <App />
+    <AuthProvider> 
+      <App />
+    </AuthProvider>
   </VisionUIControllerProvider>
 </BrowserRouter>)
 

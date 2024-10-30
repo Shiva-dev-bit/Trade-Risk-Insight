@@ -30,6 +30,8 @@ function SignUp() {
       ...prevState,
       [name]: value,
     }));
+    setError('');
+    setAlert('');
   };
 
   const signUpNewUser = async (e) => {
@@ -37,23 +39,27 @@ function SignUp() {
     setError('');
     setAlert('');
     setLoading(true);
-  
+
     const { email, full_name, password } = signUp;
-  
+
+    console.log('email', email);
+
     // Check if user exists in `users` table
     const { data: existingUser, error: userFetchError } = await supabase
       .from('users')
       .select('*')
       .eq('email', email)
-      .single();
-  
+
+
     if (userFetchError && userFetchError.code !== 'PGRST116') {
       setError("An unexpected error occurred. Please try again.");
       setLoading(false);
       return;
     }
-  
-    if (existingUser) {
+
+    console.log('existingUser', existingUser);
+
+    if (existingUser.length > 0) {
       // User already exists
       setError("User already exists with this email.");
       setLoading(false);
@@ -62,44 +68,46 @@ function SignUp() {
       const { data: newUser, error: insertError } = await supabase
         .from('users')
         .insert([{ email: email, username: full_name, hashed_password: password }]);
-  
+
       if (insertError) {
-        setError("Error adding user to database. Please try again.");
+        console.log("Error adding user to database. Please try again.");
       } else {
         console.log("New user added:");
-        setAlert('Please check inbox to confirm account');
       }
       setLoading(false);
     }
-  
-    // Proceed with signup if user doesn't exist
-    const { data, error: signUpError } = await supabase.auth.signUp(
-      {
-        email,
-        password,
-        options: {
-          emailRedirectTo: 'http://localhost:3000/authentication/sign-in',
+
+
+    if (existingUser.length <= 0 ) {
+      const { data, error: signUpError } = await supabase.auth.signUp(
+        {
+          email,
+          password,
+          options: {
+            emailRedirectTo: 'http://localhost:3000/authentication/sign-in',
+          },
         },
-      },
-      {
-        data: { display_name: full_name },
+        {
+          data: { display_name: full_name },
+        }
+      );
+
+      if (signUpError) {
+        setError("Error signing up. Please try again.");
+      } else {
+        setAlert('Please check inbox to confirm account');
       }
-    );
-  
-    if (signUpError) {
-      setError("Error signing up. Please try again.");
-    } else {
-      setAlert('Please check inbox to confirm account');
     }
-  
+
     setSignUp({
       email: '',
       password: '',
       full_name: '',
     });
-  
+
     setLoading(false);
   };
+
   return (
     <CoverLayout
       title="Join Us"
@@ -116,7 +124,8 @@ function SignUp() {
           </VuiTypography>
         )}
         {alert && (
-          <VuiTypography variant="body2" color="white" textAlign="center" mb={2}>
+          <VuiTypography variant="body2"  textAlign="center" mb={2} sx={{color : '#1ae9f0',fontWeight : 'bold'
+          }}>
             {alert}
           </VuiTypography>
         )}
@@ -143,6 +152,7 @@ function SignUp() {
               name="full_name"
               onChange={handleSignUpChange}
               required
+              value={signUp.full_name}
             />
           </GradientBorder>
         </VuiBox>
@@ -169,6 +179,7 @@ function SignUp() {
               name="email"
               onChange={handleSignUpChange}
               required
+              value={signUp.email}
             />
           </GradientBorder>
         </VuiBox>
@@ -197,6 +208,7 @@ function SignUp() {
               name="password"
               onChange={handleSignUpChange}
               required
+              value={signUp.password}
             />
           </GradientBorder>
         </VuiBox>

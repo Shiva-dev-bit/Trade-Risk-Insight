@@ -23,9 +23,11 @@ const ForgotPassword = () => {
             console.error("Error sending reset link:", error); 
             setResetMessage("Failed to send reset link. Please try again."); 
         } else {
-            setResetMessage("Password reset link has been sent to your email. Please check your inbox."); // Success message
+            setResetMessage("Password reset link has been sent to your email. Please check"); // Success message
             console.log("Reset link sent:", data);
         }
+
+        setEmail('')
     };
 
     return (
@@ -47,6 +49,7 @@ const ForgotPassword = () => {
                         name="email" 
                         value={email} 
                         onChange={(e) => setEmail(e.target.value)} 
+                        required
                     />
                 </VuiBox>
                 <VuiBox mt={4} mb={1}>

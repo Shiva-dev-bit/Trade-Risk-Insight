@@ -7,36 +7,39 @@ import VuiInput from 'components/VuiInput';
 import VuiButton from 'components/VuiButton';
 import CoverLayout from "layouts/authentication/components/CoverLayout";
 import { supabase } from 'lib/supabase';
+import { useHistory } from 'react-router-dom';
 
 const ResetPassword = () => {
     const [password, setPassword] = useState('');
-    const [email, setEmail] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [message, setMessage] = useState(null);
+    const history = useHistory();
 
       
 
     const handlePasswordReset = async (e) => {
         e.preventDefault();
+
     
         setLoading(true);
         console.log('Attempting to reset password...'); 
     
         try {
             const { error } = await supabase.auth.updateUser({
-                email,
                 password,
             });
     
             if (error) {
                 console.error('Error updating password:', error.message); 
                 throw error;
+            }else{
+                console.log('Password updated successfully!'); 
+                setMessage('Password has been reset successfully!');
+                setError(null);
+                history.push('/dashboard');
             }
     
-            console.log('Password updated successfully!'); 
-            setMessage('Password has been reset successfully!');
-            setError(null);
         } catch (error) {
             setError(error.message);
         } finally {
@@ -68,15 +71,6 @@ const ResetPassword = () => {
                         <VuiTypography component="label" variant="button" color="white" fontWeight="medium">
                             New Password
                         </VuiTypography>
-                    </VuiBox>
-
-                    <VuiBox mb={1} ml={0.5}>
-                    <VuiInput
-                        type="email"
-                        placeholder="Enter the Mail"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
                     </VuiBox>
                     
                     <VuiInput
