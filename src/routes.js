@@ -72,6 +72,15 @@ const routes = [
   },
   {
     type: "collapse",
+    name: "Portfolio",
+    key: "portfolio",
+    route: "/portfolio",
+    icon: <BusinessCenterOutlined size="15px" color="inherit" />,
+    component: Portfolio,
+    noCollapse: true,
+  },
+  {
+    type: "collapse",
     name: "Tables",
     key: "tables",
     route: "/tables",
@@ -106,17 +115,9 @@ const routes = [
     icon: <BsFillPersonFill size="15px" color="inherit" />,
     component: Profile,
     noCollapse: true,
-    
+    authenticated: true,
   },
-  {
-    type: "collapse",
-    name: "Portfolio",
-    key: "portfolio",
-    route: "/portfolio",
-    icon: <BusinessCenterOutlined size="15px" color="inherit" />,
-    component: Portfolio,
-    noCollapse: true,
-  },
+
   {
     type: "collapse",
     name: "Sign In",
@@ -125,7 +126,7 @@ const routes = [
     icon: <IoIosDocument size="15px" color="inherit" />,
     component: SignIn,
     noCollapse: true,
-    
+    authenticated: false,
   },
   {
     type: "collapse",
@@ -135,21 +136,20 @@ const routes = [
     icon: <IoRocketSharp size="15px" color="inherit" />,
     component: SignUp,
     noCollapse: true,
-    
+    authenticated: false,
   },
   {
     type: "route",
     key: "forget-password",
     route: "/authentication/forget-password",
-    component: ForgotPassword, 
+    component: ForgotPassword,
   },
   {
     type: "route",
     key: "reset-password",
     route: "/authentication/reset-password",
-    component: ResetPassword, 
+    component: ResetPassword,
   },
-  
 ];
 
 export default routes;

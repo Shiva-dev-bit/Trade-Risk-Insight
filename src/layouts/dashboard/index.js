@@ -68,49 +68,27 @@ import { supabase } from "lib/supabase";
 function Dashboard() {
   const { gradients } = colors;
   const { cardContent } = gradients;
+  const stockData  = useContext(AuthContext)
   const [stocks, setStocks] = useState([]);
   const [stocksPercent,setStocksPercent] = useState([]);
-  const { storeStockData } = useContext(AuthContext);
 
+    
+  var today = new Date();
+  var dd = String(today.getDate()).padStart(2, "0");
+  var mm = String(today.getMonth() + 1).padStart(2, "0");
+  var yyyy = today.getFullYear();
 
-  let [stockData, setStockData] = useState({
-    id: 352,
-    symbol: "TATAMOTORS",
-    company_name: "Tata Motors Limited",
-    currency: "INR",
-    exchange: "NSE",
-    mic_code: "XNSE",
-    country: "India",
-    type: "Common Stock",
-    created_at: "2024-10-22T08:32:08.093318+00:00",
-    updated_at: "2024-10-22T08:32:08.02+00:00"
-});
-
-const handleClickStock = (getStock) => {
-  setStockData(getStock);
-};
-
-storeStockData(stockData);
-
- var today = new Date();
- var dd = String(today.getDate()).padStart(2, '0');
- var mm = String(today.getMonth() + 1).padStart(2, '0'); 
- var yyyy = today.getFullYear();
-
-  today = yyyy + '-' + mm + '-' + dd
+  today = yyyy + "-" + mm + "-" + dd;
   console.log(today);
-
 
   const fetchStockData = async () => {
     try {
-      const { data, error } = await supabase
-        .from('price')
-        .select('*')
+      const { data, error } = await supabase.from("price").select("*");
 
       if (error) throw error;
       if (data) setStocks(data);
     } catch (error) {
-      console.log('Error fetching stocks:', error);
+      console.log("Error fetching stocks:", error);
     }
   };
 
@@ -125,7 +103,7 @@ storeStockData(stockData);
       if (error) throw error;
       if (data) setStocksPercent(data);
     } catch (error) {
-      console.log('Error fetching stocks:', error);
+      console.log("Error fetching stocks:", error);
     }
   };
 
@@ -133,26 +111,29 @@ storeStockData(stockData);
   console.log('price', stocks);
   console.log('pricePercent', stocksPercent);
 
-  const updated_price = stocks.filter((ele) => ele.symbol === stockData.symbol && ele.
-    mic_code === stockData.mic_code);
+  const updated_price = stocks.filter(
+    (ele) => ele.symbol === stockData.symbol && ele.mic_code === stockData.mic_code
+  );
 
-  const price_percent = stocksPercent.filter((ele) => ele.symbol === stockData.symbol && ele.
-    exchange === stockData.exchange && ele.trading_date === today);
+  const price_percent = stocksPercent.filter(
+    (ele) =>
+      ele.symbol === stockData.symbol &&
+      ele.exchange === stockData.exchange &&
+      ele.trading_date === today
+  );
 
   const New_price = updated_price[updated_price.length - 1];
-  console.log('price_percent',price_percent);
+  console.log("price_percent", price_percent);
 
   const isPositiveChange = price_percent[0]?.percentage_change > 0;
 
   const icon = isPositiveChange ? (
-    <FaCaretUp style={{ color: 'green' }} /> 
+    <FaCaretUp style={{ color: "green" }} />
   ) : (
-    <FaCaretDown style={{ color: 'red' }} /> 
+    <FaCaretDown style={{ color: "red" }} />
   );
 
-  const percentageColor = isPositiveChange ? "success" : "error"; 
-
-
+  const percentageColor = isPositiveChange ? "success" : "error";
 
   useEffect(() => {
     fetchStockData();
@@ -162,48 +143,52 @@ storeStockData(stockData);
     console.log("Stocks component rendered");
 
     const channel_1 = supabase
-      .channel('price-channel')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'price' }, (payload) => {
+      .channel("price-channel")
+      .on("postgres_changes", { event: "*", schema: "public", table: "price" }, (payload) => {
         // console.log('Real-time update:', payload);
 
         setStocks((prevStocks) => {
           const { eventType, new: newStock, old: oldStock } = payload;
 
           switch (eventType) {
-            case 'INSERT':
+            case "INSERT":
               return [...prevStocks, newStock];
-            case 'UPDATE':
-              return prevStocks.map((stock) => stock.id === newStock.id ? newStock : stock);
-            case 'DELETE':
+            case "UPDATE":
+              return prevStocks.map((stock) => (stock.id === newStock.id ? newStock : stock));
+            case "DELETE":
               return prevStocks.filter((stock) => stock.id !== oldStock.id);
             default:
               return prevStocks;
           }
         });
       })
-      .subscribe((status) => console.log('Subscription status:', status));
+      .subscribe((status) => console.log("Subscription status:", status));
 
-      const channel_2 = supabase
-      .channel('stock_daily_summary-channel')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'stock_daily_summary' }, (payload) => {
-        console.log('stock_daily_summary:', payload);
+    const channel_2 = supabase
+      .channel("stock_daily_summary-channel")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "stock_daily_summary" },
+        (payload) => {
+          console.log("stock_daily_summary:", payload);
 
-        setStocksPercent((prevStocks) => {
-          const { eventType, new: newStock, old: oldStock } = payload;
+          setStocksPercent((prevStocks) => {
+            const { eventType, new: newStock, old: oldStock } = payload;
 
-          switch (eventType) {
-            case 'INSERT':
-              return [...prevStocks, newStock];
-            case 'UPDATE':
-              return prevStocks.map((stock) => stock.id === newStock.id ? newStock : stock);
-            case 'DELETE':
-              return prevStocks.filter((stock) => stock.id !== oldStock.id);
-            default:
-              return prevStocks;
-          }
-        });
-      })
-      .subscribe((status) => console.log('Subscription status:', status));
+            switch (eventType) {
+              case "INSERT":
+                return [...prevStocks, newStock];
+              case "UPDATE":
+                return prevStocks.map((stock) => (stock.id === newStock.id ? newStock : stock));
+              case "DELETE":
+                return prevStocks.filter((stock) => stock.id !== oldStock.id);
+              default:
+                return prevStocks;
+            }
+          });
+        }
+      )
+      .subscribe((status) => console.log("Subscription status:", status));
 
     return () => {
       supabase.removeChannel(channel_1);
@@ -224,10 +209,9 @@ storeStockData(stockData);
     }
   };
 
-
   return (
     <DashboardLayout>
-      <DashboardNavbar handleClickStock={handleClickStock} />
+      {/* <DashboardNavbar handleClickStock={handleClickStock} /> */}
       <VuiBox py={3}>
         <VuiBox mb={3}>
           <Grid container spacing={3} alignItems="stretch">
@@ -236,65 +220,73 @@ storeStockData(stockData);
                 title={{
                   text: stockData.company_name,
                   fontWeight: "regular",
-                  sx: { fontSize: '1.5rem' }  
+                  sx: { fontSize: "1.5rem" },
                 }}
                 count={
                   <span style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
                     {New_price?.price?.toFixed(2)}
                   </span> 
                 }
-                percentage={{ color: percentageColor, text: (
-                  <>
-                    {icon} 
-                    {`${price_percent[0]?.price_change.toFixed(2) === undefined ? '' : price_percent[0]?.price_change.toFixed(2)} 
-                    (${price_percent[0]?.percentage_change === undefined ? '' : price_percent[0]?.percentage_change}%)`} 
-                  </>
-                ) }}
+                percentage={{
+                  color: percentageColor,
+                  text: (
+                    <>
+                      {icon}
+                      {`${
+                        price_percent[0]?.price_change.toFixed(2) === undefined
+                          ? ""
+                          : price_percent[0]?.price_change.toFixed(2)
+                      } 
+                    (${
+                      price_percent[0]?.percentage_change === undefined
+                        ? ""
+                        : price_percent[0]?.percentage_change
+                    }%)`}
+                    </>
+                  ),
+                }}
                 icon={{ color: "info", component: getIcon(stockData.company_name) }}
-                sx={{ width: '100%', height: '100%' }}
+                sx={{ width: "100%", height: "100%" }}
               />
             </Grid>
 
             <Grid item xs={12} md={6} lg={3}>
               <MiniStatisticsCard
-                title={{ text: "Currency & Exchange", sx: { fontSize: '1.5rem' } }}
+                title={{ text: "Currency & Exchange", sx: { fontSize: "1.5rem" } }}
                 count={
-                  <span style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
+                  <span style={{ fontSize: "1.1rem", fontWeight: "bold" }}>
                     {`${stockData.currency} / ${stockData.exchange}`}
                   </span>
                 }
                 icon={{ color: "info", component: getIcon("Currency & Exchange") }}
-                sx={{ width: '100%', height: '100%' }}
+                sx={{ width: "100%", height: "100%" }}
               />
             </Grid>
 
             <Grid item xs={12} md={6} lg={3}>
               <MiniStatisticsCard
-                title={{ text: "Symbol & Country", sx: { fontSize: '1.5rem' } }}
+                title={{ text: "Symbol & Country", sx: { fontSize: "1.5rem" } }}
                 count={
-                  <span style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
+                  <span style={{ fontSize: "1.1rem", fontWeight: "bold" }}>
                     {`${stockData.symbol}, ${stockData.country}`}
                   </span>
                 }
                 icon={{ color: "info", component: getIcon("MIC Code & Country") }}
-                sx={{ width: '100%', height: '100%' }}
+                sx={{ width: "100%", height: "100%" }}
               />
             </Grid>
 
             <Grid item xs={12} md={6} lg={3}>
               <MiniStatisticsCard
-                title={{ text: "Type of Stock", sx: { fontSize: '1.5rem' } }}
+                title={{ text: "Type of Stock", sx: { fontSize: "1.5rem" } }}
                 count={
-                  <span style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
-                    {stockData.type}
-                  </span>
+                  <span style={{ fontSize: "1.1rem", fontWeight: "bold" }}>{stockData.type}</span>
                 }
                 icon={{ color: "info", component: getIcon("Type of Stock") }}
-                sx={{ width: '100%', height: '100%' }}
+                sx={{ width: "100%", height: "100%" }}
               />
             </Grid>
           </Grid>
-
         </VuiBox>
         <VuiBox mb={3}>
           <Grid container spacing="18px">

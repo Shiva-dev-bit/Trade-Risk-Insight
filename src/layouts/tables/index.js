@@ -41,7 +41,7 @@ function Tables() {
 
   return (
     <DashboardLayout>
-      <DashboardNavbar />
+      {/* <DashboardNavbar /> */}
       <VuiBox py={3}>
         <VuiBox mb={3}>
           <Card>

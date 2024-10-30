@@ -39,7 +39,7 @@ import CreditBalance from "./components/CreditBalance";
 function Billing() {
   return (
     <DashboardLayout>
-      <DashboardNavbar />
+      {/* <DashboardNavbar /> */}
       <VuiBox mt={4}>
         <VuiBox mb={1.5}>
           <Grid container spacing={3}>

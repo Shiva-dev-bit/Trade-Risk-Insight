@@ -19,6 +19,7 @@ import { IoBuild } from "react-icons/io5";
 // UI Risk LENS AI Dashboard React example components
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import { useEffect, useState } from "react";
+import { Box } from "@mui/material";
 
 function Header({ username, email }) {
   const [tabsOrientation, setTabsOrientation] = useState("horizontal");
@@ -47,8 +48,7 @@ function Header({ username, email }) {
   const handleSetTabValue = (event, newValue) => setTabValue(newValue);
 
   return (
-    <VuiBox position="relative">
-      {/* <DashboardNavbar light /> */}
+    <Box position="relative">
       <Card
         sx={{
           px: 3,
@@ -109,7 +109,7 @@ function Header({ username, email }) {
               })}
             >
               <VuiTypography variant="lg" color="white" fontWeight="bold">
-                {username}
+                {username ? username : "Sign in to list your stocks"}
               </VuiTypography>
               <VuiTypography variant="button" color="text" fontWeight="regular">
                 {email}
@@ -132,7 +132,7 @@ function Header({ username, email }) {
           </Grid>
         </Grid>
       </Card>
-    </VuiBox>
+    </Box>
   );
 }
 

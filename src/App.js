@@ -48,6 +48,10 @@ import routes from "routes";
 // UI Risk LENS AI Dashboard React contexts
 import { useVisionUIController, setMiniSidenav, setOpenConfigurator } from "context";
 import { AuthContext } from "context/Authcontext";
+import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
+import { supabase } from "lib/supabase";
+import { Snackbar } from "@mui/material";
 
 export default function App() {
   const [controller, dispatch] = useVisionUIController();
@@ -55,8 +59,7 @@ export default function App() {
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const [rtlCache, setRtlCache] = useState(null);
   const { pathname } = useLocation();
-  const { session } = useContext(AuthContext)
-
+  const { session, storeStockData } = useContext(AuthContext);
 
   // Cache for the rtl
   useMemo(() => {
@@ -98,37 +101,163 @@ export default function App() {
     document.scrollingElement.scrollTop = 0;
   }, [pathname]);
 
-  console.log("Session: ", session)
-  
-  let routesNew
-  if(session?.
-    refresh_token
-    ){
-     routesNew = routes.filter((route) => route.name !== "Sign Up" && route.name !== "Sign In")
-    console.log("Routes after filtered: ", routesNew)
-  }
-  else {
-    routesNew  = routes.filter((route) => route.name !== "Profile" && route.name !== "Portfolio");
+  console.log("Session: ", session);
+
+  let routesNew;
+  if (session?.refresh_token) {
+    routesNew = routes.filter((route) => route.name !== "Sign Up" && route.name !== "Sign In");
+    console.log("Routes after filtered: ", routesNew);
+  } else {
+    routesNew = routes.filter((route) => route.name !== "Profile" && route.name !== "Portfolio");
   }
 
- 
   const getRoutes = (allRoutes) =>
     allRoutes.map((route) => {
       if (route.collapse) {
         return getRoutes(route.collapse);
       }
-  
+
       // Check for the custom route type
       if (route.route && route.type === "route") {
         return <Route exact path={route.route} component={route.component} key={route.key} />;
       }
-  
+
       if (route.route) {
         return <Route exact path={route.route} component={route.component} key={route.key} />;
       }
-  
+
       return null;
     });
+
+  let [stockData, setStockData] = useState({
+    id: 352,
+    symbol: "TATAMOTORS",
+    company_name: "Tata Motors Limited",
+    currency: "INR",
+    exchange: "NSE",
+    mic_code: "XNSE",
+    country: "India",
+    type: "Common Stock",
+    created_at: "2024-10-22T08:32:08.093318+00:00",
+    updated_at: "2024-10-22T08:32:08.02+00:00",
+  });
+
+  let userId = 1;
+
+  const handleClickStock = (getStock) => {
+    console.log("getStock before storing:", getStock); // Log the input
+    if (getStock) {
+      storeStockData(getStock);
+      console.log("Updated stockData:", stockData); // This may log the old state due to closure
+    } else {
+      console.log("getStock is null or undefined");
+    }
+  };
+
+  const [stocks, setStocks] = useState([]);
+
+  const fetchUserStocks = async () => {
+    const { data, error } = await supabase
+      .from("userPortfolio")
+      .select("portfolio_id, stock_id, quantity, average_price, is_deleted_yn, stocks(*), users(*)")
+      .eq("user_id", userId)
+      .eq("is_deleted_yn", false);
+
+    if (error) {
+      console.error("Error fetching stocks:", error);
+    } else {
+      setStocks(data);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserStocks();
+  }, []);
+
+  const fetchStockFromAPI = async (symbol, exchange) => {
+    try {
+      const response = await axios.get(
+        `https://983c-223-178-80-57.ngrok-free.app/search/${symbol}`
+      );
+      const data = response.data;
+
+      // Filter data by exchange
+      return data.find((stock) => stock.exchange === exchange) || {};
+    } catch (error) {
+      console.error(`Error fetching stock for ${symbol}:`, error);
+      return {}; // Return empty object in case of error
+    }
+  };
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [colorstatus, setColorstatus] = useState("");
+  const snackbarTheme = {
+    success: {
+      backgroundColor: "#008000",
+    },
+    error: {
+      backgroundColor: "#FF0000",
+    },
+    existing: {
+      backgroundColor: "#808080",
+    },
+  };
+
+  // let colorstatus = "";
+  const addStockPortfolio = async (stock) => {
+    const stockIdentifier = {
+      symbol: stock?.stock?.symbol,
+      exchange: stock?.stock?.exchange,
+    };
+
+    console.log("stockIdentifier", stockIdentifier);
+
+    // Step 1: Check if the stock with the same symbol and exchange exists in the portfolio
+    const { data: existingStock, error: fetchError } = await supabase
+      .from("userPortfolio")
+      .select("*")
+      .eq("user_id", userId) // Ensure it belongs to the correct user
+      .eq("symbol", stockIdentifier.symbol)
+      .eq("exchange", stockIdentifier.exchange)
+      .single();
+
+    if (fetchError && fetchError.code !== "PGRST116") {
+      console.error("Error fetching stock:", fetchError);
+      return;
+    }
+
+    if (existingStock) {
+      console.log("Stock already exists in the portfolio:", existingStock);
+      setSnackbarMessage(`${stock?.stock?.company_name} already exists in your portfolio.`);
+      setColorstatus("existing");
+      setSnackbarOpen(true); // Open Snackbar when stock exists
+      return;
+    }
+
+    // Step 2: Insert the stock if it doesn't exist
+    const { data, error } = await supabase.from("userPortfolio").insert([
+      {
+        user_id: userId,
+        quantity: stock.quantity || 0,
+        average_price: stock.averagePrice || 0,
+        is_deleted_yn: false,
+        ...stockIdentifier, // Spread the symbol and exchange
+      },
+    ]);
+
+    if (error) {
+      console.error("Error adding stock:", error);
+      setColorstatus("error");
+    } else {
+      console.log("Stock added successfully:", data);
+      setColorstatus("success");
+
+      setSnackbarMessage(`${stock?.stock?.company_name} has been added to your portfolio!`);
+      setSnackbarOpen(true); // Open Snackbar when stock is added
+      fetchUserStocks(); // Refresh the user's portfolio
+      location.reload();
+    }
+  };
 
   const configsButton = (
     <VuiBox
@@ -164,7 +293,7 @@ export default function App() {
               color={sidenavColor}
               brand=""
               brandName="Risk Protect AI"
-              routes={routesNew} 
+              routes={routesNew}
               onMouseEnter={handleOnMouseEnter}
               onMouseLeave={handleOnMouseLeave}
             />
@@ -174,33 +303,54 @@ export default function App() {
         )}
         {layout === "vr" && <Configurator />}
         <Switch>
-          {getRoutes(routesNew)} 
+          {getRoutes(routesNew)}
           <Redirect from="*" to="/dashboard" />
         </Switch>
       </ThemeProvider>
     </CacheProvider>
   ) : (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      {layout === "dashboard" && (
-        <>
-          <Sidenav
-            color={sidenavColor}
-            brand=""
-            brandName="Risk Protect AI"
-            routes={routesNew}  // Use routesNew here
-            onMouseEnter={handleOnMouseEnter}
-            onMouseLeave={handleOnMouseLeave} />
-          <Configurator />
-          {configsButton}
-        </>
-      )}
-      {layout === "vr" && <Configurator />}
-      <Switch>
-        {getRoutes(routesNew)}  // Use routesNew here
-        <Redirect from="*" to="/dashboard" />
-      </Switch>
-    </ThemeProvider>
+    <>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        {layout === "dashboard" && (
+          <>
+            <Sidenav
+              color={sidenavColor}
+              brand=""
+              brandName="Risk Protect AI"
+              routes={routes}
+              onMouseEnter={handleOnMouseEnter}
+              onMouseLeave={handleOnMouseLeave}
+            />
+            <DashboardLayout>
+              <DashboardNavbar
+                addStockPortfolio={addStockPortfolio}
+                handleClickStock={handleClickStock}
+                fetchUserStocks={fetchUserStocks}
+                fetchStockFromAPI={fetchStockFromAPI}
+              />
+              {snackbarOpen && (
+                <Snackbar
+                  open={snackbarOpen}
+                  onClose={() => setSnackbarOpen(false)}
+                  message={snackbarMessage}
+                  autoHideDuration={3000} // Close the snackbar after 3 seconds
+                  // sx={{ backgroundColor: colorstatus }} // Change color as needed
+                  sx={snackbarTheme[colorstatus] || {}} // Use the theme object
+                />
+              )}
+            </DashboardLayout>
+
+            <Configurator />
+            {configsButton}
+          </>
+        )}
+        {layout === "vr" && <Configurator />}
+        <Switch>
+          {getRoutes(routesNew)}
+          <Redirect from="*" to="/dashboard" />
+        </Switch>
+      </ThemeProvider>
+    </>
   );
-  
 }

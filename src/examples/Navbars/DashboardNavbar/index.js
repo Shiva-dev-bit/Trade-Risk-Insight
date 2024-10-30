@@ -1,3 +1,4 @@
+import "./loader.css";
 import { useState, useEffect, useContext } from "react";
 import { useLocation, Link } from "react-router-dom";
 import PropTypes from "prop-types";
@@ -36,15 +37,36 @@ import {
 // Images
 import team2 from "assets/images/team-2.jpg";
 import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
-import { Box, Checkbox, FormControlLabel, FormGroup, List, ListItemIcon, MenuItem, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  List,
+  Modal,
+  Snackbar,
+  SnackbarContent,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { supabase } from "lib/supabase";
-import { BsChevronDown } from "react-icons/bs";
+import { BsCheckLg, BsChevronDown } from "react-icons/bs";
 import StockPrice from "./StockPrice";
 import axios from "axios";
+import { Add } from "@mui/icons-material";
 import { AuthContext } from "context/Authcontext";
-import { Logout } from "@mui/icons-material";
 
-function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
+function DashboardNavbar({
+  absolute,
+  light,
+  isMini,
+  handleClickStock,
+  addStockPortfolio,
+  fetchUserStocks,
+  fetchStockFromAPI,
+}) {
   const [navbarType, setNavbarType] = useState();
   const [controller, dispatch] = useVisionUIController();
   const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator } = controller;
@@ -52,34 +74,26 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
   const route = useLocation().pathname.split("/").slice(1);
   const [user, setUser] = useState([]);
 
-
-
   const { session } = useContext(AuthContext);
 
   const userEmail = session?.user?.email;
 
-  console.log('user', user);
-
+  console.log("user", user);
 
   const fetchUser = async (userMail) => {
     try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq("email", userMail);
+      const { data, error } = await supabase.from("users").select("*").eq("email", userMail);
 
       if (error) throw error;
       if (data) setUser(data);
     } catch (error) {
-      console.log('Error fetching stocks:', error);
+      console.log("Error fetching stocks:", error);
     }
   };
 
   useEffect(() => {
     fetchUser(userEmail);
-  }, [userEmail])
-
-
+  }, [userEmail]);
 
   useEffect(() => {
     if (fixedNavbar) {
@@ -142,15 +156,13 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredData, setFilteredData] = useState([]);
-  const [isDefaultActive, setIsDefaultActive] = useState(false);
+  const [isDefaultActive, setIsDefaultActive] = useState(true);
   const [activeDropdown, setActiveDropdown] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [showDropdown, setShowDropdown] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [selectedFilters, setSelectedFilters] = useState({
-    countries: [],
-    exchanges: [],
+    countries: ["India"],
+    exchanges: ["NSE"],
     currencies: [],
     types: [],
   });
@@ -162,111 +174,23 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
     types: { label: "Financial Assets Types", key: "type" },
   };
 
-  const normalizeStockData = (data, source) => {
-    if (!Array.isArray(data)) return [];
-
-    return data.map((item) => ({
-      company_name: item.company_name || "",
-      symbol: item.symbol || "",
-      exchange: item.exchange || "",
-      currency: item.currency || "",
-      country: item.country || "",
-      type: item.type || "",
-      mic_code: item.mic_code || "",
-      price: source === "api" ? item.price : "",
-      close: source === "api" ? item.close : "",
-      percent_change: source === "api" ? item.percent_change : "",
-      source,
-    }));
-  };
-
-  const removeDuplicates = (apiData, supabaseData) => {
-    const seen = new Set();
-    const combined = [...supabaseData];
-
-    apiData.forEach((apiItem) => {
-      const key = `${apiItem.symbol}-${apiItem.exchange}`;
-      if (!seen.has(key)) {
-        const existsInSupabase = supabaseData.some(
-          (dbItem) => dbItem.symbol === apiItem.symbol && dbItem.exchange === apiItem.exchange
-        );
-        if (!existsInSupabase) {
-          combined.push(apiItem);
-        }
-      }
-      seen.add(key);
-    });
-
-    return combined;
-  };
-
-  const fetchSupabaseData = async (query) => {
-    if (!query.trim()) return [];
-
-    try {
-      const { data, error } = await supabase
-        .from("stocks")
-        .select("*")
-        .or(`company_name.ilike.%${query}%,symbol.ilike.%${query}%`);
-
-      if (error) throw error;
-      return normalizeStockData(data || [], "supabase");
-    } catch (error) {
-      console.error("Supabase fetch error:", error);
-      return [];
-    }
-  };
-
-  const fetchApiData = async (query) => {
-    if (!query.trim()) return [];
-
-    try {
-      const response = await axios.get(
-        `https://4fdf-223-178-80-57.ngrok-free.app/search/${query}`,
-        { headers: { Accept: "application/json" } }
-      );
-
-      if (response.headers["content-type"]?.includes("application/json")) {
-        console.log("response", response.data);
-        return normalizeStockData(response.data || [], "api");
-      } else {
-        console.error("Unexpected content type:", response.data);
-        return [];
-      }
-    } catch (error) {
-      console.error("API fetch error:", error.message);
-      return [];
-    }
-  };
-
-  const handleSearch = async (value) => {
+  const handleSearch = (event) => {
+    const value = event.target.value;
     setSearchTerm(value);
-    setShowDropdown(true);
 
     if (!value.trim()) {
+      setActiveDropdown(null);
       setFilteredData([]);
-      return;
     }
+  };
 
-    setIsLoading(true);
-    setError(null);
+  const fetchSearchData = async (query) => {
+    setLoading(true); // Set loading to true before fetching
 
     try {
-      let results = [];
+      const response = await axios.get(`https://4fdf-223-178-80-57.ngrok-free.app/search/${query}`);
+      let results = response.data || [];
 
-      if (!isDefaultActive) {
-        // Fetch from both sources when advance search is not active
-        const [supabaseData, apiData] = await Promise.all([
-          fetchSupabaseData(value),
-          fetchApiData(value),
-        ]);
-        results = removeDuplicates(apiData, supabaseData);
-      } else {
-        // Only fetch from Supabase when advance search is active
-        results = await fetchSupabaseData(value);
-      }
-
-      // Apply filters
       Object.entries(selectedFilters).forEach(([category, selectedValues]) => {
         if (selectedValues.length > 0) {
           const key = filterCategories[category].key;
@@ -274,64 +198,47 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
         }
       });
 
-      setFilteredData(
-        results.sort((a, b) => (a.company_name || "").localeCompare(b.company_name || ""))
-      );
+      setFilteredData(results);
     } catch (error) {
       console.error("Error fetching data:", error);
-      setError("Failed to fetch data. Please try again.");
       setFilteredData([]);
     } finally {
-      setIsLoading(false);
+      setLoading(false); // Set loading to false after fetching
     }
   };
 
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
       if (searchTerm.trim()) {
-        handleSearch(searchTerm);
+        fetchSearchData(searchTerm);
       } else {
-        setShowDropdown(false);
+        setFilteredData([]);
       }
-    }, 300);
+    }, 300); // Debounce to reduce API calls
 
     return () => clearTimeout(debounceTimer);
-  }, [searchTerm, selectedFilters, isDefaultActive]);
-
-  const getUniqueValues = (data, key) => {
-    return [...new Set(data.map((item) => item[key]).filter(Boolean))].sort();
-  };
-
-  const getCounts = (data, key) => {
-    return data.reduce((acc, item) => {
-      if (item[key]) {
-        acc[item[key]] = (acc[item[key]] || 0) + 1;
-      }
-      return acc;
-    }, {});
-  };
+  }, [searchTerm, selectedFilters]);
 
   const handleFilterChange = (category, value) => {
-    setSelectedFilters((prev) => ({
-      ...prev,
-      [category]: prev[category].includes(value)
+    setSelectedFilters((prev) => {
+      const isChecked = prev[category].includes(value);
+      const updatedFilters = isChecked
         ? prev[category].filter((v) => v !== value)
-        : [...prev[category], value],
-    }));
+        : [...prev[category], value];
+
+      return { ...prev, [category]: updatedFilters };
+    });
   };
 
   const handleDefaultChange = () => {
-    setIsDefaultActive(!isDefaultActive);
-    setSelectedFilters({
-      countries: !isDefaultActive ? ["India"] : [],
-      exchanges: !isDefaultActive ? ["NSE"] : [],
-      currencies: [],
-      types: [],
-    });
+    const newDefaultState = !isDefaultActive;
+    setIsDefaultActive(newDefaultState);
 
-    if (searchTerm.trim()) {
-      handleSearch(searchTerm);
-    }
+    const defaultFilters = newDefaultState
+      ? { countries: ["India"], exchanges: ["NSE"], currencies: [], types: [] }
+      : { countries: [], exchanges: [], currencies: [], types: [] };
+
+    setSelectedFilters(defaultFilters);
   };
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -346,26 +253,25 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
   };
 
   const handleLogout = async () => {
-    try{
-      const { error } = await supabase.auth.signOut()
+    try {
+      const { error } = await supabase.auth.signOut();
 
       if (!error) {
         console.log("User logged out");
       }
-    }
-    catch(error){
-      console.log('Signout',error);
+    } catch (error) {
+      console.log("Signout", error);
     }
     handleClose();
   };
 
-
   const FilterSection = ({ category }) => {
     const key = filterCategories[category].key;
-    const uniqueValues = getUniqueValues(filteredData, key);
-    const counts = getCounts(filteredData, key);
-
-
+    const uniqueValues = [...new Set(filteredData.map((item) => item[key]))].sort();
+    const counts = filteredData.reduce((acc, item) => {
+      acc[item[key]] = (acc[item[key]] || 0) + 1;
+      return acc;
+    }, {});
 
     return (
       <FormGroup row>
@@ -396,6 +302,44 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
     );
   };
 
+  const [openModal, setOpenModal] = useState(false);
+  const [quantity, setQuantity] = useState("");
+  const [averagePrice, setAveragePrice] = useState("");
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+  // Open modal when the button is clicked
+  const handleAddButtonClick = (e) => {
+    e.stopPropagation(); // Prevent click event bubbling
+    setOpenModal(true);
+  };
+
+  // Close the modal
+  const handleModalClose = (e) => {
+    e.stopPropagation(); // Prevent unintended closures
+    setOpenModal(false);
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
+  const handleStockInPortfolio = (item) => {
+    addStockPortfolio({
+      stock: item,
+      quantity: parseFloat(quantity),
+      averagePrice: parseFloat(averagePrice),
+    });
+
+    setSnackbarMessage(`${item.company_name} has been added to your portfolio!`);
+    setSnackbarOpen(true);
+    setOpenModal(false);
+    setQuantity(""); // Reset fields
+    setAveragePrice("");
+    fetchUserStocks();
+    fetchStockFromAPI();
+  };
+
   return (
     <AppBar
       position={absolute ? "absolute" : navbarType}
@@ -422,7 +366,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
                   size="large"
                   placeholder="Search..."
                   value={searchTerm}
-                  onChange={(e) => handleSearch(e.target.value)}
+                  onChange={handleSearch}
                   icon={{
                     component: (
                       <span role="img" aria-label="search">
@@ -437,7 +381,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
                   })}
                 />
 
-                {showDropdown && (
+                {searchTerm && (
                   <List
                     sx={{
                       mt: 2,
@@ -447,7 +391,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
                       width: "100%",
                       height: "20rem",
                       zIndex: 10,
-                      overflow: "auto",
+                      overflow: "scroll",
                     }}
                   >
                     <FormControlLabel
@@ -484,14 +428,10 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
                       {activeDropdown && <FilterSection category={activeDropdown} />}
                     </Box>
 
-                    {isLoading ? (
-                      <Typography sx={{ padding: 2, textAlign: "center", color: "gray" }}>
-                        Loading...
-                      </Typography>
-                    ) : error ? (
-                      <Typography sx={{ padding: 2, textAlign: "center", color: "red" }}>
-                        {error}
-                      </Typography>
+                    {loading ? (
+                      <Box sx={{ textAlign: "center", py: 2 }}>
+                        <div className="loader"></div> {/* Add your loader here */}
+                      </Box>
                     ) : filteredData.length > 0 ? (
                       filteredData.map((item, index) => (
                         <Box
@@ -500,7 +440,6 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
                           onClick={() => {
                             handleClickStock(item);
                             setSearchTerm("");
-                            setShowDropdown(false);
                           }}
                         >
                           <Box sx={{ cursor: "pointer", borderBottom: "0.2px solid grey", py: 2 }}>
@@ -510,7 +449,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
                               <Box sx={{ fontWeight: 900, fontSize: "15px" }}>
                                 {item.company_name}
                               </Box>
-                              <Box sx={{ display: "flex", gap: "2rem" }}>
+                              <Box sx={{ display: "flex", gap: "2rem", pr: 10 }}>
                                 <Box sx={{ fontSize: "13px" }}>{item.exchange}</Box>
                                 <Box sx={{ fontSize: "13px" }}>
                                   {isDefaultActive && item.currency === "INR" ? "" : item.currency}
@@ -531,14 +470,94 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
                                 >
                                   {item.symbol}
                                 </Box>
-                                <StockPrice
-                                  symbol={item.symbol}
-                                  mic_code={item.mic_code}
-                                  supabase={supabase}
-                                  percent_change={item.percent_change}
-                                  close={item.close}
-                                  source={item.source} // "api" or "supabase"
-                                />
+
+                                <Box display={"flex"}>
+                                  <StockPrice
+                                    symbol={item.symbol}
+                                    mic_code={item.mic_code}
+                                    percent_change={item.percent_change}
+                                    close={item.close}
+                                  />
+                                  <Box>
+                                    {/* Button to open modal */}
+                                    <Button
+                                      size="large"
+                                      onClick={handleAddButtonClick}
+                                      title="Add to portfolio"
+                                      sx={{ width: "20px" }}
+                                    >
+                                      <Add
+                                        color="white"
+                                        size="20"
+                                        sx={{
+                                          borderRadius: "5px",
+                                          "&:hover": {
+                                            background: "#fff",
+                                            color: "#000",
+                                          },
+                                        }}
+                                      />
+                                    </Button>
+
+                                    {/* Modal for entering Quantity & Average Price */}
+                                    <Modal
+                                      open={openModal}
+                                      onClose={handleModalClose}
+                                      disableEnforceFocus
+                                      BackdropProps={{
+                                        style: { backgroundColor: "rgba(0, 0, 0, 0.5)" },
+                                      }}
+                                    >
+                                      <Box
+                                        onClick={(e) => e.stopPropagation()}
+                                        sx={{
+                                          position: "absolute",
+                                          top: "50%",
+                                          left: "50%",
+                                          transform: "translate(-50%, -50%)",
+                                          width: 400,
+                                          bgcolor: "background.paper",
+                                          boxShadow: 24,
+                                          p: 4,
+                                          borderRadius: "8px",
+                                          border: 0,
+                                          // i
+                                        }}
+                                      >
+                                        <h2>Add Stock Details</h2>
+                                        <TextField
+                                          id="outlined-basic"
+                                          variant="outlined"
+                                          label="Quantity"
+                                          type="number"
+                                          fullWidth
+                                          margin="normal"
+                                          value={quantity}
+                                          onChange={(e) => setQuantity(e.target.value)}
+                                        />
+                                        <TextField
+                                          id="outlined-basic"
+                                          variant="outlined"
+                                          label="Average Price"
+                                          type="number"
+                                          fullWidth
+                                          margin="normal"
+                                          value={averagePrice}
+                                          onChange={(e) => setAveragePrice(e.target.value)}
+                                        />
+                                        <Button
+                                          variant="contained"
+                                          color="primary"
+                                          onClick={() => handleStockInPortfolio(item)}
+                                          fullWidth
+                                          sx={{ mt: 2, color: "#fff" }}
+                                        >
+                                          Add to Portfolio
+                                        </Button>
+                                      </Box>
+                                    </Modal>
+                                  </Box>
+                                </Box>
                               </Box>
                             </Box>
                           </Box>
@@ -549,6 +568,19 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
                         No results found
                       </Typography>
                     )}
+
+                    {/* <Snackbar
+                      open={snackbarOpen}
+                      autoHideDuration={3000} // Duration before it closes automatically
+                      onClose={handleSnackbarClose}
+                      anchorOrigin={{ vertical: "top", horizontal: "right" }}
+                    >
+                      <SnackbarContent
+                        message={snackbarMessage} // Use the state variable for the message
+                        onClose={handleSnackbarClose}
+                        sx={{ backgroundColor: "green" }} // Change color as needed
+                      />
+                    </Snackbar> */}
                   </List>
                 )}
               </Box>
@@ -584,11 +616,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
                     >
                       account_circle
                     </Icon>
-                    <VuiTypography
-                      variant="button"
-                      fontWeight="medium"
-                      color={"white"}
-                    >
+                    <VuiTypography variant="button" fontWeight="medium" color={"white"}>
                       {user[0]?.username}
                     </VuiTypography>
                   </IconButton>
@@ -598,17 +626,16 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
                     id="logout-menu"
                     open={open}
                     onClose={handleClose}
-                    transformOrigin={{ horizontal: 'left', vertical: 'top' }}
-                    anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+                    transformOrigin={{ horizontal: "left", vertical: "top" }}
+                    anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
                   >
                     <MenuItem onClick={handleLogout} sx={{ color: "#fff" }} fontSize="bold">
-                      <ListItemIcon >
-                        <Logout fontSize="small" sx={{ color: "#fff" }}/>
+                      <ListItemIcon>
+                        <Logout fontSize="small" sx={{ color: "#fff" }} />
                       </ListItemIcon>
                       Logout
                     </MenuItem>
                   </Menu>
-
                 </>
               )}
 
@@ -644,7 +671,6 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock }) {
 
               {renderMenu()}
             </VuiBox>
-
           </VuiBox>
         )}
       </Toolbar>

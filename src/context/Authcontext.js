@@ -1,5 +1,5 @@
-import React, { createContext, useState, useEffect } from 'react';
-import { supabase } from 'lib/supabase';
+import React, { createContext, useState, useEffect } from "react";
+import { supabase } from "lib/supabase";
 
 // Create AuthContext
 export const AuthContext = createContext();
@@ -7,16 +7,20 @@ export const AuthContext = createContext();
 // AuthContext Provider component
 export const AuthProvider = ({ children }) => {
   const [session, setSession] = useState(null);
-  const [stockData, setStockData] = useState(null);
+  const [stockData, setStockData] = useState([]);
 
   useEffect(() => {
     const fetchSessionAndUser = async () => {
       // Check the initial session from Supabase
-      const { data: { session: initialSession } } = await supabase.auth.getSession();
+      const {
+        data: { session: initialSession },
+      } = await supabase.auth.getSession();
       setSession(initialSession);
 
       // Listen for changes to the authentication state
-      const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((event, session) => {
         setSession(session);
       });
 
@@ -33,12 +37,9 @@ export const AuthProvider = ({ children }) => {
     setStockData(data);
   };
 
-
   return (
-    <AuthContext.Provider value={{ session , stockData, storeStockData}}>
+    <AuthContext.Provider value={{ session, stockData, storeStockData }}>
       {children}
     </AuthContext.Provider>
   );
 };
-
-
