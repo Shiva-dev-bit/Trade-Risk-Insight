@@ -24,6 +24,7 @@ import Assessment from '@mui/icons-material/Assessment';
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { AuthContext } from "context/Authcontext";
+import { format } from "date-fns";
 
 export default function data() {
   const { stockData } = useContext(AuthContext);
@@ -57,10 +58,12 @@ export default function data() {
 
 
   const [newsData,setNewsData] = useState([]);
-
   
   const fetchNews = async () => {
-    const api = `https://4fdf-223-178-80-57.ngrok-free.app/news/${stockData?.company_name}`;
+    let api = 'https://8fc9-223-178-85-213.ngrok-free.app/news/general';
+    if(stockData?.company_name){
+      api = `https://8fc9-223-178-85-213.ngrok-free.app/news/stock/${stockData?.company_name}`;
+    }
     try {
       const response = await axios.get(api);
       const data = response.data;
@@ -75,9 +78,7 @@ export default function data() {
   };
 
   useEffect(() => {
-    if (stockData?.symbol) {
-      fetchNews();
-    }
+    fetchNews();
   }, [stockData?.symbol]);
 
   console.log('newsData',newsData);
@@ -128,7 +129,7 @@ export default function data() {
       ),
       time: (
         <VuiTypography variant="caption" fontWeight="regular" color="white">
-          {item.publish_date}
+          {format(new Date(item.publish_date), "yyyy-MM-dd HH:mm:ss")}
         </VuiTypography>
       ),
       category: (

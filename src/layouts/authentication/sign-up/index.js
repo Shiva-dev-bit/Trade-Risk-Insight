@@ -60,12 +60,28 @@ function SignUp() {
     console.log('existingUser', existingUser);
 
     if (existingUser.length > 0) {
-      // User already exists
+    
       setError("User already exists with this email.");
       setLoading(false);
-    } else {
-      // If user does not exist, insert the new user into `users` table
-      const { data: newUser, error: insertError } = await supabase
+    } 
+
+
+    if (existingUser.length <= 0 ) {
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: 'http://localhost:3000/authentication/sign-in',
+          data: { display_name: full_name }, 
+        },
+      });
+      
+
+      if (signUpError) {
+        setError("Error signing up. Please try again.");
+      } else {
+        setAlert('Please check Email to confirm account');
+        const { data: newUser, error: insertError } = await supabase
         .from('users')
         .insert([{ email: email, username: full_name, hashed_password: password }]);
 
@@ -75,27 +91,6 @@ function SignUp() {
         console.log("New user added:");
       }
       setLoading(false);
-    }
-
-
-    if (existingUser.length <= 0 ) {
-      const { data, error: signUpError } = await supabase.auth.signUp(
-        {
-          email,
-          password,
-          options: {
-            redirectTo: 'http://localhost:3000/authentication/sign-in',
-          },
-        },
-        {
-          data: { display_name: full_name },
-        }
-      );
-
-      if (signUpError) {
-        setError("Error signing up. Please try again.");
-      } else {
-        setAlert('Please check Email to confirm account');
       }
     }
 

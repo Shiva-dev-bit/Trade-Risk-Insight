@@ -106,10 +106,10 @@ export default function App() {
   let routesNew;
   if (session?.refresh_token) {
     routesNew = routes.filter((route) => route.name !== "Sign Up" && route.name !== "Sign In");
-    console.log("Routes after filtered: ", routesNew);
   } else {
     routesNew = routes.filter((route) => route.name !== "Profile" && route.name !== "Portfolio");
   }
+  console.log("Routes after filtered: ", routesNew);
 
   const getRoutes = (allRoutes) =>
     allRoutes.map((route) => {
@@ -129,18 +129,7 @@ export default function App() {
       return null;
     });
 
-  let [stockData, setStockData] = useState({
-    id: 352,
-    symbol: "TATAMOTORS",
-    company_name: "Tata Motors Limited",
-    currency: "INR",
-    exchange: "NSE",
-    mic_code: "XNSE",
-    country: "India",
-    type: "Common Stock",
-    created_at: "2024-10-22T08:32:08.093318+00:00",
-    updated_at: "2024-10-22T08:32:08.02+00:00",
-  });
+
 
   let userId = 1;
 
@@ -148,7 +137,6 @@ export default function App() {
     console.log("getStock before storing:", getStock); // Log the input
     if (getStock) {
       storeStockData(getStock);
-      console.log("Updated stockData:", stockData); // This may log the old state due to closure
     } else {
       console.log("getStock is null or undefined");
     }
@@ -318,7 +306,7 @@ export default function App() {
               color={sidenavColor}
               brand=""
               brandName="Risk Protect AI"
-              routes={routes}
+              routes={routesNew}
               onMouseEnter={handleOnMouseEnter}
               onMouseLeave={handleOnMouseLeave}
             />

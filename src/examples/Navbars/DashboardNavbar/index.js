@@ -190,7 +190,7 @@ function DashboardNavbar({
     setLoading(true); // Set loading to true before fetching
 
     try {
-      const response = await axios.get(`https://4fdf-223-178-80-57.ngrok-free.app/search/${query}`);
+      const response = await axios.get(`https://8fc9-223-178-85-213.ngrok-free.app/search/${query}`);
       let results = response.data || [];
 
       Object.entries(selectedFilters).forEach(([category, selectedValues]) => {
