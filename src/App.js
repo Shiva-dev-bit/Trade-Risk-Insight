@@ -255,7 +255,7 @@ export default function App() {
       setSnackbarMessage(`${stock?.stock?.company_name} has been added to your portfolio!`);
       setSnackbarOpen(true); // Open Snackbar when stock is added
       fetchUserStocks(); // Refresh the user's portfolio
-      location.reload();
+      // location.reload();
     }
   };
 

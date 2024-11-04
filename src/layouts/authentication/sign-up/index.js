@@ -84,7 +84,7 @@ function SignUp() {
           email,
           password,
           options: {
-            emailRedirectTo: 'http://localhost:3000/authentication/sign-in',
+            redirectTo: 'http://localhost:3000/authentication/sign-in',
           },
         },
         {
@@ -95,7 +95,7 @@ function SignUp() {
       if (signUpError) {
         setError("Error signing up. Please try again.");
       } else {
-        setAlert('Please check inbox to confirm account');
+        setAlert('Please check Email to confirm account');
       }
     }
 
@@ -119,7 +119,7 @@ function SignUp() {
     >
       <VuiBox component="form" onSubmit={signUpNewUser}>
         {error && (
-          <VuiTypography variant="body2" color="error" textAlign="center" mb={2}>
+          <VuiTypography variant="body2" color="error" textAlign="center" mb={2} sx={{fontWeight : 'bold'}}>
             {error}
           </VuiTypography>
         )}

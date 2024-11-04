@@ -72,6 +72,40 @@ function Dashboard() {
   const [stocks, setStocks] = useState([]);
   const [stocksPercent,setStocksPercent] = useState([]);
 
+  const initialStockData = {
+    symbol: "TCS",
+    company_name: "Tata Consultancy Services Limited",
+    country: "India",
+    price: "4084.64990",
+    open: "4075.00000",
+    high: "4107.00000",
+    low: "4060.05005",
+    percent_change: "0.23066",
+    currency: "INR",
+    exchange: "NSE",
+    change: "9.39990",
+    previous_close: "4075.25000",
+    volume: "1934976",
+    close: "4084.64990",
+    type : 'Common Stock',
+    is_market_open: false,
+    trading_date: "N/A",
+    last_updated: "2024-10-30T14:37:05.098775"
+  };
+
+  const [stocksData,setStocksData] = useState(stockData?.stockData || initialStockData)
+
+  
+  useEffect(() => {
+    if (!stockData?.stockData || stockData.stockData.length === 0) {
+      setStocksData(initialStockData);
+    } else {
+      setStocksData(stockData.stockData);
+    }
+  }, [stockData]);
+  
+  console.log('Dashboard',stocksData);
+
     
   var today = new Date();
   var dd = String(today.getDate()).padStart(2, "0");
@@ -112,18 +146,18 @@ function Dashboard() {
   console.log('pricePercent', stocksPercent);
 
   const updated_price = stocks.filter(
-    (ele) => ele.symbol === stockData.symbol && ele.mic_code === stockData.mic_code
+    (ele) => ele.symbol === stocksData.symbol && ele.exchange === stocksData.exchange
   );
 
   const price_percent = stocksPercent.filter(
     (ele) =>
-      ele.symbol === stockData.symbol &&
-      ele.exchange === stockData.exchange &&
+      ele.symbol === stocksData.symbol &&
+      ele.exchange === stocksData.exchange &&
       ele.trading_date === today
   );
 
   const New_price = updated_price[updated_price.length - 1];
-  console.log("price_percent", price_percent);
+  console.log("New_price", New_price);
 
   const isPositiveChange = price_percent[0]?.percentage_change > 0;
 
@@ -218,7 +252,7 @@ function Dashboard() {
             <Grid item xs={12} md={6} lg={3}>
               <MiniStatisticsCard
                 title={{
-                  text: stockData.company_name,
+                  text: stocksData?.company_name,
                   fontWeight: "regular",
                   sx: { fontSize: "1.5rem" },
                 }}
@@ -245,7 +279,7 @@ function Dashboard() {
                     </>
                   ),
                 }}
-                icon={{ color: "info", component: getIcon(stockData.company_name) }}
+                icon={{ color: "info", component: getIcon(stocksData?.company_name) }}
                 sx={{ width: "100%", height: "100%" }}
               />
             </Grid>
@@ -255,7 +289,7 @@ function Dashboard() {
                 title={{ text: "Currency & Exchange", sx: { fontSize: "1.5rem" } }}
                 count={
                   <span style={{ fontSize: "1.1rem", fontWeight: "bold" }}>
-                    {`${stockData.currency} / ${stockData.exchange}`}
+                    {`${stocksData?.currency} / ${stocksData?.exchange}`}
                   </span>
                 }
                 icon={{ color: "info", component: getIcon("Currency & Exchange") }}
@@ -268,7 +302,7 @@ function Dashboard() {
                 title={{ text: "Symbol & Country", sx: { fontSize: "1.5rem" } }}
                 count={
                   <span style={{ fontSize: "1.1rem", fontWeight: "bold" }}>
-                    {`${stockData.symbol}, ${stockData.country}`}
+                    {`${stocksData?.symbol}, ${stocksData?.country}`}
                   </span>
                 }
                 icon={{ color: "info", component: getIcon("MIC Code & Country") }}
@@ -280,7 +314,7 @@ function Dashboard() {
               <MiniStatisticsCard
                 title={{ text: "Type of Stock", sx: { fontSize: "1.5rem" } }}
                 count={
-                  <span style={{ fontSize: "1.1rem", fontWeight: "bold" }}>{stockData.type}</span>
+                  <span style={{ fontSize: "1.1rem", fontWeight: "bold" }}>{stocksData?.type}</span>
                 }
                 icon={{ color: "info", component: getIcon("Type of Stock") }}
                 sx={{ width: "100%", height: "100%" }}
@@ -291,7 +325,7 @@ function Dashboard() {
         <VuiBox mb={3}>
           <Grid container spacing="18px">
             <Grid item xs={12} lg={12} xl={5}>
-              <WelcomeMark stockData={stockData} />
+              <WelcomeMark stocksData={stocksData} />
             </Grid>
             <Grid item xs={12} lg={6} xl={3}>
               <SatisfactionRate />

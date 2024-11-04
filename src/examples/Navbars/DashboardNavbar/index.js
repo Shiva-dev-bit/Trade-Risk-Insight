@@ -45,6 +45,8 @@ import {
   FormControlLabel,
   FormGroup,
   List,
+  ListItemIcon,
+  MenuItem,
   Modal,
   Snackbar,
   SnackbarContent,
@@ -55,7 +57,7 @@ import { supabase } from "lib/supabase";
 import { BsCheckLg, BsChevronDown } from "react-icons/bs";
 import StockPrice from "./StockPrice";
 import axios from "axios";
-import { Add } from "@mui/icons-material";
+import { Add, Logout } from "@mui/icons-material";
 import { AuthContext } from "context/Authcontext";
 
 function DashboardNavbar({

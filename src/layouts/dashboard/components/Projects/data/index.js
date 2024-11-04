@@ -60,7 +60,7 @@ export default function data() {
 
   
   const fetchNews = async () => {
-    const api = `https://4fdf-223-178-80-57.ngrok-free.app/news/${stockData?.symbol}`;
+    const api = `https://4fdf-223-178-80-57.ngrok-free.app/news/${stockData?.company_name}`;
     try {
       const response = await axios.get(api);
       const data = response.data;

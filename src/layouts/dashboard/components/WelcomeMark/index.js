@@ -6,7 +6,7 @@ import { supabase } from "lib/supabase";
 import gif from "assets/images/cardimgfree.png";
 import CloseIcon from '@mui/icons-material/Close';
 
-const WelcomeMark = ({ stockData }) => {
+const WelcomeMark = ({ stocksData }) => {
 
   const [companyData, setCompanyData] = useState({
     companyDescription: '',
@@ -25,6 +25,8 @@ const WelcomeMark = ({ stockData }) => {
     country: '',
     micCode: ''
   });
+  
+  console.log('profile',stocksData?.symbol);
 
   const [open, setOpen] = useState(false);
   const toggleModal = () => setOpen(!open);
@@ -96,8 +98,8 @@ const WelcomeMark = ({ stockData }) => {
   };
 
   useEffect(() => {
-    if (stockData?.symbol) {
-      fetchProfile(stockData.symbol);
+    if (stocksData?.symbol) {
+      fetchProfile(stocksData.symbol);
     } else {
       // Reset company data if no data is found
       setCompanyData({
@@ -118,7 +120,7 @@ const WelcomeMark = ({ stockData }) => {
         micCode: ''
       });
     }
-  }, [stockData]);
+  }, [stocksData]);
 
   const getShortDescription = (description) => {
     return description.length > 120 ? description.substring(0, 120) + '...' : description;
