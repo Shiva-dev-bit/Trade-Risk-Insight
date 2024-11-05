@@ -26,13 +26,38 @@ import Welcome from "../profile/components/Welcome/index";
 import CarInformations from "./components/CarInformations";
 import StockList from "./components/StockList";
 import { supabase } from "lib/supabase";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "context/Authcontext";
 
 function Overview() {
   const [stocks, setStocks] = useState([]);
-  const userId = 1;
+  const [userId, setUserId] = useState(null); // Dynamic userId
+  const { session } = useContext(AuthContext);
+
+  // const userId = 1;
+
+  const getUserData = async () => {
+    if (!session?.user?.email) return;
+
+    const { data: userdata, error } = await supabase
+      .from("users")
+      .select("*")
+      .eq("email", session.user.email)
+      .single();
+
+    if (error) {
+      console.error("Error fetching user data:", error);
+      return;
+    }
+
+    if (userdata) {
+      setUserId(userdata);
+    }
+  };
 
   const fetchUserStocks = async () => {
+    if (!userId) return;
+
     const { data, error } = await supabase
       .from("userPortfolio")
       .select("portfolio_id, stock_id, quantity, average_price, is_deleted_yn, stocks(*), users(*)")
@@ -47,12 +72,18 @@ function Overview() {
   };
 
   useEffect(() => {
-    fetchUserStocks();
-  }, []);
+    getUserData();
+  }, [session]);
+
+  useEffect(() => {
+    if (userId) {
+      fetchUserStocks();
+    }
+  }, [userId]);
 
   return (
     <DashboardLayout>
-      <Header username={stocks[0]?.users?.username} email={stocks[0]?.users?.email} />
+      <Header username={userId?.username && userId?.username} email={userId?.email} />
       <VuiBox mt={5} mb={3}>
         <Grid
           container
@@ -75,10 +106,7 @@ function Overview() {
               },
             })}
           >
-            <Welcome
-              username={stocks.length > 0 && stocks[0]?.users?.username}
-              email={stocks.length > 0 && stocks[0]?.users?.email}
-            />
+            <Welcome username={userId?.username && userId?.username} email={userId?.email} />
           </Grid>
           <Grid
             item
@@ -91,7 +119,7 @@ function Overview() {
               },
             })}
           >
-            <CarInformations userdata={stocks.length > 0 && stocks[0]?.users} />
+            <CarInformations userdata={userId?.username && userId?.username} />
           </Grid>
           <Grid
             item
@@ -107,12 +135,12 @@ function Overview() {
             <ProfileInfoCard
               title="profile information"
               description={`Hi, I’m ${
-                stocks.length > 0 && stocks[0]?.users?.username
+                userId?.username && userId?.username
               }, Decisions: If you can’t decide, the answer is no. If two equally difficult paths, choose the one more painful in the short term (pain avoidance is creating an illusion of equality).`}
               info={{
-                fullName: `${stocks.length > 0 && stocks[0]?.users?.username}`,
+                fullName: `${userId?.username && userId?.username}`,
                 mobile: "(44) 123 1234 123",
-                email: `${stocks.length > 0 && stocks[0]?.users?.email}`,
+                email: `${userId?.email}`,
                 location: "United States",
               }}
               social={[
@@ -137,7 +165,7 @@ function Overview() {
         </Grid>
       </VuiBox>
 
-      <StockList stocks={stocks} fetchUserStocks={fetchUserStocks} />
+      {/* <StockList stocks={stocks} fetchUserStocks={fetchUserStocks} /> */}
 
       <Grid container spacing={3} mb="30px">
         <Grid item xs={12} xl={3} height="100%">

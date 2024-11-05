@@ -109,7 +109,7 @@ function Header({ username, email }) {
               })}
             >
               <VuiTypography variant="lg" color="white" fontWeight="bold">
-                {username ? username : "Sign in to list your stocks"}
+                {username && username }
               </VuiTypography>
               <VuiTypography variant="button" color="text" fontWeight="regular">
                 {email}

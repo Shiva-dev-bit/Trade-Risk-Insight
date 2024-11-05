@@ -104,7 +104,7 @@ function Dashboard() {
     }
   }, [stockData]);
   
-  console.log('Dashboard',stocksData);
+  // console.log('Dashboard',stocksData);
 
     
   var today = new Date();
@@ -113,7 +113,7 @@ function Dashboard() {
   var yyyy = today.getFullYear();
 
   today = yyyy + "-" + mm + "-" + dd;
-  console.log(today);
+  // console.log(today);
 
   const fetchStockData = async () => {
     try {
@@ -142,8 +142,8 @@ function Dashboard() {
   };
 
 
-  console.log('price', stocks);
-  console.log('pricePercent', stocksPercent);
+  // console.log('price', stocks);
+  // console.log('pricePercent', stocksPercent);
 
   const updated_price = stocks.filter(
     (ele) => ele.symbol === stocksData.symbol && ele.exchange === stocksData.exchange
@@ -157,7 +157,7 @@ function Dashboard() {
   );
 
   const New_price = updated_price[updated_price.length - 1];
-  console.log("New_price", New_price);
+  // console.log("New_price", New_price);
 
   const isPositiveChange = price_percent[0]?.percentage_change > 0;
 
@@ -204,7 +204,7 @@ function Dashboard() {
         "postgres_changes",
         { event: "*", schema: "public", table: "stock_daily_summary" },
         (payload) => {
-          console.log("stock_daily_summary:", payload);
+          // console.log("stock_daily_summary:", payload);
 
           setStocksPercent((prevStocks) => {
             const { eventType, new: newStock, old: oldStock } = payload;
@@ -353,7 +353,6 @@ function Dashboard() {
                   </VuiBox>
                   <VuiBox sx={{ height: "310px" }}>
                     <LineChart
-                      lineChartData={lineChartDataDashboard}
                       lineChartOptions={lineChartOptionsDashboard}
                     />
                   </VuiBox>

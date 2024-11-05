@@ -80,7 +80,7 @@ function DashboardNavbar({
 
   const userEmail = session?.user?.email;
 
-  console.log("user", user);
+  // console.log("user", user);
 
   const fetchUser = async (userMail) => {
     try {
@@ -89,7 +89,7 @@ function DashboardNavbar({
       if (error) throw error;
       if (data) setUser(data);
     } catch (error) {
-      console.log("Error fetching stocks:", error);
+      console.log("Error fetching stocks in dashboard Navbar:", error);
     }
   };
 
@@ -190,13 +190,16 @@ function DashboardNavbar({
     setLoading(true); // Set loading to true before fetching
 
     try {
-      const response = await axios.get(`https://8fc9-223-178-85-213.ngrok-free.app/search/${query}`);
+      const response = await axios.get(
+        `https://8fc9-223-178-85-213.ngrok-free.app/search/${query}`
+      );
       let results = response.data || [];
 
       Object.entries(selectedFilters).forEach(([category, selectedValues]) => {
         if (selectedValues.length > 0) {
           const key = filterCategories[category].key;
-          results = results.filter((item) => selectedValues.includes(item[key]));
+          results =
+            results.length > 0 && results.filter((item) => selectedValues.includes(item[key]));
         }
       });
 
@@ -304,42 +307,47 @@ function DashboardNavbar({
     );
   };
 
+  const [selectedStock, setSelectedStock] = useState(null); // Add this new state
   const [openModal, setOpenModal] = useState(false);
   const [quantity, setQuantity] = useState("");
   const [averagePrice, setAveragePrice] = useState("");
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   // Open modal when the button is clicked
-  const handleAddButtonClick = (e) => {
+  const handleAddButtonClick = (e, stock) => {
     e.stopPropagation(); // Prevent click event bubbling
     setOpenModal(true);
+    setSelectedStock(stock);
   };
 
   // Close the modal
   const handleModalClose = (e) => {
     e.stopPropagation(); // Prevent unintended closures
     setOpenModal(false);
+    setSelectedStock(null); // Clear selected stock when closing
   };
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
 
-  const handleStockInPortfolio = (item) => {
+  const handleStockInPortfolio = () => {
+    console.log("Selected item:", selectedStock);
+    if (!selectedStock) return;
+
     addStockPortfolio({
-      stock: item,
+      stock: selectedStock,
       quantity: parseFloat(quantity),
       averagePrice: parseFloat(averagePrice),
     });
 
-    setSnackbarMessage(`${item.company_name} has been added to your portfolio!`);
-    setSnackbarOpen(true);
+    // setSnackbarMessage(`${selectedStock?.company_name} has been added to your portfolio!`);
+    // setSnackbarOpen(true);
     setOpenModal(false);
     setQuantity(""); // Reset fields
     setAveragePrice("");
+    setSelectedStock(null); // Clear selected stock
     fetchUserStocks();
-    fetchStockFromAPI();
+    // fetchStockFromAPI();
   };
 
   return (
@@ -484,7 +492,8 @@ function DashboardNavbar({
                                     {/* Button to open modal */}
                                     <Button
                                       size="large"
-                                      onClick={handleAddButtonClick}
+                                      // onClick={handleAddButtonClick}
+                                      onClick={(e) => handleAddButtonClick(e, item)}
                                       title="Add to portfolio"
                                       sx={{ width: "20px" }}
                                     >
@@ -523,7 +532,6 @@ function DashboardNavbar({
                                           p: 4,
                                           borderRadius: "8px",
                                           border: 0,
-                                          // i
                                         }}
                                       >
                                         <h2>Add Stock Details</h2>
@@ -550,7 +558,9 @@ function DashboardNavbar({
                                         <Button
                                           variant="contained"
                                           color="primary"
-                                          onClick={() => handleStockInPortfolio(item)}
+                                          key={`${item.symbol}-${index}`}
+                                          // onClick={(e) => handleStockInPortfolio(e, item)}
+                                          onClick={handleStockInPortfolio}
                                           fullWidth
                                           sx={{ mt: 2, color: "#fff" }}
                                         >
@@ -570,19 +580,6 @@ function DashboardNavbar({
                         No results found
                       </Typography>
                     )}
-
-                    {/* <Snackbar
-                      open={snackbarOpen}
-                      autoHideDuration={3000} // Duration before it closes automatically
-                      onClose={handleSnackbarClose}
-                      anchorOrigin={{ vertical: "top", horizontal: "right" }}
-                    >
-                      <SnackbarContent
-                        message={snackbarMessage} // Use the state variable for the message
-                        onClose={handleSnackbarClose}
-                        sx={{ backgroundColor: "green" }} // Change color as needed
-                      />
-                    </Snackbar> */}
                   </List>
                 )}
               </Box>

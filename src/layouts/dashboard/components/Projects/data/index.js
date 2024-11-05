@@ -28,7 +28,7 @@ import { format } from "date-fns";
 
 export default function data() {
   const { stockData } = useContext(AuthContext);
-  console.log('search stockData' , stockData);
+  // console.log('search stockData' , stockData);
 
 
   const avatars = (members) =>
@@ -81,7 +81,7 @@ export default function data() {
     fetchNews();
   }, [stockData?.symbol]);
 
-  console.log('newsData',newsData);
+  // console.log('newsData',newsData);
 
   // const data = [
   //   {
