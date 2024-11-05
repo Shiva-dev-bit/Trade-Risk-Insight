@@ -27,7 +27,7 @@ const CarInformations = ({ userdata }) => {
           Stock Informations
         </VuiTypography>
         <VuiTypography variant="button" color="text" fontWeight="regular" mb="30px">
-          Hello, <span style={{ textTransform: "capitalize" }}>{userdata.username}</span>!
+          Hello, <span style={{ textTransform: "capitalize" }}>{userdata}</span>!
         </VuiTypography>
         <Stack
           spacing="24px"

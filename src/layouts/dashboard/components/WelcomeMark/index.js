@@ -26,7 +26,6 @@ const WelcomeMark = ({ stocksData }) => {
     micCode: ''
   });
   
-  console.log('profile',stocksData?.symbol);
 
   const [open, setOpen] = useState(false);
   const toggleModal = () => setOpen(!open);
@@ -126,7 +125,7 @@ const WelcomeMark = ({ stocksData }) => {
     return description.length > 120 ? description.substring(0, 120) + '...' : description;
   };
 
-  console.log(companyData.website);
+  // console.log(companyData.website);
 
   return (
     <Card sx={() => ({
