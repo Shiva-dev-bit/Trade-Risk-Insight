@@ -1,29 +1,57 @@
-import React from 'react';
-
-import { Card } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Card, CircularProgress } from '@mui/material';
 import VuiBox from 'components/VuiBox';
 import VuiTypography from 'components/VuiTypography';
 import { IoHappy } from 'react-icons/io5';
 import colors from 'assets/theme/base/colors';
 import linearGradient from 'assets/theme/functions/linearGradient';
-import CircularProgress from '@mui/material/CircularProgress';
 
 const SatisfactionRate = () => {
 	const { info, gradients } = colors;
 	const { cardContent } = gradients;
 
+	const [data, setData] = useState(null);
+	const [loading, setLoading] = useState(true);
+
+	useEffect(() => {
+		axios
+			.get('https://8fc9-223-178-85-213.ngrok-free.app/volatility/TCS')
+			.then((response) => {
+				setData(response.data.data);
+				setLoading(false);
+			})
+			.catch((error) => {
+				console.error("Error fetching data:", error);
+				setLoading(false);
+			});
+	}, []);
+
+	if (loading) return <CircularProgress />;
+
+	// const { summary, symbol } = data;
+	const summary = '' , symbol = '';
+	const satisfactionRate = 95; // Example static value
+
 	return (
-		<Card>
-			<VuiBox display='flex' flexDirection='column'>
-				<VuiTypography variant='lg' color='white' fontWeight='bold' mb='4px'>
-					Satisfaction Rate
+		<Card sx={{maxHeight : '90%'}}>
+			<VuiBox display='flex' flexDirection='column' padding={2}>
+				<VuiTypography variant='h5' color='white' fontWeight='bold' mb='10px'>
+					{symbol} - Stock Performance
 				</VuiTypography>
-				<VuiTypography variant='button' color='text' fontWeight='regular' mb='20px'>
-					From all projects
-				</VuiTypography>
+				<VuiBox display='flex' justifyContent='space-between' mb={3}>
+					<VuiBox>
+						<VuiTypography variant='h6' color='white'>
+							Current Price: ${summary?.current_price?.toFixed(2)}
+						</VuiTypography>
+						<VuiTypography variant='body2' color='white'>
+							Change: ${summary?.price_change?.toFixed(2)} ({summary?.price_change_percent?.toFixed(2)}%)
+						</VuiTypography>
+					</VuiBox>
+				</VuiBox>
 				<VuiBox sx={{ alignSelf: 'center', justifySelf: 'center', zIndex: '-1' }}>
 					<VuiBox sx={{ position: 'relative', display: 'inline-flex' }}>
-						<CircularProgress variant='determinate' value={60} size={170} color='info' />
+						<CircularProgress variant='determinate' value={satisfactionRate} size={170} color='info' />
 						<VuiBox
 							sx={{
 								top: 0,
@@ -75,7 +103,7 @@ const SatisfactionRate = () => {
 						alignItems='center'
 						sx={{ minWidth: '80px' }}>
 						<VuiTypography color='white' variant='h3'>
-							95%
+							{satisfactionRate}%
 						</VuiTypography>
 						<VuiTypography color='text' variant='caption' fontWeight='regular'>
 							Based on likes

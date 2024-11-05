@@ -281,7 +281,7 @@ export default function App() {
               color={sidenavColor}
               brand=""
               brandName="Risk Protect AI"
-              routes={routesNew}
+              routes={routes}
               onMouseEnter={handleOnMouseEnter}
               onMouseLeave={handleOnMouseLeave}
             />
@@ -291,7 +291,7 @@ export default function App() {
         )}
         {layout === "vr" && <Configurator />}
         <Switch>
-          {getRoutes(routesNew)}
+          {getRoutes(routes)}
           <Redirect from="*" to="/dashboard" />
         </Switch>
       </ThemeProvider>
@@ -335,7 +335,7 @@ export default function App() {
         )}
         {layout === "vr" && <Configurator />}
         <Switch>
-          {getRoutes(routesNew)}
+          {getRoutes(routes)}
           <Redirect from="*" to="/dashboard" />
         </Switch>
       </ThemeProvider>

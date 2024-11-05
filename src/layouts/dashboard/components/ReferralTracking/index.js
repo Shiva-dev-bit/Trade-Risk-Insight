@@ -14,7 +14,7 @@ function ReferralTracking() {
 	return (
 		<Card
 			sx={{
-				height: '100%',
+				height: '90%',
 				background: linearGradient(gradients.cardDark.main, gradients.cardDark.state, gradients.cardDark.deg)
 			}}>
 			<VuiBox sx={{ width: '100%' }}>

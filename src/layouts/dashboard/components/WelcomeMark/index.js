@@ -133,7 +133,8 @@ const WelcomeMark = ({ stocksData }) => {
       py: "32px",
       px: "24px",
       backgroundSize: "cover",
-      backgroundPosition: "50%"
+      backgroundPosition: "50%",
+      height : '90%'
     })}>
       <VuiBox height="100%" display="flex" flexDirection="column" justifyContent="space-between">
         <VuiBox>
