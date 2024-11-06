@@ -32,8 +32,7 @@ export default function data() {
   const [newsData,setNewsData] = useState([]);
   
   const fetchNews = async () => {
-    // let api = 'https://22eb-223-178-82-244.ngrok-free.app/news/general';
-    let api = '';
+    let api = 'https://22eb-223-178-82-244.ngrok-free.app/news/general';
     if(stockData?.symbol){
       api = `https://22eb-223-178-82-244.ngrok-free.app/news/stock/${stockData?.symbol}`;
     }
