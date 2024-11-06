@@ -28,49 +28,30 @@ import { format } from "date-fns";
 
 export default function data() {
   const { stockData } = useContext(AuthContext);
-  // console.log('search stockData' , stockData);
-
-
-  const avatars = (members) =>
-    members.map(([image, name]) => (
-      <Tooltip key={name} title={name} placeholder="bottom">
-        <VuiAvatar
-          src={image}
-          alt="name"
-          size="xs"
-          sx={{
-            border: ({ borders: { borderWidth }, palette: { dark } }) =>
-              `${borderWidth[2]} solid ${dark.focus}`,
-            cursor: "pointer",
-            position: "relative",
-
-            "&:not(:first-of-type)": {
-              ml: -1.25,
-            },
-
-            "&:hover, &:focus": {
-              zIndex: "10",
-            },
-          }}
-        />
-      </Tooltip>
-    ));
-
 
   const [newsData,setNewsData] = useState([]);
   
   const fetchNews = async () => {
-    let api = 'https://8fc9-223-178-85-213.ngrok-free.app/news/general';
-    if(stockData?.company_name){
-      api = `https://8fc9-223-178-85-213.ngrok-free.app/news/stock/${stockData?.company_name}`;
+    // let api = 'https://22eb-223-178-82-244.ngrok-free.app/news/general';
+    let api = '';
+    if(stockData?.symbol){
+      api = `https://22eb-223-178-82-244.ngrok-free.app/news/stock/${stockData?.symbol}`;
     }
+   
     try {
       const response = await axios.get(api);
       const data = response.data;
 
-      if (data) {
+      if (data && data.news.length > 0) {
         setNewsData(data);
         console.log("News data", data);
+      } else{
+        console.log("No news data");
+        api = `https://22eb-223-178-82-244.ngrok-free.app/news/stock/${stockData?.company_name}`;
+        const response = await axios.get(api);
+        const data = response.data;
+
+        setNewsData(data);
       }
     } catch (error) {
       console.log("error", error);
@@ -81,42 +62,16 @@ export default function data() {
     fetchNews();
   }, [stockData?.symbol]);
 
-  // console.log('newsData',newsData);
-
-  // const data = [
-  //   {
-  //     company: "GLAXO",
-  //     title: "Donegal-based TCS Signs 15 year Deal for Ireland’s new pension scheme",
-  //     url: "https://www.donegaldaily.com/2024/10/29/donegal-based-tcs-signs-15-year-deal-for-irelands-new-pension-scheme-1/",
-  //     text: "Donegal-based Tata Consultancy Services (TCS) has secured a 15-year contract...",
-  //     publish_date: "40 minutes ago",
-  //     category: "CAPITAL MARKET - LIVE",
-  //     sentiment: 0.509,
-  //   },
-  //   // Add more items as needed
-  // ];
-
-
   return {
     columns: [
-      { name: "company", align: "left" },
       { name: "headline", align: "left" },
-      { name: "time", align: "center" },
-      { name: "category", align: "center" },
+      { name: "datetime", align: "center" },
       { name: "sentiment", align: "center" },
     ],
   
     rows: newsData?.news?.map((item) => ({
-      company: (
-        <VuiBox display="flex" alignItems="center">
-          <TrendingDown style={{ color: item.sentiment < 0 ? "red" : "green", marginRight: "8px" }} />
-          <VuiTypography variant="button" fontWeight="medium" color="white">
-            {stockData?.symbol}
-          </VuiTypography>
-        </VuiBox>
-      ),
       headline: (
-        <div>
+        <>
           <VuiTypography variant="button" fontWeight="medium" color="white">
             <a href={item.url} target="_blank" rel="noopener noreferrer" style={{ color: "inherit", textDecoration: "none" }}>
               {item.title.substring(0, 60)}
@@ -125,21 +80,16 @@ export default function data() {
           <VuiTypography variant="body2" color="white">
             <a href={item.url} style={{ color: "inherit" }}>{item.text.substring(0, 50)}... </a>
           </VuiTypography>
-        </div>
+        </>
       ),
-      time: (
+      datetime: (
         <VuiTypography variant="caption" fontWeight="regular" color="white">
-          {format(new Date(item.publish_date), "yyyy-MM-dd HH:mm:ss")}
-        </VuiTypography>
-      ),
-      category: (
-        <VuiTypography variant="button" fontWeight="bold" color="white">
-          {item.category}
+          {format(new Date(item.publish_date), "dd-MM-yyyy,' 'HH:mm:ss")}
         </VuiTypography>
       ),
       sentiment: (
-        <VuiTypography variant="button" fontWeight="bold" color={item.sentiment > 0 ? "green" : "red"}>
-          {item.sentiment.toFixed(2)}
+        <VuiTypography variant="button" fontWeight="bold" sx={{color : item.sentiment > 0 ? "#24fc03" : "#db2c40"}}>
+          {item.sentiment > 0 ? '+'+item.sentiment.toFixed(2) : item.sentiment.toFixed(2)}
         </VuiTypography>
       ),
     })),

@@ -16,7 +16,7 @@
 
 */
 
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -35,39 +35,19 @@ import Table from "examples/Tables/Table";
 // Data
 import data from "layouts/dashboard/components/Projects/data";
 import { Box } from "@mui/material";
+import { AuthContext } from "context/Authcontext";
+
 
 function Projects() {
   const { columns, rows } = data();
-  const [menu, setMenu] = useState(null);
+  const { stockData } = useContext(AuthContext);
 
-  const openMenu = ({ currentTarget }) => setMenu(currentTarget);
-  const closeMenu = () => setMenu(null);
-
-  const renderMenu = (
-    <Menu
-      id="simple-menu"
-      anchorEl={menu}
-      anchorOrigin={{
-        vertical: "top",
-        horizontal: "left",
-      }}
-      transformOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      open={Boolean(menu)}
-      onClose={closeMenu}
-    >
-      <MenuItem onClick={closeMenu}>Action</MenuItem>
-      <MenuItem onClick={closeMenu}>Another action</MenuItem>
-      <MenuItem onClick={closeMenu}>Something else</MenuItem>
-    </Menu>
-  );
 
   return (
     <Card
       sx={{
         height: "100% !important",
+        overflowX: "auto"
       }}
     >
       <VuiBox display="flex" justifyContent="space-between" alignItems="center" mb="32px">
@@ -76,13 +56,13 @@ function Projects() {
             Top Stock Market News
           </VuiTypography>
         </VuiBox>
-        <VuiBox color="text" px={2}>
-          <Icon sx={{ cursor: "pointer", fontWeight: "bold" }} fontSize="small" onClick={openMenu}>
-            more_vert
-          </Icon>
+        <VuiBox>
+        <VuiTypography color="white" variant="lg" mb="6px" gutterBottom style={{ fontSize : '15px' }}>
+          {stockData?.company_name}
+        </VuiTypography>
         </VuiBox>
-        {renderMenu}
       </VuiBox>
+
       <VuiBox
         sx={{
           "& th": {
@@ -97,12 +77,32 @@ function Projects() {
           },
         }}
       >
-        <Box sx={{ overflowX: "auto", maxHeight: "500px" }}>
+        <Box
+          sx={{
+            maxHeight: "400px",
+            overflowY: "auto",  // Allows both vertical and horizontal scrolling simultaneously
+            "&::-webkit-scrollbar": {
+              width: "6px",       // Width for vertical scrollbar
+              height: "6px",      // Height for horizontal scrollbar
+            },
+            "&::-webkit-scrollbar-track": {
+              backgroundColor: "transparent",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: "#888",
+              borderRadius: "10px",
+            },
+            "&::-webkit-scrollbar-thumb:hover": {
+              backgroundColor: "#555",
+            },
+          }}
+        >
           <Table columns={columns} rows={rows} />
         </Box>
       </VuiBox>
     </Card>
   );
+
 }
 
 export default Projects;

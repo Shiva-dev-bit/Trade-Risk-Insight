@@ -16,7 +16,7 @@ const StockList = ({ stocks, fetchUserStocks, fetchStockFromAPI }) => {
 
   const fetchCompanyName = async (symbol, exchange) => {
     try {
-      const response = await fetch(`https://8fc9-223-178-85-213.ngrok-free.app/search/${symbol}`);
+      const response = await fetch(`https://22eb-223-178-82-244.ngrok-free.app/search/${symbol}`);
       const data = await response.json();
 
       // Find the matching company based on both symbol and exchange

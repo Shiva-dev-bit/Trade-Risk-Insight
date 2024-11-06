@@ -191,7 +191,7 @@ function DashboardNavbar({
 
     try {
       const response = await axios.get(
-        `https://8fc9-223-178-85-213.ngrok-free.app/search/${query}`
+        `https://22eb-223-178-82-244.ngrok-free.app/search/${query}`
       );
       let results = response.data || [];
 

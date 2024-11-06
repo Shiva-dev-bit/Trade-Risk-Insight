@@ -110,7 +110,6 @@ export default function App() {
   } else {
     routesNew = routes.filter((route) => route.name !== "Profile" && route.name !== "Portfolio");
   }
-  console.log("Routes after filtered: ", routesNew);
 
   const getRoutes = (allRoutes) =>
     allRoutes.map((route) => {
@@ -275,7 +274,7 @@ export default function App() {
   const fetchStockFromAPI = async (symbol, exchange) => {
     try {
       const response = await axios.get(
-        `https://8fc9-223-178-85-213.ngrok-free.app/search/${symbol}`
+        `https://22eb-223-178-82-244.ngrok-free.app/search/${symbol}`
       );
       const data = response.data;
 
