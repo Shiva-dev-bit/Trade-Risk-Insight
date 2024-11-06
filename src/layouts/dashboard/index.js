@@ -574,7 +574,6 @@ import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "context/Authcontext";
 import { supabase } from "lib/supabase";
 
-
 function Dashboard() {
   const { gradients } = colors;
   const { cardContent } = gradients;
@@ -600,7 +599,7 @@ function Dashboard() {
     type: 'Common Stock',
     is_market_open: false,
     trading_date: "N/A",
-    last_updated: "2024-10-30T14:37:05.098775"
+    last_updated: "2024-10-30T14:37:05.098775",
   };
 
   const [stocksData, setStocksData] = useState(stockData?.stockData || initialStockData)
@@ -615,7 +614,6 @@ function Dashboard() {
   }, [stockData]);
 
   // console.log('Dashboard',stocksData);
-
 
   var today = new Date();
   var dd = String(today.getDate()).padStart(2, "0");
@@ -651,7 +649,6 @@ function Dashboard() {
     }
   };
 
-
   // console.log('price', stocks);
   // console.log('pricePercent', stocksPercent);
 
@@ -682,7 +679,6 @@ function Dashboard() {
   useEffect(() => {
     fetchStockData();
     fetchDailyStock();
-
 
     console.log("Stocks component rendered");
 
@@ -755,7 +751,6 @@ function Dashboard() {
 
   return (
     <DashboardLayout>
-      {/* <DashboardNavbar handleClickStock={handleClickStock} /> */}
       <VuiBox py={3}>
         <VuiBox mb={3}>
           <Grid container spacing={1} alignItems="stretch">
@@ -768,7 +763,7 @@ function Dashboard() {
                   sx: { fontSize: "1.5rem" },
                 }}
                 count={
-                  <span style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
+                  <span style={{ fontSize: "1.1rem", fontWeight: "bold" }}>
                     {New_price?.price?.toFixed(2)}
                   </span>
                 }
@@ -848,19 +843,20 @@ function Dashboard() {
               <Card>
                 <VuiBox sx={{ height: "100%" }}>
                   <VuiTypography variant="lg" color="white" fontWeight="bold" mb="5px">
-                    Sales Overview
+                    Stock Price Overview
                   </VuiTypography>
                   <VuiBox display="flex" alignItems="center" mb="40px">
-                    <VuiTypography variant="button" color="success" fontWeight="bold">
+                    {/* <VuiTypography variant="button" color="success" fontWeight="bold">
                       +5% more{" "}
                       <VuiTypography variant="button" color="text" fontWeight="regular">
                         in 2021
                       </VuiTypography>
-                    </VuiTypography>
+                    </VuiTypography> */}
                   </VuiBox>
                   <VuiBox sx={{ height: "310px" }}>
                     <LineChart
                       lineChartOptions={lineChartOptionsDashboard}
+                      newprice={New_price?.price?.toFixed(2)}
                     />
                   </VuiBox>
                 </VuiBox>

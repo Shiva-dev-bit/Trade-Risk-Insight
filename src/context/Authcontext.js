@@ -37,6 +37,8 @@ export const AuthProvider = ({ children }) => {
     setStockData(data);
   };
 
+  
+
   return (
     <AuthContext.Provider value={{ session, stockData, storeStockData }}>
       {children}

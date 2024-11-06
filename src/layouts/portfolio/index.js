@@ -1,4 +1,7 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
+// import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
+// import { Button } from '@mui/material';
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import { supabase } from "lib/supabase";
 import React, { useContext, useEffect, useState } from "react";
@@ -6,12 +9,14 @@ import axios from "axios";
 import StockList from "./components/StockList";
 import Header from "./components/Header";
 import { AuthContext } from "context/Authcontext";
+import VuiBox from "components/VuiBox";
+import VuiTypography from "components/VuiTypography";
+import Footer from "examples/Footer";
 
 const Portfolio = () => {
   const [stocks, setStocks] = useState([]);
   const [userData, setUserData] = useState();
-  const [userId, setUserId] = useState(null); // Store userId dynamically
-  // console.log("userDatauserData", userData);
+  const [userId, setUserId] = useState(null);
 
   const { session } = useContext(AuthContext);
 
@@ -62,70 +67,6 @@ const Portfolio = () => {
       return {};
     }
   };
-
-  // const fetchUserStocks = async () => {
-  //   if (!userId) return;
-
-  //   const { data, error } = await supabase
-  //     .from("userPortfolio")
-  //     .select(
-  //       `
-  //       portfolio_id,
-  //       stock_id,
-  //       quantity,
-  //       average_price,
-  //       symbol,
-  //       exchange,
-  //       is_deleted_yn,
-  //       stocks(*),
-  //       users(*)
-  //     `
-  //     )
-  //     .eq("user_id", userId)
-  //     .eq("is_deleted_yn", false);
-
-  //   if (error) {
-  //     console.error("Error fetching stocks:", error);
-  //     return;
-  //   }
-
-  //   // Fetch prices for all stocks
-  //   const enrichedStocks = await Promise.all(
-  //     data.map(async (item) => {
-  //       const stockSymbol = item?.symbol ? item?.symbol : item?.stocks?.symbol;
-  //       const stockExchange = item?.exchange ? item?.exchange : item?.stocks?.exchange;
-  //       let priceData = null;
-
-  //       if (item.stock_id) {
-  //         const { data: latestPrice, error: priceError } = await supabase
-  //           .from("price")
-  //           .select("price")
-  //           .eq("symbol", stockSymbol)
-  //           .eq("exchange", stockExchange);
-
-  //         if (priceError) {
-  //           console.error("Error fetching price:", priceError);
-  //           const apiData = await fetchStockFromAPI(stockSymbol, stockExchange);
-  //           priceData = apiData[0]?.close;
-  //         } else {
-  //           priceData = latestPrice[0]?.price;
-  //         }
-  //       } else {
-  //         const stockData = await fetchStockFromAPI(stockSymbol, stockExchange);
-  //         priceData = stockData[0]?.close;
-  //       }
-
-  //       return {
-  //         ...item,
-  //         live_price: priceData,
-  //         symbol: stockSymbol,
-  //         exchange: stockExchange,
-  //       };
-  //     })
-  //   );
-
-  //   setStocks(enrichedStocks);
-  // };
 
   const fetchUserStocks = async () => {
     if (!userId) return;
@@ -256,16 +197,99 @@ const Portfolio = () => {
 
   return (
     <DashboardLayout>
-      <Box display="flex" flexDirection="column" gap={2}>
-        <Header username={userData?.username} email={userData?.email} />
-        <StockList
-          stocks={stocks}
-          fetchUserStocks={fetchUserStocks}
-          fetchStockFromAPI={fetchStockFromAPI}
-        />
-      </Box>
+      {userId ? (
+        <Box display="flex" flexDirection="column" gap={2}>
+          <Header username={userData?.username} email={userData?.email} />
+          <StockList
+            stocks={stocks}
+            fetchUserStocks={fetchUserStocks}
+            fetchStockFromAPI={fetchStockFromAPI}
+          />
+        </Box>
+      ) : (
+        <Box my={"15%"} mx={"28%"} sx={{ height: "27vh" }}>
+          <Button
+            component={Link}
+            variant="contained"
+            to="/authentication/sign-in"
+            sx={{ background: "#0047AB", fontSize: "15px" }}
+          >
+            Sign in to add your stocks in portfolio or to see the existing stocks you added
+          </Button>
+        </Box>
+      )}
+      <Footer />
     </DashboardLayout>
   );
 };
 
 export default Portfolio;
+
+// import { Box } from "@mui/material";
+// import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
+// import { supabase } from "lib/supabase";
+// import React, { useContext, useEffect, useState } from "react";
+// import StockList from "./components/StockList";
+// import Header from "./components/Header";
+// import { AuthContext } from "context/Authcontext";
+// import Footer from "examples/Footer";
+// import { useStockContext } from "context/StockContext"; // Import the StockContext
+
+// const Portfolio = () => {
+//   const { session } = useContext(AuthContext);
+//   const { stocks, fetchUserStocks } = useStockContext();
+//   const [userId, setUserId] = useState(null);
+//   const [userData, setUserData] = useState();
+
+//   const getUserData = async () => {
+//     if (!session?.user?.email) return;
+
+//     const { data: userMail, error } = await supabase
+//       .from("users")
+//       .select("user_id")
+//       .eq("email", session?.user?.email)
+//       .single();
+
+//     if (error) {
+//       console.error("Error fetching user id:", error);
+//       return;
+//     }
+
+//     const { data: userdatas, error: userdataError } = await supabase
+//       .from("users")
+//       .select("*")
+//       .eq("email", session?.user?.email)
+//       .single();
+
+//     if (userdataError) {
+//       console.error("Error fetching user data:", userdataError);
+//       return;
+//     }
+
+//     if (userMail) {
+//       setUserId(userMail?.user_id);
+//       setUserData(userdatas);
+//     }
+//   };
+
+//   useEffect(() => {
+//     getUserData();
+//   }, [session]);
+
+//   useEffect(() => {
+//     if (userId) {
+//       fetchUserStocks(userId); // Call the fetchUserStocks with userId
+//     }
+//   }, [userId, fetchUserStocks]);
+
+//   return (
+//     <DashboardLayout>
+//       <Box display="flex" flexDirection="column" gap={2}>
+//         <Header username={userData?.username} email={userData?.email} />
+//         <StockList stocks={stocks} fetchUserStocks={fetchUserStocks} />
+//       </Box>
+//     </DashboardLayout>
+//   );
+// };
+
+// export default Portfolio;

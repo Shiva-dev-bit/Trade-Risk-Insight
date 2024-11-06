@@ -14,7 +14,7 @@ const StockPrice = ({ symbol, mic_code, percent_change, close, source }) => {
   }, [symbol, mic_code, close, percent_change, source]);
 
   const formattedPrice = useMemo(() => {
-    if (priceData === null) return "--";
+    if (priceData === null || isNaN(priceData)) return "--";
     return new Intl.NumberFormat("en-IN", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
@@ -27,8 +27,12 @@ const StockPrice = ({ symbol, mic_code, percent_change, close, source }) => {
 
   return (
     <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-      <Typography sx={{ color: "white", fontSize: "16px" }}>{formattedPrice}</Typography>
-      {percentageChange !== null && (
+      {formattedPrice !== "--" ? (
+        <Typography sx={{ color: "white", fontSize: "16px" }}>{formattedPrice}</Typography>
+      ) : (
+        <Typography sx={{ color: "white", fontSize: "16px", marginRight: "40px" }}>-</Typography>
+      )}
+      {percentageChange !== null && !isNaN(percentageChange) ? (
         <Typography
           sx={{
             color,
@@ -39,6 +43,18 @@ const StockPrice = ({ symbol, mic_code, percent_change, close, source }) => {
         >
           {percentageChange > 0 ? <FaCaretUp /> : <FaCaretDown />}
           {Math.abs(percentageChange).toFixed(2)}%
+        </Typography>
+      ) : (
+        <Typography
+          sx={{
+            color,
+            fontSize: "16px",
+            display: "flex",
+            alignItems: "center",
+            marginRight: "25px",
+          }}
+        >
+          -
         </Typography>
       )}
     </Box>
