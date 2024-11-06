@@ -38,7 +38,6 @@ import {
 import team2 from "assets/images/team-2.jpg";
 import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
 import {
-  Alert,
   Box,
   Button,
   Checkbox,
@@ -48,8 +47,6 @@ import {
   ListItemIcon,
   MenuItem,
   Modal,
-  Snackbar,
-  SnackbarContent,
   TextField,
   Typography,
 } from "@mui/material";
@@ -60,15 +57,7 @@ import axios from "axios";
 import { Add, Logout } from "@mui/icons-material";
 import { AuthContext } from "context/Authcontext";
 
-function DashboardNavbar({
-  absolute,
-  light,
-  isMini,
-  handleClickStock,
-  addStockPortfolio,
-  fetchUserStocks,
-  fetchStockFromAPI,
-}) {
+function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPortfolio }) {
   const [navbarType, setNavbarType] = useState();
   const [controller, dispatch] = useVisionUIController();
   const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator } = controller;
@@ -255,6 +244,7 @@ function DashboardNavbar({
 
   const handleClose = () => {
     setAnchorEl(null);
+    location.reload();
   };
 
   const handleLogout = async () => {
@@ -345,9 +335,7 @@ function DashboardNavbar({
     setOpenModal(false);
     setQuantity(""); // Reset fields
     setAveragePrice("");
-    setSelectedStock(null); // Clear selected stock
-    fetchUserStocks();
-    // fetchStockFromAPI();
+    setSelectedStock(null);
   };
 
   return (
@@ -446,7 +434,7 @@ function DashboardNavbar({
                       filteredData.map((item, index) => (
                         <Box
                           key={`${item.symbol}-${index}`}
-                          sx={{ px: 1, py: 0.1, color: "white !important" }}
+                          sx={{ px: 3, py: 0.1, color: "white !important" }}
                           onClick={() => {
                             handleClickStock(item);
                             setSearchTerm("");
@@ -460,8 +448,10 @@ function DashboardNavbar({
                                 {item.company_name}
                               </Box>
                               <Box sx={{ display: "flex", gap: "2rem", pr: 10 }}>
-                                <Box sx={{ fontSize: "13px" }}>{item.exchange}</Box>
-                                <Box sx={{ fontSize: "13px" }}>
+                                <Box sx={{ fontSize: "14px", fontWeight: 900 }}>
+                                  {item.exchange}
+                                </Box>
+                                <Box sx={{ fontSize: "14px", fontWeight: 900 }}>
                                   {isDefaultActive && item.currency === "INR" ? "" : item.currency}
                                 </Box>
                               </Box>
@@ -475,7 +465,7 @@ function DashboardNavbar({
                                     borderRadius: "10px",
                                     letterSpacing: "0.4px",
                                     fontSize: "16px",
-                                    fontWeight: 400,
+                                    fontWeight: 600,
                                   }}
                                 >
                                   {item.symbol}
@@ -515,9 +505,9 @@ function DashboardNavbar({
                                       open={openModal}
                                       onClose={handleModalClose}
                                       disableEnforceFocus
-                                      BackdropProps={{
-                                        style: { backgroundColor: "rgba(0, 0, 0, 0.5)" },
-                                      }}
+                                      // BackdropProps={{
+                                      //   style: { backgroundColor: "rgba(0, 0, 0, 0.5)" },
+                                      // }}
                                     >
                                       <Box
                                         onClick={(e) => e.stopPropagation()}

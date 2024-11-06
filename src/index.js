@@ -24,16 +24,19 @@ import App from "App";
 // UI Risk LENS AI Dashboard React Context Provider
 import { VisionUIControllerProvider } from "context";
 import { AuthProvider } from "context/Authcontext";
+import { StockProvider } from "context/StockContext";
 
-const rootElement = document.getElementById('root');
+const rootElement = document.getElementById("root");
 const root = createRoot(rootElement);
 
-
-root.render(<BrowserRouter>
-  <VisionUIControllerProvider>
-    <AuthProvider> 
-      <App />
-    </AuthProvider>
-  </VisionUIControllerProvider>
-</BrowserRouter>)
-
+root.render(
+  <BrowserRouter>
+    <VisionUIControllerProvider>
+      <AuthProvider>
+        <StockProvider>
+          <App />
+        </StockProvider>
+      </AuthProvider>
+    </VisionUIControllerProvider>
+  </BrowserRouter>
+);

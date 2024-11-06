@@ -53,6 +53,7 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import { supabase } from "lib/supabase";
 import { Snackbar, SnackbarContent } from "@mui/material";
 import axios from "axios";
+import { useStockContext } from "context/StockContext";
 
 export default function App() {
   const [controller, dispatch] = useVisionUIController();
@@ -61,6 +62,7 @@ export default function App() {
   const [rtlCache, setRtlCache] = useState(null);
   const { pathname } = useLocation();
   const { session, storeStockData } = useContext(AuthContext);
+  const { fetchUserStocks } = useStockContext();
 
   // Cache for the rtl
   useMemo(() => {
@@ -129,8 +131,6 @@ export default function App() {
       return null;
     });
 
-
-
   // let userId = 1;
   const [userId, setUserId] = useState(null);
   const getUserData = async () => {
@@ -153,7 +153,7 @@ export default function App() {
   };
 
   const handleClickStock = (getStock) => {
-    console.log("getStock before storing:", getStock); // Log the input
+    // console.log("getStock before storing:", getStock); 
     if (getStock) {
       storeStockData(getStock);
     } else {
@@ -162,114 +162,6 @@ export default function App() {
   };
 
   const [stocks, setStocks] = useState([]);
-
-  const fetchUserStocks = async () => {
-    if (!userId) return;
-
-    const { data, error } = await supabase
-      .from("userPortfolio")
-      .select(
-        `
-        portfolio_id,
-        stock_id,
-        quantity,
-        average_price,
-        symbol,
-        exchange,
-        is_deleted_yn,
-        stocks(*),
-        users(*)
-      `
-      )
-      .eq("user_id", userId)
-      .eq("is_deleted_yn", false);
-
-    if (error) {
-      console.error("Error fetching stocks:", error);
-      return;
-    }
-
-    // Fetch prices for all stocks
-    //   const enrichedStocks = await Promise.all(
-    //     data.map(async (item) => {
-    //       const stockSymbol = item?.symbol ? item?.symbol : item?.stocks?.symbol;
-    //       const stockExchange = item?.exchange ? item?.exchange : item?.stocks?.exchange;
-    //       let priceData = null;
-
-    //       if (item.stock_id) {
-    //         const { data: latestPrice, error: priceError } = await supabase
-    //           .from("price")
-    //           .select("price")
-    //           .eq("symbol", stockSymbol)
-    //           .eq("exchange", stockExchange);
-
-    //         if (priceError) {
-    //           console.error("Error fetching price:", priceError);
-    //           const apiData = await fetchStockFromAPI(stockSymbol, stockExchange);
-    //           priceData = apiData[0]?.close;
-    //         } else {
-    //           priceData = latestPrice[0]?.price;
-    //         }
-    //       } else {
-    //         // Fetch from external API if no stock_id
-    //         const stockData = await fetchStockFromAPI(stockSymbol, stockExchange);
-    //         priceData = stockData[0]?.close;
-    //       }
-
-    //       return {
-    //         ...item,
-    //         live_price: priceData,
-    //         symbol: stockSymbol,
-    //         exchange: stockExchange,
-    //       };
-    //     })
-    //   );
-
-    //   setStocks(enrichedStocks);
-    // };
-
-    const enrichedStocks = await Promise.all(
-      data.map(async (item) => {
-        const stockSymbol = item?.symbol ? item?.symbol : item?.stocks?.symbol;
-        const stockExchange = item?.exchange ? item?.exchange : item?.stocks?.exchange;
-        let priceData = null;
-
-        if (item.stock_id) {
-          const { data: latestPrice, error: priceError } = await supabase
-            .from("price")
-            .select("price")
-            .eq("symbol", stockSymbol)
-            .eq("exchange", stockExchange);
-
-          if (priceError) {
-            console.error("Error fetching price:", priceError);
-            const apiData = await fetchStockFromAPI(stockSymbol, stockExchange);
-            priceData = apiData[0]?.close;
-          } else {
-            priceData = latestPrice[0]?.price;
-          }
-        } else {
-          const stockData = await fetchStockFromAPI(stockSymbol, stockExchange);
-          priceData = stockData[0]?.close;
-        }
-
-        return {
-          ...item,
-          live_price: priceData,
-          symbol: stockSymbol,
-          exchange: stockExchange,
-        };
-      })
-    );
-
-    setStocks(enrichedStocks);
-  };
-
-  useEffect(() => {
-    if (userId) {
-      fetchUserStocks();
-    }
-  }, [userId]);
 
   const fetchStockFromAPI = async (symbol, exchange) => {
     try {
@@ -299,63 +191,6 @@ export default function App() {
       backgroundColor: "#808080",
     },
   };
-
-  // const addStockPortfolio = async (stock) => {
-  //   if (!userId) return;
-
-  //   const stockIdentifier = {
-  //     symbol: stock?.stock?.symbol,
-  //     exchange: stock?.stock?.exchange,
-  //   };
-
-  //   console.log("stockIdentifier", stockIdentifier);
-
-  //   // Step 1: Check if the stock with the same symbol and exchange exists in the portfolio
-  //   const { data: existingStock, error: fetchError } = await supabase
-  //     .from("userPortfolio")
-  //     .select("*")
-  //     .eq("user_id", userId) // Ensure it belongs to the correct user
-  //     .eq("symbol", stockIdentifier.symbol)
-  //     .eq("exchange", stockIdentifier.exchange)
-  //     .single();
-
-  //   if (fetchError && fetchError.code !== "PGRST116") {
-  //     console.error("Error fetching stock:", fetchError);
-  //     return;
-  //   }
-
-  //   if (existingStock) {
-  //     console.log("Stock already exists in the portfolio:", existingStock);
-  //     setSnackbarMessage(`${stock?.stock?.company_name} already exists in your portfolio.`);
-  //     setColorstatus("existing");
-  //     setSnackbarOpen(true); // Open Snackbar when stock exists
-  //     return;
-  //   }
-
-  //   // Step 2: Insert the stock if it doesn't exist
-  //   const { data, error } = await supabase.from("userPortfolio").insert([
-  //     {
-  //       user_id: userId,
-  //       quantity: stock.quantity || 0,
-  //       average_price: stock.averagePrice || 0,
-  //       is_deleted_yn: false,
-  //       ...stockIdentifier, // Spread the symbol and exchange
-  //     },
-  //   ]);
-
-  //   if (error) {
-  //     console.error("Error adding stock:", error);
-  //     setColorstatus("error");
-  //   } else {
-  //     console.log("Stock added successfully:", data);
-  //     setColorstatus("success");
-
-  //     setSnackbarMessage(`${stock?.stock?.company_name} has been added to your portfolio!`);
-  //     setSnackbarOpen(true); // Open Snackbar when stock is added
-  //     fetchUserStocks(); // Refresh the user's portfolio
-  //     location.reload();
-  //   }
-  // };
 
   const addStockPortfolio = async (stock) => {
     console.log("Attempting to add stock:", stock);
@@ -412,9 +247,10 @@ export default function App() {
       console.log("Stock added successfully:", data);
       setColorstatus("success");
       setSnackbarMessage(`${stock?.stock?.company_name} has been added to your portfolio!`);
-      setSnackbarOpen(true);
+      setSnackbarOpen(false);
 
       // Refresh user's stock portfolio
+      // location.reload();
       fetchUserStocks();
     }
   };
@@ -490,7 +326,6 @@ export default function App() {
               <DashboardNavbar
                 addStockPortfolio={addStockPortfolio}
                 handleClickStock={handleClickStock}
-                fetchUserStocks={fetchUserStocks}
                 // fetchStockFromAPI={fetchStockFromAPI}
               />
               {snackbarOpen && (
