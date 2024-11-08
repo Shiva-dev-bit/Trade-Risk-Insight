@@ -53,7 +53,7 @@ const LineChart = ({ newprice }) => {
       setLoading(true);
       setError(null);
       const response = await fetch(
-        `https://22eb-223-178-82-244.ngrok-free.app/stock_graph/${selectedSymbol}/${timePeriod}/${selectedExchange}`
+        `http://172.235.16.92:8000/stock_graph/${selectedSymbol}/${timePeriod}/${selectedExchange}`
       );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -518,7 +518,7 @@ export default LineChart;
 //       setLoading(true);
 //       setError(null);
 //       const response = await fetch(
-//         `https://22eb-223-178-82-244.ngrok-free.app/stock_graph/${selectedSymbol}/${timePeriod}/${selectedExchange}`
+//         `http://172.235.16.92:8000/stock_graph/${selectedSymbol}/${timePeriod}/${selectedExchange}`
 //       );
 //       if (!response.ok) {
 //         throw new Error(`HTTP error! status: ${response.status}`);

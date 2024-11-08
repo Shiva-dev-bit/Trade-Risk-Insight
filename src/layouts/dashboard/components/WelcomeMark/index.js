@@ -5,6 +5,7 @@ import VuiTypography from "components/VuiTypography";
 import { supabase } from "lib/supabase";
 import gif from "assets/images/cardimgfree.png";
 import CloseIcon from '@mui/icons-material/Close';
+import axios from "axios";
 
 const WelcomeMark = ({ stocksData }) => {
 
@@ -25,6 +26,8 @@ const WelcomeMark = ({ stocksData }) => {
     country: '',
     micCode: ''
   });
+
+  
   
 
   const [open, setOpen] = useState(false);
@@ -45,52 +48,31 @@ const WelcomeMark = ({ stocksData }) => {
 
   const fetchProfile = async (symbol) => {
     try {
-      const { data, error } = await supabase
-        .from('companyProfile')
-        .select('*')
-        .eq('symbol', symbol);
-
-      if (error) {
-        console.error('Error fetching profile:', error);
-      } else if (data && data.length > 0) {
-        const profile = data[0];
-        setCompanyData({
-          companyDescription: profile.company_description,
-          CEO: profile.ceo,
-          numberOfEmployees: profile.number_of_employees,
-          address: profile.address,
-          address2: profile.address2,
-          city: profile.city,
-          state: profile.state,
-          zip: profile.zip,
-          phone: profile.phone,
-          website: profile.website,
-          instrumentType: profile.instrument_type,
-          sector: profile.sector,
-          industry: profile.industry,
-          country: profile.country,
-          micCode: profile.mic_code
-        });
-      } else {
         // Reset company data if no data is found
+
+        console.log('symbol',symbol);
+        const response = await axios.get(`http://172.235.16.92:8000/company-profile/${symbol}/${stocksData?.exchange}`);
+        const companyData = response.data;
+
+        console.log('companyData',companyData);
+
         setCompanyData({
-          companyDescription: '',
-          CEO: '',
-          numberOfEmployees: '',
-          address: '',
-          address2: '',
-          city: '',
-          state: '',
-          zip: '',
-          phone: '',
-          website: '',
-          instrumentType: '',
-          sector: '',
-          industry: '',
-          country: '',
-          micCode: ''
+          companyDescription: companyData?.description,
+          CEO: companyData?.CEO,
+          numberOfEmployees: companyData?.employees,
+          address: companyData?.address,
+          address2: companyData?.address2,
+          city: companyData?.city,
+          state: companyData?.state,
+          zip: companyData?.zip,
+          phone: companyData?.phone,
+          website: companyData?.website,
+          instrumentType: companyData?.instrumentType,
+          sector: companyData?.sector,
+          industry: companyData?.industry,
+          country: companyData?.country,
+          micCode: companyData?.mic_code
         });
-      }
     } catch (error) {
       console.error('Error with request:', error);
     }
@@ -133,7 +115,8 @@ const WelcomeMark = ({ stocksData }) => {
       px: "24px",
       backgroundSize: "cover",
       backgroundPosition: "50%",
-      height : '90%'
+      height : '90%',
+      fontSize : '10px'
     })}>
       <VuiBox height="100%" display="flex" flexDirection="column" justifyContent="space-between">
         <VuiBox>

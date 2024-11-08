@@ -8,6 +8,7 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [session, setSession] = useState(null);
   const [stockData, setStockData] = useState([]);
+  const [typeStock,setTypeStock] = useState('');
 
   useEffect(() => {
     const fetchSessionAndUser = async () => {
@@ -40,7 +41,7 @@ export const AuthProvider = ({ children }) => {
   
 
   return (
-    <AuthContext.Provider value={{ session, stockData, storeStockData }}>
+    <AuthContext.Provider value={{ session, stockData, storeStockData , setTypeStock}}>
       {children}
     </AuthContext.Provider>
   );

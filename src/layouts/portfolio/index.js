@@ -54,7 +54,7 @@ const Portfolio = () => {
   const fetchStockFromAPI = async (symbol, exchange) => {
     try {
       const response = await axios.get(
-        `https://22eb-223-178-82-244.ngrok-free.app/search/${symbol}`
+        `http://172.235.16.92:8000/search/${symbol}`
       );
       const data = response.data;
       const stockData = data.filter((stock) => stock?.exchange === exchange) || {};
