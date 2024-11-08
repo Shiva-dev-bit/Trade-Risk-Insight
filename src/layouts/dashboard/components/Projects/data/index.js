@@ -88,7 +88,7 @@ export default function data() {
       ),
       sentiment: (
         <VuiTypography variant="button" fontWeight="bold" sx={{color : item.sentiment > 0 ? "#24fc03" : "#db2c40"}}>
-          {item.sentiment > 0 ? '+'+item.sentiment.toFixed(2) : item.sentiment.toFixed(2)}
+          {item.sentiment > 0 ? '+'+item.sentiment : item.sentiment}
         </VuiTypography>
       ),
     })),

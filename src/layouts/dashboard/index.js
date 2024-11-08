@@ -69,7 +69,7 @@ import axios from "axios";
 function Dashboard() {
   const { gradients } = colors;
   const { cardContent } = gradients;
-  const stockData = useContext(AuthContext)
+  const stockData = useContext(AuthContext);
   const [stocks, setStocks] = useState([]);
   const [stocksPercent, setStocksPercent] = useState([]);
 
@@ -88,7 +88,7 @@ function Dashboard() {
     previous_close: "4075.25000",
     volume: "1934976",
     close: "4084.64990",
-    type: 'Common Stock',
+    type: "Common Stock",
     is_market_open: false,
     trading_date: "N/A",
     last_updated: "2024-10-30T14:37:05.098775",
@@ -161,10 +161,9 @@ const fetchStatistics = async () => {
   const fetchDailyStock = async () => {
     try {
       const { data, error } = await supabase
-        .from('stock_daily_summary')
-        .select('*')
-        .eq('trading_date', today);
-
+        .from("stock_daily_summary")
+        .select("*")
+        .eq("trading_date", today);
 
       if (error) throw error;
       if (data) setStocksPercent(data);
@@ -280,7 +279,7 @@ const fetchStatistics = async () => {
   
   return (
     <DashboardLayout>
-      <VuiBox py={3}>
+      <VuiBox>
         <VuiBox mb={3}>
           <Grid container spacing={1} alignItems="stretch">
             {/* First card with extra width */}
@@ -301,8 +300,7 @@ const fetchStatistics = async () => {
                   text: (
                     <>
                       {icon}
-                      {`${price_percent[0]?.price_change?.toFixed(2) || ""
-                        } 
+                      {`${price_percent[0]?.price_change?.toFixed(2) || ""} 
                 (${price_percent[0]?.percentage_change || ""}%)`}
                     </>
                   ),
@@ -343,9 +341,7 @@ const fetchStatistics = async () => {
               <MiniStatisticsCard
                 title={{ text: "Type of Stock", sx: { fontSize: "1.5rem" } }}
                 count={
-                  <span style={{ fontSize: "1.1rem", fontWeight: "bold" }}>
-                    {stocksData?.type}
-                  </span>
+                  <span style={{ fontSize: "1.1rem", fontWeight: "bold" }}>{stocksData?.type}</span>
                 }
                 icon={{ color: "info", component: getIcon("Type of Stock") }}
                 sx={{ width: "100%", height: "100%", minHeight: "120px" }}
@@ -382,7 +378,7 @@ const fetchStatistics = async () => {
                       </VuiTypography>
                     </VuiTypography> */}
                   </VuiBox>
-                  <VuiBox sx={{ height: "310px" }}>
+                  <VuiBox>
                     <LineChart
                       lineChartOptions={lineChartOptionsDashboard}
                       newprice={New_price?.price?.toFixed(2)}
@@ -396,7 +392,6 @@ const fetchStatistics = async () => {
                 <VuiBox>
                   <VuiBox
                     mb="24px"
-                    height="220px"
                     sx={{
                       background: linearGradient(
                         cardContent.main,

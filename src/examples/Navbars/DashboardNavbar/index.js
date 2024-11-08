@@ -354,7 +354,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
               <Box
                 sx={(theme) => ({
                   backgroundColor: "info.main !important",
-                  width: "820px",
+                  width: "800px",
                   position: "relative",
                   [theme.breakpoints.down("sm")]: { maxWidth: "80px" },
                 })}

@@ -75,13 +75,18 @@ const StockList = ({ stocks, fetchUserStocks }) => {
   };
 
   const formatPrice = (price) => {
-    // console.log("price", price);
-    if (!price) return "-";
+    if (!price || isNaN(price)) return "-";
     return new Intl.NumberFormat("en-IN", {
       style: "currency",
       currency: "INR",
-      maximumFractionDigits: 2,
+      // maximumFractionDigits: 2,
     }).format(price);
+  };
+
+  const formatPercent = (percent) => {
+    console.log("percentpercentpercent", percent);
+    if (isNaN(percent)) return "";
+    return `${percent >= 0 ? "+" : ""}${percent.toFixed(2)}%`;
   };
 
   const calculateProfit = (quantity, livePrice, averagePrice) => {
@@ -234,7 +239,8 @@ const StockList = ({ stocks, fetchUserStocks }) => {
                 {formatPrice(stock?.average_price)}
               </Typography>
               <Typography sx={{ color: "#fff", textAlign: "center", flex: 1, fontSize: "13px" }}>
-                {formatPrice(stock?.live_price) ? formatPrice(stock?.live_price) : "-"}
+                {/* {formatPrice(stock?.live_price) ? formatPrice(stock?.live_price) : "-"} */}
+                {formatPrice(stock?.live_price)}
               </Typography>
               <Typography sx={{ color: "#fff", textAlign: "center", flex: 1, fontSize: "13px" }}>
                 {formatPrice(totalInvestment)}
@@ -247,8 +253,10 @@ const StockList = ({ stocks, fetchUserStocks }) => {
                   textAlign: "center",
                 }}
               >
-                {formatPrice(profit)} ({percentGain >= 0 ? "+" : ""}
-                {percentGain.toFixed(2)}%)
+                {/* {formatPrice(profit)} ({percentGain >= 0 ? "+" : ""}
+                {isNaN(percentGain) ? "-%)" : `${percentGain.toFixed(2)}%`} */}
+                {formatPrice(profit)}{" "}
+                {formatPercent(percentGain) ? `${formatPercent(percentGain)}` : ""}
               </Typography>
               <Typography sx={{ color: "#fff", textAlign: "center", flex: 1, fontSize: "13px" }}>
                 {formatPrice(totalValue)}

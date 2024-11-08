@@ -9,8 +9,6 @@ import axios from "axios";
 import StockList from "./components/StockList";
 import Header from "./components/Header";
 import { AuthContext } from "context/Authcontext";
-import VuiBox from "components/VuiBox";
-import VuiTypography from "components/VuiTypography";
 import Footer from "examples/Footer";
 
 const Portfolio = () => {
