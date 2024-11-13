@@ -786,47 +786,25 @@ const LineChart = ({ newprice }) => {
   };
 
   const updateChartWithNewPrice = (currentData, newPrice, timezone) => {
-    if (!currentData[0]?.data?.length || typeof newPrice !== "number") {
-      // console.log("typeof newPrice", typeof newPrice);
-      // console.log("!currentData[0]?.data?.length", !currentData[0]?.data?.length);
-      // console.log("currentDatacurrentData", currentData);
-      return currentData;
-    }
-
     const currentTime = moment().tz(timezone);
+  
+    // Only proceed if newPrice is valid
+    if (typeof newPrice !== "number") return currentData;
+  
     const updatedData = [...currentData];
-
-    // Only proceed if the price has changed
-    if (lastPriceRef.current !== newPrice) {
-      const lastDataPoint = updatedData[0].data[updatedData[0].data.length - 1];
-
-      // Create a new candle
-      const newDataPoint = {
-        x: currentTime.valueOf(),
-        y: [
-          lastDataPoint
-            ? parseFloat(lastDataPoint.y[3]).toFixed(2)
-            : parseFloat(newPrice).toFixed(2), // Open (previous close or current price)
-          parseFloat(newPrice).toFixed(2), // High
-          parseFloat(newPrice).toFixed(2), // Low
-          parseFloat(newPrice).toFixed(2), // Close
-        ].map(Number),
-      };
-
-      // Add the new candle
-      updatedData[0].data.push(newDataPoint);
-
-      // Keep only today's data
-      const startOfDay = currentTime.clone().startOf("day");
-      updatedData[0].data = updatedData[0].data.filter((point) =>
-        moment(point.x).isSameOrAfter(startOfDay)
-      );
-
-      lastPriceRef.current = newPrice;
-    }
-
+  
+    // Create a new data point for the line chart
+    const newDataPoint = {
+      x: currentTime.valueOf(),  // Timestamp of the new price
+      y: newPrice,  // New price value (e.g., closing price)
+    };
+  
+    // Add the new data point to the chart data
+    updatedData[0].data.push(newDataPoint);
+  
     return updatedData;
   };
+  
 
   const fetchData = async (timePeriod) => {
     try {
@@ -857,26 +835,21 @@ const LineChart = ({ newprice }) => {
         }
       }
 
+      console.log("processedValues", processedValues);
+
       const formattedData = [
         {
           name: "Price",
-          data: processedValues
-            .map((item) => ({
-              x: moment.tz(item.datetime, data.meta.exchange_timezone).valueOf(),
-              y: [
-                parseFloat(item.open),
-                parseFloat(item.high),
-                parseFloat(item.low),
-                parseFloat(item.close),
-              ],
-            }))
-            .filter((item) => !item.y.some((val) => val === null || isNaN(val))),
+          data: processedValues.map((item) => ({
+            x: moment.tz(item.datetime, data.meta.exchange_timezone).valueOf(), // Timestamp
+            y: parseFloat(item.close),  // Closing price
+          })),
         },
       ];
 
       const options = {
         chart: {
-          type: "line",
+          type: "line",  // Line chart type
           toolbar: {
             show: false,
           },
@@ -889,26 +862,17 @@ const LineChart = ({ newprice }) => {
           },
         },
         xaxis: {
-          type: "datetime",
+          type: "datetime",  // The x-axis is based on time
           labels: {
-            style: {
-              colors: "#c8cfca",
-              fontSize: "10px",
-            },
             formatter: getDateTimeFormatter(timePeriod, data.meta.exchange_timezone),
           },
-          tickAmount: timePeriod === "1m" ? 10 : undefined,
         },
         yaxis: {
           tooltip: {
             enabled: true,
           },
           labels: {
-            style: {
-              colors: "#c8cfca",
-              fontSize: "10px",
-            },
-            formatter: (value) => value.toFixed(2),
+            formatter: (value) => value.toFixed(2),  // Display price with two decimal places
           },
           forceNiceScale: true,
         },
@@ -922,15 +886,17 @@ const LineChart = ({ newprice }) => {
           strokeDashArray: 5,
           borderColor: "#56577A",
         },
-        plotOptions: {
-          candlestick: {
-            colors: {
-              upward: "#26C281",
-              downward: "#ed3419",
-            },
-          },
-        },
       };
+      
+      const series = [
+        {
+          name: "Price",
+          data: processedValues.map((item) => ({
+            x: moment.tz(item.datetime, data.meta.exchange_timezone).valueOf(), // Timestamp
+            y: parseFloat(item.close),  // Close price for line chart
+          })),
+        },
+      ];
 
       if (timePeriod === "1d" && processedValues.length === 0) {
         setError("No data available for today");
@@ -949,6 +915,14 @@ const LineChart = ({ newprice }) => {
   useEffect(() => {
     fetchData(timePeriod);
   }, [timePeriod, stockData]);
+
+  useEffect(() => {
+    if (newprice && timeZoneRef.current) {
+      setChartData(prevData => {
+        return updateChartWithNewPrice(prevData, newprice, timeZoneRef.current);
+      });
+    }
+  }, [newprice]);
 
   // useEffect(() => {
   //   if (newprice && timeZoneRef.current && timePeriod === "1d") {
@@ -1051,9 +1025,10 @@ const LineChart = ({ newprice }) => {
       </div>
       {chartData[0]?.data?.length > 0 ? (
         <ReactApexChart
+        // key={JSON.stringify(chartData)}
           options={chartOptions}
           series={chartData}
-          type="candlestick"
+          type="line"
           width="100%"
           height="100%"
         />

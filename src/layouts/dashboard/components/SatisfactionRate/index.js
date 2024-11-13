@@ -44,7 +44,7 @@ const SatisfactionRate = () => {
       <VuiBox display="flex" flexDirection="column" padding={2} sx={{ textAlign: 'center' }}>
         <VuiBox>
           <VuiTypography variant="h5" color="white" fontWeight="bold" mb="10px">
-            Volatility Score - {data?.metrics?.volatility_percentile?.toFixed(2)}
+            Volatility Score - {data?.metrics?.volatility_percentile?.toFixed(2)*100}%
           </VuiTypography>
         </VuiBox>
         <VuiBox sx={{ alignSelf: "center", justifySelf: "center", zIndex: "-1" }}>
@@ -123,14 +123,14 @@ const SatisfactionRate = () => {
             sx={{ minWidth: "80px" }}
           >
             <VuiTypography color="white" variant="h5">
-              {data?.metrics?.volatility_percentile?.toFixed(2)}%
+              {data?.metrics?.volatility_percentile?.toFixed(2)*100}%
             </VuiTypography>
             <VuiTypography color="text" variant="caption" fontWeight="regular" sx={{ fontSize: '10px' }}>
               Based on Stocks
             </VuiTypography>
           </VuiBox>
           <VuiTypography color="text" variant="caption" display="inline-block" fontWeight="regular">
-            1%
+            100%
           </VuiTypography>
         </VuiBox>
       </VuiBox>
