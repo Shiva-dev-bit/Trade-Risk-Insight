@@ -33,8 +33,8 @@ export default function data() {
   
   const fetchNews = async () => {
     let api = 'http://172.235.16.92:8000/news/general';
-    if(stockData?.symbol){
-      api = `http://172.235.16.92:8000/news/stock/${stockData?.symbol}`;
+    if(stockData?.company_name){
+      api = `http://172.235.16.92:8000/news/stock/${stockData?.company_name}`;
     }
    
     try {
@@ -46,7 +46,7 @@ export default function data() {
         console.log("News data", data);
       } else{
         console.log("No news data");
-        api = `http://172.235.16.92:8000/news/stock/${stockData?.company_name}`;
+        api = `http://172.235.16.92:8000/news/stock/${stockData?.symbol}`;
         const response = await axios.get(api);
         const data = response.data;
 
@@ -73,7 +73,7 @@ export default function data() {
         <>
           <VuiTypography variant="button" fontWeight="medium" color="white">
             <a href={item.url} target="_blank" rel="noopener noreferrer" style={{ color: "inherit", textDecoration: "none" }}>
-              {item.title.substring(0, 60)}
+              {item.title.substring(0, 50)}
             </a>
           </VuiTypography>
           <VuiTypography variant="body2" color="white">

@@ -876,7 +876,7 @@ const LineChart = ({ newprice }) => {
 
       const options = {
         chart: {
-          type: "candlestick",
+          type: "line",
           toolbar: {
             show: false,
           },

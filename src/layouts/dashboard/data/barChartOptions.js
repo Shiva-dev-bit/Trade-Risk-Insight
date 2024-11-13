@@ -67,9 +67,6 @@ export const barChartOptionsDashboard = {
   grid: {
     show: false,
   },
-  fill: {
-    colors: "#fff",
-  },
   dataLabels: {
     enabled: false,
   },

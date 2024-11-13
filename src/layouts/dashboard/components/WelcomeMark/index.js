@@ -104,7 +104,7 @@ const WelcomeMark = ({ stocksData }) => {
   }, [stocksData]);
 
   const getShortDescription = (description) => {
-    return description.length > 120 ? description.substring(0, 120) + '...' : description;
+    return description?.length > 120 ? description.substring(0, 120) + '...' : description;
   };
 
   // console.log(companyData.website);

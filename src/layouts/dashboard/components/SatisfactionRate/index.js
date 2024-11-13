@@ -7,6 +7,9 @@ import { IoHappy, IoSad } from "react-icons/io5";
 import { FaFaceSmile } from "react-icons/fa6";
 import colors from "assets/theme/base/colors";
 import linearGradient from "assets/theme/functions/linearGradient";
+import { AuthContext } from "context/Authcontext";
+import { useContext } from "react";
+
 
 const SatisfactionRate = () => {
   const { info, gradients } = colors;
@@ -14,10 +17,14 @@ const SatisfactionRate = () => {
 
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const stockData = useContext(AuthContext);
+
+  console.log('Volatility', data);
+
 
   useEffect(() => {
     axios
-      .get("https://8fc9-223-178-85-213.ngrok-free.app/volatility/TCS")
+      .get(`http://172.235.16.92:8000/volatility/${stockData?.stockData?.symbol}`)
       .then((response) => {
         setData(response.data.data);
         setLoading(false);
@@ -26,41 +33,29 @@ const SatisfactionRate = () => {
         console.error("Error fetching data:", error);
         setLoading(false);
       });
-  }, []);
+  }, [stockData?.stockData?.symbol]);
 
   if (loading) return <CircularProgress />;
 
-  // const { summary, symbol } = data;
-  const summary = "",
-    symbol = "";
   const satisfactionRate = 5;
 
   return (
     <Card sx={{ height: "100%" }}>
-      <VuiBox display="flex" flexDirection="column" padding={2}>
-        <VuiTypography variant="h5" color="white" fontWeight="bold" mb="10px">
-          {/* {symbol}  */}
-          Volatility Score
-        </VuiTypography>
-        <VuiBox display="flex" justifyContent="space-between" mb={3}>
-          <VuiBox>
-            <VuiTypography variant="h6" color="white">
-              Current Price: ${summary?.current_price?.toFixed(2)}
-            </VuiTypography>
-            <VuiTypography variant="body2" color="white">
-              Change: ${summary?.price_change?.toFixed(2)} (
-              {summary?.price_change_percent?.toFixed(2)}%)
-            </VuiTypography>
-          </VuiBox>
+      <VuiBox display="flex" flexDirection="column" padding={2} sx={{ textAlign: 'center' }}>
+        <VuiBox>
+          <VuiTypography variant="h5" color="white" fontWeight="bold" mb="10px">
+            Volatility Score - {data?.metrics?.volatility_percentile?.toFixed(2)}
+          </VuiTypography>
         </VuiBox>
         <VuiBox sx={{ alignSelf: "center", justifySelf: "center", zIndex: "-1" }}>
           <VuiBox sx={{ position: "relative", display: "inline-flex" }}>
             <CircularProgress
               variant="determinate"
-              value={satisfactionRate}
+              value={(data?.metrics?.volatility_percentile ?? 0) * 100}
               size={150}
               color="info"
             />
+
             <VuiBox
               sx={{
                 top: 0,
@@ -91,9 +86,9 @@ const SatisfactionRate = () => {
                   <IoSad size="30px" color="#ffac33" />
                 )} */}
 
-                {satisfactionRate === 50 ? (
+                {data?.metrics?.volatility_percentile === 1 ? (
                   <FaFaceSmile size="26px" color="#fff" />
-                ) : satisfactionRate > 50 ? (
+                ) : data?.metrics?.volatility_percentile > 0.5 ? (
                   <IoHappy size="30px" color="#fff" />
                 ) : (
                   <IoSad size="30px" color="#fff" />
@@ -127,15 +122,15 @@ const SatisfactionRate = () => {
             alignItems="center"
             sx={{ minWidth: "80px" }}
           >
-            <VuiTypography color="white" variant="h3">
-              {satisfactionRate}%
+            <VuiTypography color="white" variant="h5">
+              {data?.metrics?.volatility_percentile?.toFixed(2)}%
             </VuiTypography>
-            <VuiTypography color="text" variant="caption" fontWeight="regular">
-              Based on likes
+            <VuiTypography color="text" variant="caption" fontWeight="regular" sx={{ fontSize: '10px' }}>
+              Based on Stocks
             </VuiTypography>
           </VuiBox>
           <VuiTypography color="text" variant="caption" display="inline-block" fontWeight="regular">
-            100%
+            1%
           </VuiTypography>
         </VuiBox>
       </VuiBox>

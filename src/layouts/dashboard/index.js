@@ -73,6 +73,7 @@ function Dashboard() {
   const [stocks, setStocks] = useState([]);
   const [stocksPercent, setStocksPercent] = useState([]);
 
+
   const initialStockData = {
     symbol: "TCS",
     company_name: "Tata Consultancy Services Limited",
@@ -95,6 +96,8 @@ function Dashboard() {
   };
 
   const [stocksData, setStocksData] = useState(stockData?.stockData || initialStockData)
+  const [isConnected, setIsConnected] = useState(false);
+  const [error, setError] = useState(null);
 
   const [StatisticsData, setStatisticsData] = useState({
     statistics: {
@@ -108,24 +111,182 @@ function Dashboard() {
       },
     }
   });
-  
 
-
-const fetchStatistics = async () => {
-  try{
-    const response = await axios(`http://172.235.16.92:8000/statistics/${stocksData?.symbol}`);
-    const data = response.data;
-    
-    if(data){
-      console.log('staticsticsdata',data);
-      setStatisticsData(data);
-    }else{
-      console.log('No data available');
+  const [indicators, setIndicators] = useState({
+    "symbol": "TATAMOTORS",
+    "exchange": "NSE",
+    "current_price": 821.95,
+    "available_exchanges": [
+      "NSE",
+      "BSE"
+    ],
+    "signals": {
+      "symbol": "TATAMOTORS",
+      "exchange": "NSE",
+      "current_price": 821.95,
+      "timestamp": "2024-11-11T12:59:33.611653",
+      "signals": {
+        "macd": {
+          "datetime": "2024-11-11",
+          "macd": -34.32744,
+          "macd_signal": -34.05067,
+          "signal": "SELL"
+        },
+        "vwap": {
+          "datetime": "2024-11-11",
+          "vwap": 815.21665,
+          "current_price": 822,
+          "signal": "SELL"
+        },
+        "rsi": {
+          "datetime": "2024-11-11",
+          "rsi": 33.88858,
+          "signal": "SELL"
+        },
+        "sma": {
+          "datetime": "2024-11-11",
+          "sma": 829.32778,
+          "current_price": 822,
+          "signal": "SELL"
+        }
+      }
     }
-  }catch(error){
-    console.log('Error fetching statistics:', error);
   }
-}
+  )
+
+
+  const [chartConfig, setChartConfig] = useState({
+    barChartData: [],
+    barColors: [],
+    barChartOptions: {}
+  });
+
+  console.log('indicators', indicators);
+  console.log('chartConfig', chartConfig);
+
+  useEffect(() => {
+    if (!indicators) return;
+
+    let barChartData = [{
+      name: indicators?.symbol,
+      data: [
+        100, // Fixed height for MACD
+        100, // Fixed height for VWAP
+        100, // Fixed height for RSI
+        100  // Fixed height for SMA
+      ]
+    }];
+
+    let barColors = [
+      indicators?.signals?.signals?.macd?.signal === "SELL" ? '#ef4444' : '#22c55e',
+      indicators?.signals?.signals?.vwap?.signal === "SELL" ? '#ef4444' : '#22c55e',
+      indicators?.signals?.signals?.rsi?.signal === "SELL" ? '#ef4444' : '#22c55e',
+      indicators?.signals?.signals?.sma?.signal === "SELL" ? '#ef4444' : '#22c55e',
+    ];
+
+    let barChartOptions = {
+      chart: {
+        toolbar: {
+          show: false,
+        },
+        background: 'transparent'
+      },
+      tooltip: {
+        style: {
+          fontSize: "10px",
+          fontFamily: "Plus Jakarta Display",
+        },
+        theme: "dark",
+        y: {
+          formatter: function (value, { seriesIndex, dataPointIndex, w }) {
+            const values = [
+              indicators?.signals.signals.macd.macd,
+              indicators?.signals.signals.vwap.vwap,
+              indicators?.signals.signals.rsi.rsi,
+              indicators?.signals.signals.sma.sma
+            ];
+            return values[dataPointIndex]?.toFixed(2);
+          }
+        }
+      },
+      xaxis: {
+        categories: ["MACD", "VWAP", "RSI", "SMA"],
+        labels: {
+          style: {
+            colors: "#fff",
+            fontSize: "12px",
+          },
+        },
+      },
+      yaxis: {
+        show: false,
+        labels: {
+          style: {
+            colors: "#fff",
+            fontSize: "12px",
+          },
+        },
+      },
+      grid: {
+        show: false,
+      },
+      dataLabels: {
+        enabled: false,
+      },
+      plotOptions: {
+        bar: {
+          borderRadius: 8,
+          columnWidth: "30px",
+          distributed: true,
+        },
+      },
+      colors: barColors,
+      title: {
+        text: `Technical Indicators : ${indicators?.symbol}`,
+        style: {
+          color: "#fff",
+          fontSize: "16px",
+        },
+      }
+    };
+
+    setChartConfig({
+      barChartData,
+      barColors,
+      barChartOptions
+    });
+  }, [indicators]);
+
+  const fetchStatistics = async () => {
+    try {
+      const response = await axios(`http://172.235.16.92:8000/statistics/${stockData?.stockData?.symbol}`);
+      const data = response.data;
+
+      if (data) {
+        console.log('staticsticsdata', data);
+        setStatisticsData(data);
+      } else {
+        console.log('No data available');
+      }
+    } catch (error) {
+      console.log('Error fetching statistics:', error);
+    }
+  }
+
+  const fetchIndicators = async () => {
+    try {
+      const response = await axios(`http://172.235.16.92:8000/technical-analysis/${stockData?.stockData?.symbol}?exchange=${stockData?.stockData?.exchange}`);
+      const data = response.data;
+      if (data) {
+        console.log('indicators', data);
+        setIndicators(data);
+      } else {
+        console.log('No data available');
+      }
+    } catch (error) {
+      console.log('Error fetching statistics:', error);
+    }
+  }
 
 
   useEffect(() => {
@@ -133,11 +294,12 @@ const fetchStatistics = async () => {
       setStocksData(initialStockData);
     } else {
       fetchStatistics();
+      fetchIndicators();
       setStocksData(stockData.stockData);
     }
   }, [stockData]);
 
-  // console.log('Dashboard',stocksData);
+  console.log('Realtime stocks', stocks);
 
   var today = new Date();
   var dd = String(today.getDate()).padStart(2, "0");
@@ -145,14 +307,21 @@ const fetchStatistics = async () => {
   var yyyy = today.getFullYear();
 
   today = yyyy + "-" + mm + "-" + dd;
-  // console.log(today);
 
   const fetchStockData = async () => {
-    try {
-      const { data, error } = await supabase.from("price").select("*");
+    console.log('stocksData', stocksData?.symbol)
+    console.log('stockData', stocksData?.exchange)
+    console.log('stockData', today);
 
-      if (error) throw error;
+    try {
+      const { data, error } = await supabase.from("price")
+        .select("*")
+        .eq("symbol", `${stocksData?.symbol}`)
+      // .eq("exchange",`${stockData?.exchange}`)
+      // .like("updated_at", `${today}%`);
+
       if (data) setStocks(data);
+      if (error) throw error;
     } catch (error) {
       console.log("Error fetching stocks:", error);
     }
@@ -172,15 +341,6 @@ const fetchStatistics = async () => {
     }
   };
 
-
-
-  // console.log('price', stocks);
-  // console.log('pricePercent', stocksPercent);
-
-  const updated_price = stocks.filter(
-    (ele) => ele.symbol === stocksData.symbol && ele.exchange === stocksData.exchange
-  );
-
   const price_percent = stocksPercent.filter(
     (ele) =>
       ele.symbol === stocksData.symbol &&
@@ -188,10 +348,10 @@ const fetchStatistics = async () => {
       ele.trading_date === today
   );
 
-  const New_price = updated_price[updated_price.length - 1];
-  // console.log("New_price", New_price);
+  const New_price = stocks?.price;
+  console.log("New_price", New_price);
 
-  const isPositiveChange = price_percent[0]?.percentage_change > 0;
+  const isPositiveChange = stocks?.intraday_percent_change > 0;
 
   const icon = isPositiveChange ? (
     <FaCaretUp style={{ color: "green" }} />
@@ -201,65 +361,141 @@ const fetchStatistics = async () => {
 
   const percentageColor = isPositiveChange ? "success" : "error";
 
+  // useEffect(() => {
+  //   fetchStockData();
+  //   fetchDailyStock();
+
+  //   console.log("Stocks component rendered");
+
+  //   const channel_1 = supabase
+  //     .channel("price-channel")
+  //     .on("postgres_changes", { event: "*", schema: "public", table: "price" }, (payload) => {
+  //       const { eventType, new: newStock } = payload;
+
+  //       if (newStock.symbol === stocksData?.symbol) {
+  //         setStocks(() => {
+  //           switch (eventType) {
+  //             case "INSERT":
+  //             case "UPDATE":
+  //               // Return only the newStock data
+  //               return [newStock];
+  //             case "DELETE":
+  //               // Clear the stock data on delete (optional)
+  //               return [];
+  //             default:
+  //               return [];
+  //           }
+  //         })
+  //       }
+  //     })
+  //     .subscribe((status) => console.log("Subscription status:", status));
+
+
+
+  //   const channel_2 = supabase
+  //     .channel("stock_daily_summary-channel")
+  //     .on(
+  //       "postgres_changes",
+  //       { event: "*", schema: "public", table: "stock_daily_summary" },
+  //       (payload) => {
+  //         // console.log("stock_daily_summary:", payload);
+
+  //         setStocksPercent((prevStocks) => {
+  //           const { eventType, new: newStock, old: oldStock } = payload;
+
+  //           switch (eventType) {
+  //             case "INSERT":
+  //               return [...prevStocks, newStock];
+  //             case "UPDATE":
+  //               return prevStocks.map((stock) => (stock.id === newStock.id ? newStock : stock));
+  //             case "DELETE":
+  //               return prevStocks.filter((stock) => stock.id !== oldStock.id);
+  //             default:
+  //               return prevStocks;
+  //           }
+  //         });
+  //       }
+  //     )
+  //     .subscribe((status) => console.log("Subscription status:", status));
+
+  //   return () => {
+  //     supabase.removeChannel(channel_1);
+  //     supabase.removeChannel(channel_2);
+  //   };
+  // }, []);
+
+  console.log('isConnected',isConnected);
+  console.log('isConnected',error);
+
   useEffect(() => {
+
     fetchStockData();
     fetchDailyStock();
 
-    console.log("Stocks component rendered");
+    let ws;
 
-    const channel_1 = supabase
-      .channel("price-channel")
-      .on("postgres_changes", { event: "*", schema: "public", table: "price" }, (payload) => {
-        // console.log('Real-time update:', payload);
+    const connectWebSocket = () => {
+      try {
+        // Use secure WebSocket if your server supports HTTPS
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${protocol}//172.235.16.92:8000/ws/${stocksData?.symbol}/${stocksData?.exchange}`;
+        console.log('Connecting to:', wsUrl);
 
-        setStocks((prevStocks) => {
-          const { eventType, new: newStock, old: oldStock } = payload;
+        ws = new WebSocket(wsUrl);
 
-          switch (eventType) {
-            case "INSERT":
-              return [...prevStocks, newStock];
-            case "UPDATE":
-              return prevStocks.map((stock) => (stock.id === newStock.id ? newStock : stock));
-            case "DELETE":
-              return prevStocks.filter((stock) => stock.id !== oldStock.id);
-            default:
-              return prevStocks;
-          }
-        });
-      })
-      .subscribe((status) => console.log("Subscription status:", status));
+        ws.onopen = () => {
+          console.log(`WebSocket Connected for ${stocksData?.symbol}`);
+          setIsConnected(true);
+          setError(null);
 
-    const channel_2 = supabase
-      .channel("stock_daily_summary-channel")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "stock_daily_summary" },
-        (payload) => {
-          // console.log("stock_daily_summary:", payload);
+          // Send initial message to start receiving updates
+          ws.send(JSON.stringify({ action: 'subscribe', symbol: stocksData?.symbol }));
+        };
 
-          setStocksPercent((prevStocks) => {
-            const { eventType, new: newStock, old: oldStock } = payload;
+        ws.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            console.log(`Received data for ${stocksData?.symbol}:`, data);
 
-            switch (eventType) {
-              case "INSERT":
-                return [...prevStocks, newStock];
-              case "UPDATE":
-                return prevStocks.map((stock) => (stock.id === newStock.id ? newStock : stock));
-              case "DELETE":
-                return prevStocks.filter((stock) => stock.id !== oldStock.id);
-              default:
-                return prevStocks;
+            if (data.type === 'realtime') {
+              setStocks(data.data);
+            } else {
+              console.log('Received non-realtime data, ignoring:', data);
             }
-          });
-        }
-      )
-      .subscribe((status) => console.log("Subscription status:", status));
+          } catch (err) {
+            console.error('Error parsing message:', err);
+          }
+        };
+
+        ws.onerror = (error) => {
+          console.error(`WebSocket error for ${stocksData?.symbol}:`, error);
+          setError('Connection error');
+          setIsConnected(false);
+        };
+
+        ws.onclose = (event) => {
+          console.log(`WebSocket disconnected for ${stocksData?.symbol}`, event.code, event.reason);
+          setIsConnected(false);
+          // Attempt to reconnect unless the connection was closed intentionally
+          if (event.code !== 1000) {
+            setTimeout(connectWebSocket, 5000);
+          }
+        };
+      } catch (err) {
+        console.error(`WebSocket connection error for ${stocksData?.symbol}:`, err);
+        setError('Connection failed');
+        setIsConnected(false);
+      }
+    };
+
+    connectWebSocket();
 
     return () => {
-      supabase.removeChannel(channel_1);
-      supabase.removeChannel(channel_2);
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.close(1000, 'Component unmounted');
+      }
     };
-  }, []);
+  }, [stocksData?.symbol, stocksData?.exchange]);
 
   const getIcon = (title) => {
     switch (title) {
@@ -276,7 +512,7 @@ const fetchStatistics = async () => {
 
 
 
-  
+
   return (
     <DashboardLayout>
       <VuiBox>
@@ -292,7 +528,7 @@ const fetchStatistics = async () => {
                 }}
                 count={
                   <span style={{ fontSize: "1.1rem", fontWeight: "bold" }}>
-                    {New_price?.price?.toFixed(2)}
+                    {New_price?.toFixed(2)}
                   </span>
                 }
                 percentage={{
@@ -300,8 +536,8 @@ const fetchStatistics = async () => {
                   text: (
                     <>
                       {icon}
-                      {`${price_percent[0]?.price_change?.toFixed(2) || ""} 
-                (${price_percent[0]?.percentage_change || ""}%)`}
+                      {`${stocks?.intraday_change?.toFixed(2) || ""} 
+                (${stocks?.intraday_percent_change?.toFixed(2) || ""}%)`}
                     </>
                   ),
                 }}
@@ -381,7 +617,7 @@ const fetchStatistics = async () => {
                   <VuiBox>
                     <LineChart
                       lineChartOptions={lineChartOptionsDashboard}
-                      newprice={New_price?.price?.toFixed(2)}
+                      newprice={New_price?.toFixed(2)}
                     />
                   </VuiBox>
                 </VuiBox>
@@ -402,8 +638,8 @@ const fetchStatistics = async () => {
                     }}
                   >
                     <BarChart
-                      barChartData={barChartDataDashboard}
-                      barChartOptions={barChartOptionsDashboard}
+                      barChartData={chartConfig.barChartData}
+                      barChartOptions={chartConfig.barChartOptions}
                     />
                   </VuiBox>
                   <VuiBox mb="10px">
@@ -413,62 +649,41 @@ const fetchStatistics = async () => {
                   </VuiBox>
                   <Grid container spacing="5px">
                     <Grid item xs={6} md={3} lg={6}>
-                      <Stack
-                        direction="row"
-                        spacing={{ sm: "10px", xl: "1px", xxl: "10px" }}
-                        mb="6px"
-                      >
-                        <VuiTypography color="text" variant="button" >
-                          Forward/PE
-                        </VuiTypography>
+                      <Stack direction="row" spacing={{ sm: "10px", xl: "1px", xxl: "10px" }} mb="6px">
+                        <VuiTypography color="text" variant="button">Forward/PE</VuiTypography>
                       </Stack>
                       <VuiTypography color="white" variant="lg" fontWeight="bold" mb="8px">
-                        {StatisticsData.statistics.valuations_metrics.forward_pe}
-                       </VuiTypography>
-                      <VuiProgress value={10} color="info" sx={{ background: "#2D2E5F" }} />
-                    </Grid>
-                    <Grid item xs={6} md={3} lg={6}>
-                      <Stack
-                        direction="row"
-                        spacing={{ sm: "10px", xl: "1px", xxl: "10px" }}
-                        mb="6px"
-                      >
-                        <VuiTypography color="text" variant="button" >
-                          Price/Sales
-                        </VuiTypography>
-                      </Stack>
-                      <VuiTypography color="white" variant="lg" fontWeight="bold" mb="8px">
-                        {StatisticsData?.statistics.valuations_metrics?.price_to_sales_ttm}
+                        {(StatisticsData?.statistics?.valuations_metrics?.forward_pe ?? 0).toFixed(3)}
                       </VuiTypography>
                       <VuiProgress value={10} color="info" sx={{ background: "#2D2E5F" }} />
                     </Grid>
+
                     <Grid item xs={6} md={3} lg={6}>
-                      <Stack
-                        direction="row"
-                        spacing={{ sm: "10px", xl: "1px", xxl: "10px" }}
-                        mb="6px"
-                      >
-                        <VuiTypography color="text" variant="button" >
-                         Enterprise/Value
-                        </VuiTypography>
+                      <Stack direction="row" spacing={{ sm: "10px", xl: "1px", xxl: "10px" }} mb="6px">
+                        <VuiTypography color="text" variant="button">Price/Sales</VuiTypography>
                       </Stack>
                       <VuiTypography color="white" variant="lg" fontWeight="bold" mb="8px">
-                        {StatisticsData?.statistics.valuations_metrics?.enterprise_to_ebitda}
+                        {(StatisticsData?.statistics?.valuations_metrics?.price_to_sales_ttm ?? 0).toFixed(3)}
+                      </VuiTypography>
+                      <VuiProgress value={10} color="info" sx={{ background: "#2D2E5F" }} />
+                    </Grid>
+
+                    <Grid item xs={6} md={3} lg={6}>
+                      <Stack direction="row" spacing={{ sm: "10px", xl: "1px", xxl: "10px" }} mb="6px">
+                        <VuiTypography color="text" variant="button">Enterprise/Value</VuiTypography>
+                      </Stack>
+                      <VuiTypography color="white" variant="lg" fontWeight="bold" mb="8px">
+                        {(StatisticsData?.statistics?.valuations_metrics?.enterprise_to_ebitda ?? 0).toFixed(3)}
                       </VuiTypography>
                       <VuiProgress value={60} color="info" sx={{ background: "#2D2E5F" }} />
                     </Grid>
+
                     <Grid item xs={6} md={3} lg={6}>
-                      <Stack
-                        direction="row"
-                        spacing={{ sm: "10px", xl: "1px", xxl: "10px" }}
-                        mb="6px"
-                      >
-                        <VuiTypography color="text" variant="button" >
-                         Forward/annual/Rate
-                        </VuiTypography>
+                      <Stack direction="row" spacing={{ sm: "10px", xl: "1px", xxl: "10px" }} mb="6px">
+                        <VuiTypography color="text" variant="button">Forward/annual/Rate</VuiTypography>
                       </Stack>
                       <VuiTypography color="white" variant="lg" fontWeight="bold" mb="8px">
-                        {StatisticsData?.statistics.dividends_and_splits?.forward_annual_dividend_yield}
+                        {(StatisticsData?.statistics?.dividends_and_splits?.forward_annual_dividend_yield ?? 0).toFixed(3)}
                       </VuiTypography>
                       <VuiProgress value={60} color="info" sx={{ background: "#2D2E5F" }} />
                     </Grid>
