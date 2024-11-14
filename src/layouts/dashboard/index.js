@@ -341,26 +341,62 @@ function Dashboard() {
     }
   };
 
-  const price_percent = stocksPercent.filter(
-    (ele) =>
-      ele.symbol === stocksData.symbol &&
-      ele.exchange === stocksData.exchange &&
-      ele.trading_date === today
-  );
+  const [priceData, setPriceData] = useState({
+    New_price : 0,
+    price_change: 0,
+    percent_change: 0,
+    isPositiveChange: null,
+    icon: null,
+    percentageColor: ""
+  });
 
-  const New_price = stocks.filter((ele) => ele.exchange === stocksData?.exchange);
-  console.log('New_price',New_price);
+  useEffect(() => {
+    console.log('Websocket & supabase Stocks',stocks.length)
+    if (stocks.length > 0 && stocksPercent.length > 0) {
+      const price_percent = stocksPercent.find(
+        (ele) =>
+          ele.symbol === stocksData.symbol &&
+          ele.exchange === stocksData.exchange &&
+          ele.trading_date === today
+      );
+  
+      const New_price = stocks.find(
+        (ele) => ele?.exchange === stocksData?.exchange && ele?.trading_date === today
+      );
+  
+      if (New_price && price_percent) {
+        const price_change = New_price.price - price_percent.previous_close;
+        const percent_change = (price_change / price_percent.previous_close) * 100;
+        const isPositiveChange = percent_change > 0;
+  
+        setPriceData({
+          New_price : New_price.price,
+          price_change,
+          percent_change,
+          isPositiveChange,
+          icon: isPositiveChange ? (
+            <FaCaretUp style={{ color: "green" }} />
+          ) : (
+            <FaCaretDown style={{ color: "red" }} />
+          ),
+          percentageColor: isPositiveChange ? "success" : "error"
+        });
+      }
+    }else{
+      const isPositiveChange = stocks?.intraday_percent_change > 0;
 
-  const isPositiveChange = stocks?.intraday_percent_change > 0 || price_percent[0]?.percentage_change > 0;
-
-  const icon = isPositiveChange ? (
-    <FaCaretUp style={{ color: "green" }} />
-  ) : (
-    <FaCaretDown style={{ color: "red" }} />
-  );
-
-  const percentageColor = isPositiveChange ? "success" : "error";
-
+      setPriceData({
+        New_price : stocks?.price,
+        icon: isPositiveChange ? (
+          <FaCaretUp style={{ color: "green" }} />
+        ) : (
+          <FaCaretDown style={{ color: "red" }} />
+        ),
+        percentageColor: isPositiveChange ? "success" : "error"
+      })
+    }
+  }, [stocks, stocksPercent, today, stocksData.symbol, stocksData.exchange]);
+  
 
 
   useEffect(() => {
@@ -424,66 +460,66 @@ function Dashboard() {
         supabase.removeChannel(channel_1);
         supabase.removeChannel(channel_2);
       };
-    // } else {
-    //   // For foreign stocks, connect to WebSocket API
-    //   console.log('WebSocket API');
+    } else {
+      // For foreign stocks, connect to WebSocket API
+      console.log('WebSocket API');
 
-    //   let ws;
-    //   const connectWebSocket = () => {
-    //     try {
-    //       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    //       const wsUrl = `${protocol}//172.235.16.92:8000/ws/${stocksData?.symbol}/${stocksData?.exchange}`;
-    //       ws = new WebSocket(wsUrl);
+      let ws;
+      const connectWebSocket = () => {
+        try {
+          const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+          const wsUrl = `${protocol}//172.235.16.92:8000/ws/${stocksData?.symbol}/${stocksData?.exchange}`;
+          ws = new WebSocket(wsUrl);
   
-    //       ws.onopen = () => {
-    //         console.log(`WebSocket Connected for ${stocksData?.symbol}`);
-    //         setIsConnected(true);
-    //         setError(null);
+          ws.onopen = () => {
+            console.log(`WebSocket Connected for ${stocksData?.symbol}`);
+            setIsConnected(true);
+            setError(null);
   
-    //         // Send initial message to start receiving updates
-    //         ws.send(JSON.stringify({ action: 'subscribe', symbol: stocksData?.symbol, exchange: stocksData?.exchange }));
-    //       };
+            // Send initial message to start receiving updates
+            ws.send(JSON.stringify({ action: 'subscribe', symbol: stocksData?.symbol, exchange: stocksData?.exchange }));
+          };
   
-    //       ws.onmessage = (event) => {
-    //         try {
-    //           const data = JSON.parse(event.data);
-    //           if (data.type === 'realtime') {
-    //             setStocks(data.data);
-    //           } else {
-    //             console.log('Received non-realtime data, ignoring:', data);
-    //           }
-    //         } catch (err) {
-    //           console.error('Error parsing message:', err);
-    //         }
-    //       };
+          ws.onmessage = (event) => {
+            try {
+              const data = JSON.parse(event.data);
+              if (data.type === 'realtime') {
+                setStocks(data.data);
+              } else {
+                console.log('Received non-realtime data, ignoring:', data);
+              }
+            } catch (err) {
+              console.error('Error parsing message:', err);
+            }
+          };
   
-    //       ws.onerror = (error) => {
-    //         console.error(`WebSocket error for ${stocksData?.symbol}:`, error);
-    //         setError('Connection error');
-    //         setIsConnected(false);
-    //       };
+          ws.onerror = (error) => {
+            console.error(`WebSocket error for ${stocksData?.symbol}:`, error);
+            setError('Connection error');
+            setIsConnected(false);
+          };
   
-    //       ws.onclose = (event) => {
-    //         console.log(`WebSocket disconnected for ${stocksData?.symbol}`, event.code, event.reason);
-    //         setIsConnected(false);
-    //         if (event.code !== 1000) {
-    //           setTimeout(connectWebSocket, 5000);
-    //         }
-    //       };
-    //     } catch (err) {
-    //       console.error(`WebSocket connection error for ${stocksData?.symbol}:`, err);
-    //       setError('Connection failed');
-    //       setIsConnected(false);
-    //     }
-    //   };
+          ws.onclose = (event) => {
+            console.log(`WebSocket disconnected for ${stocksData?.symbol}`, event.code, event.reason);
+            setIsConnected(false);
+            if (event.code !== 1000) {
+              setTimeout(connectWebSocket, 5000);
+            }
+          };
+        } catch (err) {
+          console.error(`WebSocket connection error for ${stocksData?.symbol}:`, err);
+          setError('Connection failed');
+          setIsConnected(false);
+        }
+      };
   
-    //   connectWebSocket();
+      connectWebSocket();
   
-    //   return () => {
-    //     if (ws && ws.readyState === WebSocket.OPEN) {
-    //       ws.close(1000, 'Component unmounted');
-    //     }
-    //   };
+      return () => {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.close(1000, 'Component unmounted');
+        }
+      };
     }
   }, [stocksData?.symbol,stocksData?.exchange]);
   
@@ -517,16 +553,16 @@ function Dashboard() {
                 }}
                 count={
                   <span style={{ fontSize: "1.1rem", fontWeight: "bold" }}>
-                    {New_price[0]?.price?.toFixed(2)}
+                    {priceData?.New_price?.toFixed(2)}
                   </span>
                 }
                 percentage={{
-                  color: percentageColor,
+                  color: priceData?.percentageColor,
                   text: (
                     <>
-                      {icon}
-                      {`${stocks?.intraday_change?.toFixed(2) || price_percent[0]?.price_change?.toFixed(2)} 
-                      (${stocks?.intraday_percent_change?.toFixed(2) || price_percent[0]?.percentage_change?.toFixed(2)}%)`}
+                      {priceData?.icon}
+                      {`${stocks?.intraday_change?.toFixed(2) || priceData.price_change?.toFixed(2)} 
+                      (${stocks?.intraday_percent_change?.toFixed(2) || (priceData.percent_change)?.toFixed(2)}%)`}
                     </>
                   ),
                 }}
@@ -606,7 +642,7 @@ function Dashboard() {
                   <VuiBox>
                     <LineChart
                       lineChartOptions={lineChartOptionsDashboard}
-                      newprice={New_price[0]?.price?.toFixed(2)}
+                      newprice={priceData?.New_price?.toFixed(2)}
                     />
                   </VuiBox>
                 </VuiBox>
