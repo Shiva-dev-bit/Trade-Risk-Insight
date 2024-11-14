@@ -193,6 +193,8 @@ const Portfolio = () => {
     };
   }, [userId]);
 
+  console.log('Portfolio',stocks);
+
   return (
     <DashboardLayout>
       {userId ? (

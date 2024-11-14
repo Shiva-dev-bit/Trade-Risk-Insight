@@ -14,6 +14,8 @@ const StockList = ({ stocks, fetchUserStocks }) => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [companyNames, setCompanyNames] = useState({});
 
+  console.log('companyNames',companyNames);
+
   const fetchCompanyName = async (symbol, exchange) => {
     try {
       const response = await fetch(`http://172.235.16.92:8000/search/${symbol}`);
@@ -47,6 +49,8 @@ const StockList = ({ stocks, fetchUserStocks }) => {
   useEffect(() => {
     // Fetch company names for all stocks
     stocks.forEach((stock) => {
+       console.log('Portfoliostock',stock);
+
       if (!companyNames[`${stock.symbol}-${stock.exchange}`]) {
         fetchCompanyName(stock.symbol, stock.exchange);
       }
