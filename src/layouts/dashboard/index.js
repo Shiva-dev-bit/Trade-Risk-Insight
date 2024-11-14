@@ -646,7 +646,7 @@ function Dashboard() {
                   <VuiBox>
                     <LineChart
                       lineChartOptions={lineChartOptionsDashboard}
-                      newprice={(parseFloat(priceData) || 0).toFixed(2)}
+                      newprice={(parseFloat(priceData.New_price) || 0).toFixed(2)}
                     />
                   </VuiBox>
                 </VuiBox>

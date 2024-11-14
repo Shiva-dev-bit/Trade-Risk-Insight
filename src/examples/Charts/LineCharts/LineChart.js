@@ -1,747 +1,10 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
+import React, { useState, useEffect, useContext, useRef, Suspense } from "react";
 import ReactApexChart from "react-apexcharts";
 import moment from "moment-timezone";
 import { AuthContext } from "context/Authcontext";
 import { Box } from "@mui/material";
 import { FaCaretDown, FaCaretUp } from "react-icons/fa";
-
-// const LineChart = ({ newprice }) => {
-//   const [chartData, setChartData] = useState([]);
-//   const [chartOptions, setChartOptions] = useState({});
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
-//   const [timePeriod, setTimePeriod] = useState("1d");
-//   const stockData = useContext(AuthContext);
-//   const timeZoneRef = useRef(null);
-//   const lastCandleRef = useRef(null);
-
-//   let selectedSymbol = stockData?.stockData?.symbol;
-//   let selectedExchange = stockData?.stockData?.exchange;
-//   const selectedStocksHigh = parseFloat(stockData?.stockData?.high || 0)?.toFixed(2);
-//   const selectedStocksLow = parseFloat(stockData?.stockData?.low || 0)?.toFixed(2);
-//   let selectedStocksChange = stockData?.stockData?.percent_change;
-
-//   const isPositive = selectedStocksChange >= 0;
-
-//   const getDateTimeFormatter = (period, timezone) => {
-//     switch (period) {
-//       case "1d":
-//         return (value) => moment.tz(value, timezone).format("HH:mm");
-//       case "1m":
-//         return (value) => moment.tz(value, timezone).format("DD MMM");
-//       case "1y":
-//         return (value) => moment.tz(value, timezone).format("MMM YYYY");
-//       case "5y":
-//         return (value) => moment.tz(value, timezone).format("YYYY");
-//       default:
-//         return (value) => moment.tz(value, timezone).format("DD MMM YYYY");
-//     }
-//   };
-
-//   const getTooltipFormatter = (period, timezone) => {
-//     switch (period) {
-//       case "1d":
-//         return (value) => moment.tz(value, timezone).format("HH:mm:ss");
-//       default:
-//         return (value) => moment.tz(value, timezone).format("DD MMM YYYY");
-//     }
-//   };
-
-//   const updateChartWithNewPrice = (currentData, newPrice, timezone) => {
-//     if (!currentData[0]?.data?.length || typeof newPrice !== "number") return currentData;
-
-//     const currentTime = moment().tz(timezone);
-//     const updatedData = [...currentData];
-//     const currentMinute = currentTime.startOf("minute");
-
-//     let lastCandle = lastCandleRef.current;
-
-//     // Initialize lastCandle with numeric defaults if it's undefined
-//     if (!lastCandle) {
-//       lastCandle = {
-//         time: currentMinute,
-//         open: newPrice,
-//         high: newPrice,
-//         low: newPrice,
-//         close: newPrice,
-//       };
-//     }
-
-//     // Ensure lastCandle has numeric values
-//     lastCandle.open = typeof lastCandle.open === "number" ? lastCandle.open : newPrice;
-//     lastCandle.high = typeof lastCandle.high === "number" ? lastCandle.high : newPrice;
-//     lastCandle.low = typeof lastCandle.low === "number" ? lastCandle.low : newPrice;
-//     lastCandle.close = typeof lastCandle.close === "number" ? lastCandle.close : newPrice;
-
-//     if (currentMinute.isSame(lastCandle.time)) {
-//       lastCandle.high = Math.max(lastCandle.high, newPrice);
-//       lastCandle.low = Math.min(lastCandle.low, newPrice);
-//       lastCandle.close = newPrice;
-//     } else {
-//       lastCandle = {
-//         time: currentMinute,
-//         open: lastCandle.close,
-//         high: newPrice,
-//         low: newPrice,
-//         close: newPrice,
-//       };
-//     }
-
-//     lastCandleRef.current = lastCandle;
-
-//     if (timePeriod === "1d") {
-//       const newDataPoint = {
-//         x: lastCandle.time.valueOf(),
-//         y: [
-//           parseFloat(lastCandle.open.toFixed(2)),
-//           parseFloat(lastCandle.high.toFixed(2)),
-//           parseFloat(lastCandle.low.toFixed(2)),
-//           parseFloat(lastCandle.close.toFixed(2)),
-//         ],
-//       };
-
-//       const lastIndex = updatedData[0].data.findIndex((point) =>
-//         moment(point.x).isSame(lastCandle.time, "minute")
-//       );
-
-//       if (lastIndex !== -1) {
-//         updatedData[0].data[lastIndex] = newDataPoint;
-//       } else {
-//         updatedData[0].data.push(newDataPoint);
-//       }
-
-//       const startOfDay = currentTime.clone().startOf("day");
-//       updatedData[0].data = updatedData[0].data.filter((point) =>
-//         moment(point.x).isSameOrAfter(startOfDay)
-//       );
-//     }
-
-//     return updatedData;
-//   };
-
-//   const fetchData = async (timePeriod) => {
-//     try {
-//       setLoading(true);
-//       setError(null);
-//       const response = await fetch(
-//         `http://172.235.16.92:8000/stock_graph/${selectedSymbol}/${timePeriod}/${selectedExchange}`
-//       );
-//       if (!response.ok) {
-//         throw new Error(`HTTP error! status: ${response.status}`);
-//       }
-//       const data = await response.json();
-
-//       timeZoneRef.current = data.meta.exchange_timezone;
-
-//       let processedValues = data.values;
-
-//       if (timePeriod === "1d") {
-//         const today = moment().tz(timeZoneRef.current).format("YYYY-MM-DD");
-//         processedValues = data.values.filter((item) => {
-//           const itemDate = moment.tz(item.datetime, timeZoneRef.current).format("YYYY-MM-DD");
-//           return itemDate === today;
-//         });
-
-//         if (processedValues.length > 0) {
-//           const lastValue = processedValues[processedValues.length - 1];
-//           lastCandleRef.current = {
-//             time: moment.tz(lastValue.datetime, timeZoneRef.current).startOf("minute"),
-//             open: parseFloat(lastValue.open),
-//             high: parseFloat(lastValue.high),
-//             low: parseFloat(lastValue.low),
-//             close: parseFloat(lastValue.close),
-//           };
-//         }
-//       }
-
-//       const formattedData = [
-//         {
-//           name: "Price", // Changed from default "Series 1" to "Price"
-//           data: processedValues
-//             .map((item) => ({
-//               x: moment.tz(item.datetime, data.meta.exchange_timezone).valueOf(),
-//               y: [
-//                 parseFloat(item.open),
-//                 parseFloat(item.high),
-//                 parseFloat(item.low),
-//                 parseFloat(item.close),
-//               ],
-//             }))
-//             .filter((item) => !item.y.some((val) => val === null || isNaN(val))),
-//         },
-//       ];
-
-//       const options = {
-//         chart: {
-//           type: "candlestick",
-//           toolbar: {
-//             show: false,
-//           },
-//           animations: {
-//             enabled: true,
-//             dynamicAnimation: {
-//               enabled: true,
-//               speed: 350,
-//             },
-//           },
-//         },
-//         xaxis: {
-//           type: "datetime",
-//           labels: {
-//             style: {
-//               colors: "#c8cfca",
-//               fontSize: "10px",
-//             },
-//             formatter: getDateTimeFormatter(timePeriod, data.meta.exchange_timezone),
-//           },
-//           tickAmount: timePeriod === "1m" ? 10 : undefined,
-//         },
-//         yaxis: {
-//           tooltip: {
-//             enabled: true,
-//           },
-//           labels: {
-//             style: {
-//               colors: "#c8cfca",
-//               fontSize: "10px",
-//             },
-//             formatter: (value) => value.toFixed(2),
-//           },
-//           forceNiceScale: true,
-//         },
-//         tooltip: {
-//           theme: "dark",
-//           x: {
-//             formatter: getTooltipFormatter(timePeriod, data.meta.exchange_timezone),
-//           },
-//         },
-//         grid: {
-//           strokeDashArray: 5,
-//           borderColor: "#56577A",
-//         },
-//         plotOptions: {
-//           candlestick: {
-//             colors: {
-//               upward: "#26C281",
-//               downward: "#ed3419",
-//             },
-//           },
-//         },
-//       };
-
-//       if (timePeriod === "1d" && processedValues.length === 0) {
-//         setError("No data available for today");
-//       }
-
-//       setChartData(formattedData);
-//       setChartOptions(options);
-//       setLoading(false);
-//     } catch (error) {
-//       console.error("Error fetching the stock data: ", error);
-//       setLoading(false);
-//       setError(error.message || "Failed to load data");
-//     }
-//   };
-
-//   useEffect(() => {
-//     fetchData(timePeriod);
-//   }, [timePeriod, stockData]);
-
-//   useEffect(() => {
-//     if (newprice && timeZoneRef.current) {
-//       const updatedChartData = updateChartWithNewPrice(chartData, newprice, timeZoneRef.current);
-//       setChartData(updatedChartData);
-//     }
-//   }, [newprice]);
-
-//   const handleTimePeriodChange = (newPeriod) => {
-//     setTimePeriod(newPeriod);
-//   };
-
-//   if (loading) {
-//     return (
-//       <div className="lds-roller">
-//         <div></div>
-//         <div></div>
-//         <div></div>
-//         <div></div>
-//         <div></div>
-//         <div></div>
-//         <div></div>
-//         <div></div>
-//       </div>
-//     );
-//   }
-
-//   if (error) {
-//     return console.error("Error in Linechart", error);
-//   }
-
-//   return (
-//     <div>
-//       <div
-//         style={{
-//           display: "flex",
-//           alignItems: "center",
-//           justifyContent: "space-between",
-//           // gap: "20px",
-//           marginBottom: "20px",
-//         }}
-//       >
-//         <Box
-//           sx={{
-//             display: "flex",
-//             justifyContent: "space-around",
-//             color: "#fff",
-//             fontSize: "12px",
-//             gap: "18px",
-//           }}
-//         >
-//           <div style={{ textAlign: "center" }}>
-//             <div>High</div>
-//             <div style={{ fontWeight: 600, fontSize: "14px" }}>₹ {selectedStocksHigh}</div>
-//           </div>
-//           <div style={{ textAlign: "center" }}>
-//             <div>Low</div>
-//             <div style={{ fontWeight: 600, fontSize: "15px" }}>₹ {selectedStocksLow}</div>
-//           </div>
-//           <div style={{ textAlign: "center" }}>
-//             <div>Returns</div>
-//             <div
-//               style={{
-//                 color: isPositive ? "#26C281" : "#ed3419",
-//                 display: "flex",
-//                 alignItems: "center",
-//                 fontWeight: 600,
-//                 fontSize: "15px",
-//               }}
-//             >
-//               {isPositive ? <FaCaretUp /> : <FaCaretDown />}
-//               {Math.abs(selectedStocksChange)?.toFixed(2)}%
-//             </div>
-//           </div>
-//           <div style={{ textAlign: "center" }}>
-//             <div>Close</div>
-//             <div style={{ fontWeight: 600, fontSize: "15px" }}>₹ {newprice}</div>
-//           </div>
-//         </Box>
-//         <Box display={"flex"} gap={"15px"}>
-//           {["5y", "1y", "1m", "1d"].map((period) => (
-//             <button
-//               key={period}
-//               onClick={() => handleTimePeriodChange(period)}
-//               style={{
-//                 padding: "8px 16px",
-//                 backgroundColor: timePeriod === period ? "#0075FF" : "#e0e0e0",
-//                 color: timePeriod === period ? "#fff" : "#000",
-//                 border: "none",
-//                 borderRadius: "4px",
-//                 cursor: "pointer",
-//               }}
-//             >
-//               {period.toUpperCase()}
-//             </button>
-//           ))}
-//         </Box>
-//       </div>
-//       {chartData[0]?.data?.length > 0 ? (
-//         <ReactApexChart
-//           options={chartOptions}
-//           series={chartData}
-//           type="candlestick"
-//           width="100%"
-//           height="100%"
-//         />
-//       ) : (
-//         <div style={{ textAlign: "center", padding: "20px" }}>No data available</div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default LineChart;
-
-// const LineChart = ({ newprice }) => {
-//   const [chartData, setChartData] = useState([]);
-//   const [chartOptions, setChartOptions] = useState({});
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
-//   const [timePeriod, setTimePeriod] = useState("1d");
-//   const stockData = useContext(AuthContext);
-//   const timeZoneRef = useRef(null);
-//   const lastCandleRef = useRef(null);
-//   const intervalRef = useRef(null);
-
-//   let selectedSymbol = stockData?.stockData?.symbol;
-//   let selectedExchange = stockData?.stockData?.exchange;
-//   const selectedStocksHigh = parseFloat(stockData?.stockData?.high || 0)?.toFixed(2);
-//   const selectedStocksLow = parseFloat(stockData?.stockData?.low || 0)?.toFixed(2);
-//   let selectedStocksChange = stockData?.stockData?.percent_change;
-
-//   const isPositive = selectedStocksChange >= 0;
-
-//   const getDateTimeFormatter = (period, timezone) => {
-//     switch (period) {
-//       case "1d":
-//         return (value) => moment.tz(value, timezone).format("HH:mm");
-//       case "1m":
-//         return (value) => moment.tz(value, timezone).format("DD MMM");
-//       case "1y":
-//         return (value) => moment.tz(value, timezone).format("MMM YYYY");
-//       case "5y":
-//         return (value) => moment.tz(value, timezone).format("YYYY");
-//       default:
-//         return (value) => moment.tz(value, timezone).format("DD MMM YYYY");
-//     }
-//   };
-
-//   const getTooltipFormatter = (period, timezone) => {
-//     switch (period) {
-//       case "1d":
-//         return (value) => moment.tz(value, timezone).format("HH:mm:ss");
-//       default:
-//         return (value) => moment.tz(value, timezone).format("DD MMM YYYY");
-//     }
-//   };
-
-//   const updateChartWithNewPrice = (currentData, newPrice, timezone) => {
-//     console.log("newPrice2222", newPrice);
-//     if (newPrice !== "") {
-//       console.log("retutninnnnng");
-//       return currentData;
-//     }
-
-//     const currentTime = moment().tz(timezone);
-//     const updatedData = [...currentData];
-//     const currentMinute = currentTime.startOf("minute");
-
-//     let lastCandle = lastCandleRef.current;
-
-//     if (!lastCandle || !moment(lastCandle.time).isSame(currentMinute)) {
-//       // Create new candle for new minute
-//       lastCandle = {
-//         time: currentMinute,
-//         open: newPrice,
-//         high: newPrice,
-//         low: newPrice,
-//         close: newPrice,
-//       };
-
-//       console.log("lastCandle", lastCandle);
-//     } else {
-//       // Update existing candle
-//       lastCandle.high = Math.max(lastCandle.high, newPrice);
-//       lastCandle.low = Math.min(lastCandle.low, newPrice);
-//       lastCandle.close = newPrice;
-//     }
-
-//     lastCandleRef.current = lastCandle;
-
-//     if (timePeriod === "1d") {
-//       const newDataPoint = {
-//         x: lastCandle.time.valueOf(),
-//         y: [
-//           parseFloat(lastCandle.open.toFixed(2)),
-//           parseFloat(lastCandle.high.toFixed(2)),
-//           parseFloat(lastCandle.low.toFixed(2)),
-//           parseFloat(lastCandle.close.toFixed(2)),
-//         ],
-//       };
-
-//       const lastIndex = updatedData[0].data.findIndex((point) =>
-//         moment(point.x).isSame(lastCandle.time, "minute")
-//       );
-
-//       if (lastIndex !== -1) {
-//         updatedData[0].data[lastIndex] = newDataPoint;
-//       } else {
-//         updatedData[0].data.push(newDataPoint);
-//       }
-
-//       // Keep only today's data
-//       const startOfDay = currentTime.clone().startOf("day");
-//       updatedData[0].data = updatedData[0].data.filter((point) =>
-//         moment(point.x).isSameOrAfter(startOfDay)
-//       );
-
-//       // Sort data points by timestamp
-//       updatedData[0].data.sort((a, b) => a.x - b.x);
-//     }
-
-//     return updatedData;
-//   };
-
-//   const fetchData = async (timePeriod) => {
-//     try {
-//       setLoading(true);
-//       setError(null);
-//       const response = await fetch(
-//         `http://172.235.16.92:8000/stock_graph/${selectedSymbol}/${timePeriod}/${selectedExchange}`
-//       );
-//       if (!response.ok) {
-//         throw new Error(`HTTP error! status: ${response.status}`);
-//       }
-//       const data = await response.json();
-
-//       timeZoneRef.current = data.meta.exchange_timezone;
-
-//       let processedValues = data.values;
-
-//       if (timePeriod === "1d") {
-//         const today = moment().tz(timeZoneRef.current).format("YYYY-MM-DD");
-//         processedValues = data.values.filter((item) => {
-//           const itemDate = moment.tz(item.datetime, timeZoneRef.current).format("YYYY-MM-DD");
-//           console.log("itemDate", itemDate === today);
-//           return itemDate === today;
-//         });
-
-//         if (processedValues.length > 0) {
-//           const lastValue = processedValues[processedValues.length - 1];
-//           console.log("lastValue", lastValue);
-//           lastCandleRef.current = {
-//             time: moment.tz(lastValue.datetime, timeZoneRef.current).startOf("minute"),
-//             open: parseFloat(lastValue.open),
-//             high: parseFloat(lastValue.high),
-//             low: parseFloat(lastValue.low),
-//             close: parseFloat(lastValue.close),
-//           };
-//         }
-//       }
-
-//       // console.log("processedValues 222", processedValues);
-
-//       const formattedData = [
-//         {
-//           name: "Price",
-//           data: processedValues
-//             .map((item) => ({
-//               x: moment.tz(item.datetime, data.meta.exchange_timezone).valueOf(),
-//               y: [
-//                 parseFloat(item.open),
-//                 parseFloat(item.high),
-//                 parseFloat(item.low),
-//                 parseFloat(item.close),
-//               ],
-//             }))
-//             .filter((item) => !item.y.some((val) => val === null || isNaN(val))),
-//         },
-//       ];
-
-//       // console.log("formattedData.data", formattedData);
-
-//       const options = {
-//         chart: {
-//           type: "candlestick",
-//           toolbar: {
-//             show: false,
-//           },
-//           animations: {
-//             enabled: true,
-//             dynamicAnimation: {
-//               enabled: true,
-//               speed: 350,
-//             },
-//           },
-//         },
-//         xaxis: {
-//           type: "datetime",
-//           labels: {
-//             style: {
-//               colors: "#c8cfca",
-//               fontSize: "10px",
-//             },
-//             formatter: getDateTimeFormatter(timePeriod, data.meta.exchange_timezone),
-//           },
-//           tickAmount: timePeriod === "1m" ? 10 : undefined,
-//         },
-//         yaxis: {
-//           tooltip: {
-//             enabled: true,
-//           },
-//           labels: {
-//             style: {
-//               colors: "#c8cfca",
-//               fontSize: "10px",
-//             },
-//             formatter: (value) => value.toFixed(2),
-//           },
-//           forceNiceScale: true,
-//         },
-//         tooltip: {
-//           theme: "dark",
-//           x: {
-//             formatter: getTooltipFormatter(timePeriod, data.meta.exchange_timezone),
-//           },
-//         },
-//         grid: {
-//           strokeDashArray: 5,
-//           borderColor: "#56577A",
-//         },
-//         plotOptions: {
-//           candlestick: {
-//             colors: {
-//               upward: "#26C281",
-//               downward: "#ed3419",
-//             },
-//           },
-//         },
-//       };
-
-//       if (timePeriod === "1d" && processedValues.length === 0) {
-//         setError("No data available for today");
-//       }
-
-//       setChartData(formattedData);
-//       setChartOptions(options);
-//       setLoading(false);
-//     } catch (error) {
-//       console.error("Error fetching the stock data: ", error);
-//       setLoading(false);
-//       setError(error.message || "Failed to load data");
-//     }
-//   };
-
-//   useEffect(() => {
-//     fetchData(timePeriod);
-
-//     // Clear existing interval if any
-//     if (intervalRef.current) {
-//       clearInterval(intervalRef.current);
-//     }
-
-//     // Set up interval for 1d view only
-//     if (timePeriod === "1d") {
-//       intervalRef.current = setInterval(() => {
-//         if (timeZoneRef.current) {
-//           const currentTime = moment().tz(timeZoneRef.current);
-//           setChartData((prevData) => {
-//             if (!prevData[0]?.data?.length) return prevData;
-//             return updateChartWithNewPrice(prevData, newprice, timeZoneRef.current);
-//           });
-//         }
-//       }, 600); // Update every minute
-//     }
-
-//     return () => {
-//       if (intervalRef.current) {
-//         clearInterval(intervalRef.current);
-//       }
-//     };
-//   }, [timePeriod, stockData, newprice]);
-
-//   useEffect(() => {
-//     if (newprice && timeZoneRef.current && timePeriod === "1d") {
-//       const updatedChartData = updateChartWithNewPrice(chartData, newprice, timeZoneRef.current);
-//       setChartData(updatedChartData);
-//       console.log("updatedChartData", updatedChartData);
-//     }
-//   }, [newprice]);
-
-//   const handleTimePeriodChange = (newPeriod) => {
-//     setTimePeriod(newPeriod);
-//   };
-
-//   if (loading) {
-//     return (
-//       <div className="lds-roller">
-//         <div></div>
-//         <div></div>
-//         <div></div>
-//         <div></div>
-//         <div></div>
-//         <div></div>
-//         <div></div>
-//         <div></div>
-//       </div>
-//     );
-//   }
-
-//   if (error) {
-//     return console.error("Error in Linechart", error);
-//   }
-
-//   return (
-//     <div>
-//       <div
-//         style={{
-//           display: "flex",
-//           alignItems: "center",
-//           justifyContent: "space-between",
-//           marginBottom: "20px",
-//         }}
-//       >
-//         <Box
-//           sx={{
-//             display: "flex",
-//             justifyContent: "space-around",
-//             color: "#fff",
-//             fontSize: "12px",
-//             gap: "18px",
-//           }}
-//         >
-//           <div style={{ textAlign: "center" }}>
-//             <div>High</div>
-//             <div style={{ fontWeight: 600, fontSize: "14px" }}>₹ {selectedStocksHigh}</div>
-//           </div>
-//           <div style={{ textAlign: "center" }}>
-//             <div>Low</div>
-//             <div style={{ fontWeight: 600, fontSize: "15px" }}>₹ {selectedStocksLow}</div>
-//           </div>
-//           <div style={{ textAlign: "center" }}>
-//             <div>Returns</div>
-//             <div
-//               style={{
-//                 color: isPositive ? "#26C281" : "#ed3419",
-//                 display: "flex",
-//                 alignItems: "center",
-//                 fontWeight: 600,
-//                 fontSize: "15px",
-//               }}
-//             >
-//               {isPositive ? <FaCaretUp /> : <FaCaretDown />}
-//               {Math.abs(selectedStocksChange)?.toFixed(2)}%
-//             </div>
-//           </div>
-//           <div style={{ textAlign: "center" }}>
-//             <div>Close</div>
-//             <div style={{ fontWeight: 600, fontSize: "15px" }}>₹ {newprice}</div>
-//           </div>
-//         </Box>
-//         <Box display={"flex"} gap={"15px"}>
-//           {["5y", "1y", "1m", "1d"].map((period) => (
-//             <button
-//               key={period}
-//               onClick={() => handleTimePeriodChange(period)}
-//               style={{
-//                 padding: "8px 16px",
-//                 backgroundColor: timePeriod === period ? "#0075FF" : "#e0e0e0",
-//                 color: timePeriod === period ? "#fff" : "#000",
-//                 border: "none",
-//                 borderRadius: "4px",
-//                 cursor: "pointer",
-//               }}
-//             >
-//               {period.toUpperCase()}
-//             </button>
-//           ))}
-//         </Box>
-//       </div>
-//       {chartData[0]?.data?.length > 0 ? (
-//         <ReactApexChart
-//           options={chartOptions}
-//           series={chartData}
-//           type="candlestick"
-//           width="100%"
-//           height="100%"
-//         />
-//       ) : (
-//         <div style={{ textAlign: "center", padding: "20px" }}>No data available</div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default LineChart;
+import axios from "axios";
 
 const LineChart = ({ newprice }) => {
   const [chartData, setChartData] = useState([]);
@@ -749,9 +12,11 @@ const LineChart = ({ newprice }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [timePeriod, setTimePeriod] = useState("1d");
+  const [isClient, setIsClient] = useState(false);
   const stockData = useContext(AuthContext);
   const timeZoneRef = useRef(null);
   const lastPriceRef = useRef(null);
+  const chartContainerRef = useRef(null);
 
   let selectedSymbol = stockData?.stockData?.symbol;
   let selectedExchange = stockData?.stockData?.exchange;
@@ -760,6 +25,21 @@ const LineChart = ({ newprice }) => {
   let selectedStocksChange = stockData?.stockData?.percent_change;
 
   const isPositive = selectedStocksChange >= 0;
+
+  // Currency symbol mapping
+  const getCurrencySymbol = (exchange) => {
+    const exchangeCurrency = {
+      NSE: '₹',
+      BSE: '₹',
+      NYSE: '$',
+      NASDAQ: '$',
+      LSE: '£',
+      default: '$'
+    };
+    return exchangeCurrency[exchange] || exchangeCurrency.default;
+  };
+
+  const currencySymbol = getCurrencySymbol(selectedExchange);
 
   const getDateTimeFormatter = (period, timezone) => {
     switch (period) {
@@ -786,38 +66,44 @@ const LineChart = ({ newprice }) => {
   };
 
   const updateChartWithNewPrice = (currentData, newPrice, timezone) => {
+    if (!currentData?.[0]?.data || typeof newPrice !== "number") return currentData;
+
     const currentTime = moment().tz(timezone);
-  
-    // Only proceed if newPrice is valid
-    if (typeof newPrice !== "number") return currentData;
-  
     const updatedData = [...currentData];
-  
-    // Create a new data point for the line chart
+    
     const newDataPoint = {
-      x: currentTime.valueOf(),  // Timestamp of the new price
-      y: newPrice,  // New price value (e.g., closing price)
+      x: currentTime.valueOf(),
+      y: newPrice,
     };
-  
-    // Add the new data point to the chart data
-    updatedData[0].data.push(newDataPoint);
-  
+
+    updatedData[0] = {
+      ...updatedData[0],
+      data: [...updatedData[0].data, newDataPoint]
+    };
+
     return updatedData;
   };
-  
 
   const fetchData = async (timePeriod) => {
+    if (!selectedSymbol || !selectedExchange) {
+      setError("Missing symbol or exchange information");
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch(
+
+      const response = await axios.get(
         `http://172.235.16.92:8000/stock_graph/${selectedSymbol}/${timePeriod}/${selectedExchange}`
       );
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
 
+      if (!response?.data) {
+        throw new Error("No data received from server");
+      }
+
+      const data = response.data;
       timeZoneRef.current = data.meta.exchange_timezone;
 
       let processedValues = data.values;
@@ -830,49 +116,53 @@ const LineChart = ({ newprice }) => {
         });
 
         if (processedValues.length > 0) {
-          const lastValue = processedValues[processedValues.length - 1];
-          lastPriceRef.current = parseFloat(lastValue.close);
+          lastPriceRef.current = parseFloat(processedValues[processedValues.length - 1].close);
         }
       }
 
-      console.log("processedValues", processedValues);
-
-      const formattedData = [
-        {
-          name: "Price",
-          data: processedValues.map((item) => ({
-            x: moment.tz(item.datetime, data.meta.exchange_timezone).valueOf(), // Timestamp
-            y: parseFloat(item.close),  // Closing price
-          })),
-        },
-      ];
+      const formattedData = [{
+        name: "Price",
+        data: processedValues.map((item) => ({
+          x: moment.tz(item.datetime, data.meta.exchange_timezone).valueOf(),
+          y: parseFloat(item.close),
+        })),
+      }];
 
       const options = {
         chart: {
-          type: "line",  // Line chart type
-          toolbar: {
-            show: false,
-          },
+          id: `stock-chart-${selectedSymbol}`,
+          type: "line",
+          toolbar: { show: false },
           animations: {
             enabled: true,
-            dynamicAnimation: {
-              enabled: true,
-              speed: 350,
-            },
+            dynamicAnimation: { speed: 350 },
           },
+          background: 'transparent',
         },
+        stroke: { 
+          width: 2,
+        },
+        colors: ['#0075FF'],
         xaxis: {
-          type: "datetime",  // The x-axis is based on time
+          type: "datetime",
           labels: {
+            style: {
+              colors: "#FFFFFF",
+              fontSize: "12px",
+            },
             formatter: getDateTimeFormatter(timePeriod, data.meta.exchange_timezone),
+          },
+          tooltip: {
+            enabled: false,
           },
         },
         yaxis: {
-          tooltip: {
-            enabled: true,
-          },
           labels: {
-            formatter: (value) => value.toFixed(2),  // Display price with two decimal places
+            style: {
+              colors: "#FFFFFF",
+              fontSize: "12px",
+            },
+            formatter: (value) => `${currencySymbol}${value.toFixed(2)}`,
           },
           forceNiceScale: true,
         },
@@ -881,26 +171,15 @@ const LineChart = ({ newprice }) => {
           x: {
             formatter: getTooltipFormatter(timePeriod, data.meta.exchange_timezone),
           },
+          y: {
+            formatter: (value) => `${currencySymbol}${value.toFixed(2)}`,
+          },
         },
         grid: {
           strokeDashArray: 5,
           borderColor: "#56577A",
         },
       };
-      
-      const series = [
-        {
-          name: "Price",
-          data: processedValues.map((item) => ({
-            x: moment.tz(item.datetime, data.meta.exchange_timezone).valueOf(), // Timestamp
-            y: parseFloat(item.close),  // Close price for line chart
-          })),
-        },
-      ];
-
-      if (timePeriod === "1d" && processedValues.length === 0) {
-        setError("No data available for today");
-      }
 
       setChartData(formattedData);
       setChartOptions(options);
@@ -912,28 +191,36 @@ const LineChart = ({ newprice }) => {
     }
   };
 
+  // Handle client-side mounting
   useEffect(() => {
-    fetchData(timePeriod);
-  }, [timePeriod, stockData]);
+    setIsClient(true);
+    return () => setIsClient(false);
+  }, []);
 
+  // Handle data fetching
   useEffect(() => {
-    if (newprice && timeZoneRef.current) {
-      setChartData(prevData => {
-        return updateChartWithNewPrice(prevData, newprice, timeZoneRef.current);
+    if (isClient && selectedSymbol && selectedExchange) {
+      fetchData(timePeriod);
+    }
+  }, [timePeriod, stockData, isClient]);
+
+  // Handle real-time price updates
+  useEffect(() => {
+    if (isClient && newprice && timeZoneRef.current && timePeriod === "1d") {
+      setChartData((prevData) => {
+        const updatedData = updateChartWithNewPrice(prevData, newprice, timeZoneRef.current);
+        return updatedData;
       });
     }
   }, [newprice]);
 
-  // useEffect(() => {
-  //   if (newprice && timeZoneRef.current && timePeriod === "1d") {
-  //     const updatedChartData = updateChartWithNewPrice(chartData, newprice, timeZoneRef.current);
-  //     setChartData(updatedChartData);
-  //   }
-  // }, [newprice]);
-
   const handleTimePeriodChange = (newPeriod) => {
     setTimePeriod(newPeriod);
   };
+
+  if (!isClient) {
+    return null;
+  }
 
   if (loading) {
     return (
@@ -951,7 +238,7 @@ const LineChart = ({ newprice }) => {
   }
 
   if (error) {
-    return console.error("Error in Linechart", error);
+    return <div style={{ color: 'red', padding: '20px' }}>Error: {error}</div>;
   }
 
   return (
@@ -975,11 +262,11 @@ const LineChart = ({ newprice }) => {
         >
           <div style={{ textAlign: "center" }}>
             <div>High</div>
-            <div style={{ fontWeight: 600, fontSize: "14px" }}>₹ {selectedStocksHigh}</div>
+            <div style={{ fontWeight: 600, fontSize: "14px" }}>{currencySymbol}{selectedStocksHigh}</div>
           </div>
           <div style={{ textAlign: "center" }}>
             <div>Low</div>
-            <div style={{ fontWeight: 600, fontSize: "15px" }}>₹ {selectedStocksLow}</div>
+            <div style={{ fontWeight: 600, fontSize: "15px" }}>{currencySymbol}{selectedStocksLow}</div>
           </div>
           <div style={{ textAlign: "center" }}>
             <div>Returns</div>
@@ -999,8 +286,7 @@ const LineChart = ({ newprice }) => {
           <div style={{ textAlign: "center" }}>
             <div>Close</div>
             <div style={{ fontWeight: 600, fontSize: "15px" }}>
-              {" "}
-              {newprice ? `₹${newprice}` : ""}
+              {newprice ? `${currencySymbol}${newprice}` : ""}
             </div>
           </div>
         </Box>
@@ -1023,18 +309,25 @@ const LineChart = ({ newprice }) => {
           ))}
         </Box>
       </div>
-      {chartData[0]?.data?.length > 0 ? (
-        <ReactApexChart
-        // key={JSON.stringify(chartData)}
-          options={chartOptions}
-          series={chartData}
-          type="line"
-          width="100%"
-          height="100%"
-        />
-      ) : (
-        <div style={{ textAlign: "center", padding: "20px" }}>No data available</div>
-      )}
+      <div style={{ height: '400px', width: '100%' }} ref={chartContainerRef}>
+        {chartData[0]?.data?.length > 0 && (
+          <Suspense fallback={<div>Loading chart...</div>}>
+            <ReactApexChart
+              key={`${selectedSymbol}-${timePeriod}-${selectedExchange}`}
+              options={chartOptions}
+              series={chartData}
+              type="line"
+              height="100%"
+              width="100%"
+            />
+          </Suspense>
+        )}
+        {!chartData[0]?.data?.length && (
+          <div style={{ textAlign: "center", padding: "20px", color: "#fff" }}>
+            No data available
+          </div>
+        )}
+      </div>
     </div>
   );
 };
