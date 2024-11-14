@@ -135,7 +135,7 @@ const WelcomeMark = ({ stocksData }) => {
                 <strong>CEO:</strong>
               </VuiTypography>
               <VuiTypography color="white" variant="h6" fontWeight="regular" mb="8px">
-                {companyData.CEO}
+                {companyData?.CEO}
               </VuiTypography>
             </Grid>
 
@@ -145,7 +145,7 @@ const WelcomeMark = ({ stocksData }) => {
               </VuiTypography>
               <VuiTypography color="white" variant="h6" fontWeight="regular" mb="8px">
                 <a href={`${companyData.website}`} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>
-                  {companyData.website}
+                  {companyData?.website}
                 </a>
               </VuiTypography>
             </Grid>
@@ -155,7 +155,7 @@ const WelcomeMark = ({ stocksData }) => {
                 <strong>Industry:</strong>
               </VuiTypography>
               <VuiTypography color="white" variant="h6" fontWeight="regular" mb="8px">
-                {companyData.industry}
+                {companyData?.industry}
               </VuiTypography>
             </Grid>
 
@@ -164,7 +164,7 @@ const WelcomeMark = ({ stocksData }) => {
                 <strong>Country:</strong>
               </VuiTypography>
               <VuiTypography color="white" variant="h6" fontWeight="regular" mb="8px">
-                {companyData.country}
+                {companyData?.country}
               </VuiTypography>
             </Grid>
 
@@ -214,7 +214,7 @@ const WelcomeMark = ({ stocksData }) => {
                       </VuiTypography>
 
                       <VuiTypography color="white" variant="h6" fontWeight="regular" mt={2} sx={{ textAlign: 'justify' }}>
-                        {companyData.companyDescription.length > 1000 ? companyData.companyDescription.substring(0, 1000) + '....' : companyData.companyDescription}
+                        {companyData?.companyDescription?.length > 1000 ? companyData?.companyDescription?.substring(0, 1000) + '....' : companyData.companyDescription}
                       </VuiTypography>
                     </Grid>
 
@@ -231,7 +231,7 @@ const WelcomeMark = ({ stocksData }) => {
                           <strong>CEO:</strong>
                         </VuiTypography>
                         <VuiTypography color="white" variant="h6" fontWeight="regular" mb="8px">
-                          {companyData.CEO}
+                          {companyData?.CEO}
                         </VuiTypography>
                       </Grid>
 
@@ -241,7 +241,7 @@ const WelcomeMark = ({ stocksData }) => {
                           <strong>Number of Employees:</strong>
                         </VuiTypography>
                         <VuiTypography color="white" variant="h6" fontWeight="regular" mb="8px">
-                          {companyData.numberOfEmployees}
+                          {companyData?.numberOfEmployees}
                         </VuiTypography>
                       </Grid>
 
@@ -251,7 +251,7 @@ const WelcomeMark = ({ stocksData }) => {
                           <strong>Address:</strong>
                         </VuiTypography>
                         <VuiTypography color="white" variant="h6" fontWeight="regular" mb="8px">
-                          {companyData.address} {companyData.address2}
+                          {companyData?.address} {companyData?.address2}
                         </VuiTypography>
                       </Grid>
 
@@ -261,7 +261,7 @@ const WelcomeMark = ({ stocksData }) => {
                           <strong>Phone:</strong>
                         </VuiTypography>
                         <VuiTypography color="white" variant="h6" fontWeight="regular" mb="8px">
-                          {companyData.phone}
+                          {companyData?.phone}
                         </VuiTypography>
                       </Grid>
 
@@ -272,12 +272,12 @@ const WelcomeMark = ({ stocksData }) => {
                         </VuiTypography>
                         <VuiTypography color="white" variant="h6" fontWeight="regular" mb="8px">
                           <a
-                            href={companyData.website} 
+                            href={companyData?.website} 
                             target="_blank"
                             rel="noopener noreferrer"
                             style={{ color: 'inherit', textDecoration: 'underline' }}
                           >
-                            {companyData.website}
+                            {companyData?.website}
                           </a>
                         </VuiTypography>
 
@@ -289,7 +289,7 @@ const WelcomeMark = ({ stocksData }) => {
                           <strong>Instrument Type:</strong>
                         </VuiTypography>
                         <VuiTypography color="white" variant="h6" fontWeight="regular" mb="8px">
-                          {companyData.instrumentType}
+                          {companyData?.instrumentType}
                         </VuiTypography>
                       </Grid>
 
@@ -299,7 +299,7 @@ const WelcomeMark = ({ stocksData }) => {
                           <strong>Sector:</strong>
                         </VuiTypography>
                         <VuiTypography color="white" variant="h6" fontWeight="regular" mb="8px">
-                          {companyData.sector}
+                          {companyData?.sector}
                         </VuiTypography>
                       </Grid>
 
@@ -309,7 +309,7 @@ const WelcomeMark = ({ stocksData }) => {
                           <strong>Industry:</strong>
                         </VuiTypography>
                         <VuiTypography color="white" variant="h6" fontWeight="regular" mb="8px">
-                          {companyData.industry}
+                          {companyData?.industry}
                         </VuiTypography>
                       </Grid>
 

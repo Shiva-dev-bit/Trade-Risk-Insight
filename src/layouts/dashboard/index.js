@@ -82,13 +82,13 @@ function Dashboard() {
     open: "4075.00000",
     high: "4107.00000",
     low: "4060.05005",
-    percent_change: "0.23066",
+    percent_change: 0.23066,
     currency: "INR",
     exchange: "NSE",
-    change: "9.39990",
-    previous_close: "4075.25000",
+    change: 9.39990,
+    previous_close: 4075.25000,
     volume: "1934976",
-    close: "4084.64990",
+    close: 4084.64990,
     type: "Common Stock",
     is_market_open: false,
     trading_date: "N/A",
@@ -315,6 +315,7 @@ function Dashboard() {
         .select("*")
         .eq("symbol", `${stocksData?.symbol}`)
         .eq("exchange", `${stocksData?.exchange}`)
+        .eq("trading_date",today)
 
       if (data) {
         setStocks(data);
@@ -342,16 +343,16 @@ function Dashboard() {
   };
 
   const [priceData, setPriceData] = useState({
-    New_price : 0,
-    price_change: 0,
-    percent_change: 0,
+    New_price : 0.0000,
+    price_change: 0.0000,
+    percent_change: 0.0000,
     isPositiveChange: null,
     icon: null,
     percentageColor: ""
   });
 
   useEffect(() => {
-    console.log('Websocket & supabase Stocks',stocks.length)
+    console.log('Websocket & supabase Stocks',stocks,stocksPercent);
     if (stocks.length > 0 && stocksPercent.length > 0) {
       const price_percent = stocksPercent.find(
         (ele) =>
@@ -363,6 +364,7 @@ function Dashboard() {
       const New_price = stocks.find(
         (ele) => ele?.exchange === stocksData?.exchange && ele?.trading_date === today
       );
+      console.log('Starting data',New_price)
   
       if (New_price && price_percent) {
         const price_change = New_price.price - price_percent.previous_close;
@@ -396,6 +398,8 @@ function Dashboard() {
       })
     }
   }, [stocks, stocksPercent, today, stocksData.symbol, stocksData.exchange]);
+
+  console.log('Starting Data',priceData);
   
 
 
@@ -561,8 +565,8 @@ function Dashboard() {
                   text: (
                     <>
                       {priceData?.icon}
-                      {`${stocks?.intraday_change?.toFixed(2) || priceData.price_change?.toFixed(2)} 
-                      (${stocks?.intraday_percent_change?.toFixed(2) || (priceData.percent_change)?.toFixed(2)}%)`}
+                      {`${stocks?.intraday_change?.toFixed(2) || priceData?.price_change?.toFixed(2)} 
+                      (${stocks?.intraday_percent_change?.toFixed(2) || (priceData?.percent_change)?.toFixed(2)}%)`}
                     </>
                   ),
                 }}
@@ -642,7 +646,7 @@ function Dashboard() {
                   <VuiBox>
                     <LineChart
                       lineChartOptions={lineChartOptionsDashboard}
-                      newprice={priceData?.New_price?.toFixed(2)}
+                      newprice={(parseFloat(priceData) || 0).toFixed(2)}
                     />
                   </VuiBox>
                 </VuiBox>
