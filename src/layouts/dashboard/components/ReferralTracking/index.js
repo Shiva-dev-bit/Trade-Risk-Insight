@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card, Stack, Typography } from "@mui/material";
 import VuiBox from "components/VuiBox";
 import VuiTypography from "components/VuiTypography";
@@ -6,10 +6,27 @@ import colors from "assets/theme/base/colors";
 import { FaEllipsisH } from "react-icons/fa";
 import linearGradient from "assets/theme/functions/linearGradient";
 import CircularProgress from "@mui/material/CircularProgress";
+import axios from "axios";
 
 function ReferralTracking() {
-  const { info, gradients } = colors;
+  const [data, setData] = useState(null);
+  const { gradients } = colors;
   const { cardContent } = gradients;
+
+  useEffect(() => {
+    // Fetch the data from the API
+    const fetchData = async () => {
+      try {
+        const response = await axios(`http://172.235.16.92:8000/svs-widget/TATAMOTORS`);
+        const result = await response.json();
+        setData(result);
+      } catch (error) {
+        console.error("Error fetching stock data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <Card
@@ -23,26 +40,10 @@ function ReferralTracking() {
       }}
     >
       <VuiBox sx={{ width: "100%" }}>
-        <VuiBox
-          //   display="flex"
-          //   alignItems="center"
-          //   justifyContent="space-beetween"
-          sx={{ width: "100%" }}
-          //   textAlign={"center"}
-          mb="40px"
-        >
-          <Typography variant="lg" color="#fff" al fontWeight="bold">
-            Safety Score
+        <VuiBox sx={{ width: "100%" }} mb="40px">
+          <Typography variant="h5" color="#fff" fontWeight="bold">
+            {data?.title || "Safety Score"}
           </Typography>
-          {/* <VuiBox
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            bgColor="#22234B"
-            sx={{ width: "37px", height: "37px", cursor: "pointer", borderRadius: "12px" }}
-          >
-            <FaEllipsisH color={info.main} size="18px" />
-          </VuiBox> */}
         </VuiBox>
         <VuiBox
           display="flex"
@@ -94,10 +95,10 @@ function ReferralTracking() {
               })}
             >
               <VuiTypography color="text" variant="button" fontWeight="regular" mb="5px">
-                Invited
+                {data?.analyzed_metrics}
               </VuiTypography>
               <VuiTypography color="white" variant="lg" fontWeight="bold">
-                145 people
+                Sentiment: {data?.sentiment_analysis}
               </VuiTypography>
             </VuiBox>
             <VuiBox
@@ -118,17 +119,17 @@ function ReferralTracking() {
               })}
             >
               <VuiTypography color="text" variant="button" fontWeight="regular" mb="5px">
-                Bonus
+                {data?.risk_level_label}
               </VuiTypography>
               <VuiTypography color="white" variant="lg" fontWeight="bold">
-                1,465
+                Safety Score: {data?.safety_score}
               </VuiTypography>
             </VuiBox>
           </Stack>
           <VuiBox sx={{ position: "relative", display: "inline-flex" }}>
             <CircularProgress
-              variant={"determinate"}
-              value={70}
+              variant="determinate"
+              value={data?.safety_score * 10} // Convert safety score to percentage
               disableShrink={true}
               size={window.innerWidth >= 1024 ? 200 : window.innerWidth >= 768 ? 170 : 200}
               color="success"
@@ -165,7 +166,7 @@ function ReferralTracking() {
                     },
                   })}
                 >
-                  7.0
+                  {data?.safety_score}
                 </VuiTypography>
                 <VuiTypography color="text" variant="button">
                   Total Score

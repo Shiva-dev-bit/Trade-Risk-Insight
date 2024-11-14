@@ -21,10 +21,10 @@ const SatisfactionRate = () => {
 
   console.log('Volatility', data);
 
-
+  // https://1878-223-178-85-20.ngrok-free.app/volatility/tcs
   useEffect(() => {
     axios
-      .get(`http://172.235.16.92:8000/volatility/${stockData?.stockData?.symbol}`)
+      .get(`http://1878-223-178-85-20.ngrok-free.app/volatility/${stockData?.stockData?.symbol}`)
       .then((response) => {
         setData(response.data.data);
         setLoading(false);
@@ -33,25 +33,24 @@ const SatisfactionRate = () => {
         console.error("Error fetching data:", error);
         setLoading(false);
       });
-  }, [stockData?.stockData?.symbol]);
-
+    }, [stockData?.stockData?.symbol]);
+    
   if (loading) return <CircularProgress />;
 
-  const satisfactionRate = 5;
 
   return (
     <Card sx={{ height: "100%" }}>
       <VuiBox display="flex" flexDirection="column" padding={2} sx={{ textAlign: 'center' }}>
         <VuiBox>
-          <VuiTypography variant="h5" color="white" fontWeight="bold" mb="10px">
-            Volatility Score - {data?.metrics?.volatility_percentile?.toFixed(2)*100}%
+          <VuiTypography variant="h6" color="white" fontWeight="bold" mb="10px">
+            Volatility Score - {(data?.volatility_score*100).toFixed(2)}%
           </VuiTypography>
         </VuiBox>
         <VuiBox sx={{ alignSelf: "center", justifySelf: "center", zIndex: "-1" }}>
           <VuiBox sx={{ position: "relative", display: "inline-flex" }}>
             <CircularProgress
               variant="determinate"
-              value={(data?.metrics?.volatility_percentile ?? 0) * 100}
+              value={(data?.volatility_score ?? 0) * 100}
               size={150}
               color="info"
             />
@@ -86,9 +85,9 @@ const SatisfactionRate = () => {
                   <IoSad size="30px" color="#ffac33" />
                 )} */}
 
-                {data?.metrics?.volatility_percentile === 1 ? (
+                {data?.volatility_score === 1 ? (
                   <FaFaceSmile size="26px" color="#fff" />
-                ) : data?.metrics?.volatility_percentile > 0.5 ? (
+                ) : data?.volatility_score > 0.5 ? (
                   <IoHappy size="30px" color="#fff" />
                 ) : (
                   <IoSad size="30px" color="#fff" />
@@ -123,7 +122,7 @@ const SatisfactionRate = () => {
             sx={{ minWidth: "80px" }}
           >
             <VuiTypography color="white" variant="h5">
-              {data?.metrics?.volatility_percentile?.toFixed(2)*100}%
+              {(data?.volatility_score*100).toFixed(2)}%
             </VuiTypography>
             <VuiTypography color="text" variant="caption" fontWeight="regular" sx={{ fontSize: '10px' }}>
               Based on Stocks
