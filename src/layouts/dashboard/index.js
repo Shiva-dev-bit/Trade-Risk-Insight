@@ -106,10 +106,6 @@ function Dashboard() {
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState(null);
 
-  console.log('stocksDatastocksData', supabaseStocks);
-  console.log('stocksDatastocksData', websocketStocks);
-  console.log('stockData', stockData?.stockData);
-
   const [StatisticsData, setStatisticsData] = useState({
     statistics: {
       valuations_metrics: {
@@ -172,8 +168,6 @@ function Dashboard() {
     barChartOptions: {}
   });
 
-  console.log('indicators', indicators);
-  console.log('chartConfig', chartConfig);
 
   useEffect(() => {
     if (!indicators) return;
@@ -286,7 +280,7 @@ function Dashboard() {
 
   const fetchIndicators = async () => {
     try {
-      const response = await axios(`http://172.235.16.92:8000/technical-analysis/${stockData?.stockData?.symbol}?exchange=${stockData?.stockData?.exchange}`);
+      const response = await axios(`http://172.235.16.92:8000/technical-analysis/${stocksData?.symbol}?exchange=${stocksData?.exchange}`);
       const data = response.data;
       if (data) {
         console.log('indicators', data);
@@ -308,7 +302,7 @@ function Dashboard() {
       fetchIndicators();
       setStocksData(stockData.stockData);
     }
-  }, [stockData]);
+  }, [stockData,stocksData?.symbol,stocksData?.exchange]);
 
 
   var today = new Date();
@@ -526,54 +520,54 @@ useEffect(() => {
   //   }
   // }, [stockData?.stockData?.symbol, stockData?.stockData?.exchange]);
 
-  const connect = useCallback(() => {
-    try {
-        if (!stockData?.stockData?.symbol || !stockData?.stockData?.exchange) return;
+//   const connect = useCallback(() => {
+//     try {
+//         if (!stockData?.stockData?.symbol || !stockData?.stockData?.exchange) return;
 
-        if (wsRef.current) {
-            wsRef.current.close();
-            wsRef.current = null;
-        }
+//         if (wsRef.current) {
+//             wsRef.current.close();
+//             wsRef.current = null;
+//         }
 
-        const ws = new WebSocket(
-            `ws://172.235.16.92:8000/ws/${stockData?.stockData?.symbol}/${stockData?.stockData?.exchange}`
-        );
-        wsRef.current = ws;
+//         const ws = new WebSocket(
+//             `ws://172.235.16.92:8000/ws/${stockData?.stockData?.symbol}/${stockData?.stockData?.exchange}`
+//         );
+//         wsRef.current = ws;
 
-        ws.onopen = () => {
-            setIsConnected(true);
-            setWebsocketConnected(true);
-        };
+//         ws.onopen = () => {
+//             setIsConnected(true);
+//             setWebsocketConnected(true);
+//         };
 
-        ws.onmessage = (event) => {
-            try {
-                const data = JSON.parse(event.data);
-                if (data.type === 'realtime' && 
-                    data.data.symbol === stockData?.stockData?.symbol && 
-                    data.data.exchange === stockData?.stockData?.exchange) {
-                    setWebsocketStocks(data.data);
-                }
-            } catch (err) {
-                console.error('Parse error:', err);
-            }
-        };
+//         ws.onmessage = (event) => {
+//             try {
+//                 const data = JSON.parse(event.data);
+//                 if (data.type === 'realtime' && 
+//                     data.data.symbol === stockData?.stockData?.symbol && 
+//                     data.data.exchange === stockData?.stockData?.exchange) {
+//                     setWebsocketStocks(data.data);
+//                 }
+//             } catch (err) {
+//                 console.error('Parse error:', err);
+//             }
+//         };
 
-        ws.onclose = () => {
-            setIsConnected(false);
-            setWebsocketConnected(false);
-            wsRef.current = null;
+//         ws.onclose = () => {
+//             setIsConnected(false);
+//             setWebsocketConnected(false);
+//             wsRef.current = null;
             
-            if (reconnectTimeoutRef.current) {
-                clearTimeout(reconnectTimeoutRef.current);
-            }
-            reconnectTimeoutRef.current = setTimeout(connect, 5000);
-        };
+//             if (reconnectTimeoutRef.current) {
+//                 clearTimeout(reconnectTimeoutRef.current);
+//             }
+//             reconnectTimeoutRef.current = setTimeout(connect, 5000);
+//         };
 
-    } catch (err) {
-        console.error('Connection error:', err);
-        setWebsocketConnected(false);
-    }
-}, [stockData?.stockData?.symbol, stockData?.stockData?.exchange]);
+//     } catch (err) {
+//         console.error('Connection error:', err);
+//         setWebsocketConnected(false);
+//     }
+// }, [stockData?.stockData?.symbol, stockData?.stockData?.exchange]);
 
 
   useEffect(() => {
@@ -640,23 +634,23 @@ useEffect(() => {
         supabase.removeChannel(channel_1);
         supabase.removeChannel(channel_2);
       };
-    } else {
-      // For foreign stocks, connect to WebSocket API
-      console.log('supabase Stocks', stocksData?.exchange, 'WebSocket API')
+    // } else {
+    //   // For foreign stocks, connect to WebSocket API
+    //   console.log('supabase Stocks', stocksData?.exchange, 'WebSocket API')
 
-      connect();
-      return () => {
-        if (reconnectTimeoutRef.current) {
-          clearTimeout(reconnectTimeoutRef.current);
-        }
-        if (wsRef.current) {
-          wsRef.current.close();
-          // wsRef.current = null;
-        }
-      };
+    //   connect();
+    //   return () => {
+    //     if (reconnectTimeoutRef.current) {
+    //       clearTimeout(reconnectTimeoutRef.current);
+    //     }
+    //     if (wsRef.current) {
+    //       wsRef.current.close();
+    //       // wsRef.current = null;
+    //     }
+    //   };
 
     }
-  }, [stocksData?.symbol, stocksData?.exchange, connect]);
+  }, [stocksData?.symbol, stocksData?.exchange]);
 
 
   const getIcon = (title) => {
@@ -777,7 +771,7 @@ useEffect(() => {
                   <VuiBox>
                     <LineChart
                       lineChartOptions={lineChartOptionsDashboard}
-                      newprice={(parseFloat(priceData.New_price) || 0).toFixed(2)}
+                      newprice={(parseFloat(priceData?.New_price) || 0).toFixed(2)}
                     />
                   </VuiBox>
                 </VuiBox>
@@ -798,8 +792,8 @@ useEffect(() => {
                     }}
                   >
                     <BarChart
-                      barChartData={chartConfig.barChartData}
-                      barChartOptions={chartConfig.barChartOptions}
+                      barChartData={chartConfig?.barChartData}
+                      barChartOptions={chartConfig?.barChartOptions}
                     />
                   </VuiBox>
                   <VuiBox mb="10px">
