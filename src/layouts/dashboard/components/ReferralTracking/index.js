@@ -7,27 +7,31 @@ import { FaEllipsisH } from "react-icons/fa";
 import linearGradient from "assets/theme/functions/linearGradient";
 import CircularProgress from "@mui/material/CircularProgress";
 import axios from "axios";
+import { AuthContext } from "context/Authcontext";
+import { useContext } from "react";
 
 function ReferralTracking() {
+  console.log('referal');
+  const stockData = useContext(AuthContext);
+
+
   const [data, setData] = useState(null);
   const { gradients } = colors;
   const { cardContent } = gradients;
-
   useEffect(() => {
     // Fetch the data from the API
     const fetchData = async () => {
       try {
-        const response = await axios(`http://172.235.16.92:8000/svs-widget/TATAMOTORS`);
-        const result = await response.json();
+        const response = await axios(`http://172.235.16.92:8000/svs-widget/${stockData?.stockData?.symbol}`);
+        const result = await response.data;
+        console.log('referal',result);
         setData(result);
       } catch (error) {
         console.error("Error fetching stock data:", error);
       }
     };
-
     fetchData();
-  }, []);
-
+  }, [stockData?.stockData?.symbol]);
   return (
     <Card
       sx={{
@@ -42,7 +46,7 @@ function ReferralTracking() {
       <VuiBox sx={{ width: "100%" }}>
         <VuiBox sx={{ width: "100%" }} mb="40px">
           <Typography variant="h5" color="#fff" fontWeight="bold">
-            {data?.title || "Safety Score"}
+            <span style={{fontSize:'medium'}}>{data?.title || "Safety Score"}</span>
           </Typography>
         </VuiBox>
         <VuiBox
@@ -98,7 +102,7 @@ function ReferralTracking() {
                 {data?.analyzed_metrics}
               </VuiTypography>
               <VuiTypography color="white" variant="lg" fontWeight="bold">
-                Sentiment: {data?.sentiment_analysis}
+                <span style={{ fontSize: "small" }}>Sentiment: {data?.sentiment_analysis}</span>
               </VuiTypography>
             </VuiBox>
             <VuiBox
@@ -121,8 +125,8 @@ function ReferralTracking() {
               <VuiTypography color="text" variant="button" fontWeight="regular" mb="5px">
                 {data?.risk_level_label}
               </VuiTypography>
-              <VuiTypography color="white" variant="lg" fontWeight="bold">
-                Safety Score: {data?.safety_score}
+              <VuiTypography color="white" variant="lg" fontWeight="bold" fontSize='small'>
+                <span style={{ fontSize: "small" }}>Safety Score: {data?.safety_score}</span>
               </VuiTypography>
             </VuiBox>
           </Stack>
@@ -179,5 +183,4 @@ function ReferralTracking() {
     </Card>
   );
 }
-
 export default ReferralTracking;

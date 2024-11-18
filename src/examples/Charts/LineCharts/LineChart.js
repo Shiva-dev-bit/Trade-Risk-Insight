@@ -309,7 +309,7 @@ const LineChart = ({ newprice }) => {
           ))}
         </Box>
       </div>
-      <div style={{ height: '400px', width: '100%' }} ref={chartContainerRef}>
+      <div style={{ height: '250px', width: '100%' }} ref={chartContainerRef}>
         {chartData[0]?.data?.length > 0 && (
           <Suspense fallback={<div>Loading chart...</div>}>
             <ReactApexChart

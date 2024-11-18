@@ -61,7 +61,7 @@ import { lineChartOptionsDashboard } from "layouts/dashboard/data/lineChartOptio
 import { barChartDataDashboard } from "layouts/dashboard/data/barChartData";
 import { barChartOptionsDashboard } from "layouts/dashboard/data/barChartOptions";
 
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "context/Authcontext";
 import { supabase } from "lib/supabase";
 import axios from "axios";
@@ -70,11 +70,15 @@ function Dashboard() {
   const { gradients } = colors;
   const { cardContent } = gradients;
   const stockData = useContext(AuthContext);
-  const [stocks, setStocks] = useState([]);
-  
+  // const [stocks, setStocks] = useState([]);
+  const wsRef = useRef(null);
+  const reconnectTimeoutRef = useRef(null);
+
+
   const [supabaseStocks, setSupabaseStocks] = useState([]);
   const [websocketStocks, setWebsocketStocks] = useState([]);
   const [stocksPercent, setStocksPercent] = useState([]);
+  const [websocketConnected, setWebsocketConnected] = useState(false);
 
 
   const initialStockData = {
@@ -102,8 +106,9 @@ function Dashboard() {
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState(null);
 
-  console.log('stocksDatastocksData',supabaseStocks);
-  console.log('stocksDatastocksData',websocketStocks);
+  console.log('stocksDatastocksData', supabaseStocks);
+  console.log('stocksDatastocksData', websocketStocks);
+  console.log('stockData', stockData?.stockData);
 
   const [StatisticsData, setStatisticsData] = useState({
     statistics: {
@@ -305,7 +310,6 @@ function Dashboard() {
     }
   }, [stockData]);
 
-  console.log('Realtime stocks', supabaseStocks);
 
   var today = new Date();
   var dd = String(today.getDate()).padStart(2, "0");
@@ -321,7 +325,9 @@ function Dashboard() {
         .select("*")
         .eq("symbol", `${stocksData?.symbol}`)
         .eq("exchange", `${stocksData?.exchange}`)
-        .eq("trading_date",today)
+        .order("trading_date", { ascending: false }) // Sort by 'trading_date' in descending order
+        .limit(1);
+      // .eq("trading_date",today)
 
       if (data) {
         setSupabaseStocks(data);
@@ -339,7 +345,10 @@ function Dashboard() {
       const { data, error } = await supabase
         .from("stock_daily_summary")
         .select("*")
-        .eq("trading_date", today);
+        .eq("symbol", `${stocksData?.symbol}`)
+        .eq("exchange", `${stocksData?.exchange}`)
+        .order("trading_date", { ascending: false }) // Sort by 'trading_date' in descending order
+        .limit(1);
 
       if (error) throw error;
       if (data) setStocksPercent(data);
@@ -356,194 +365,299 @@ function Dashboard() {
     icon: null,
     percentageColor: ""
   });
-  
+
   useEffect(() => {
-    // Determine whether to use Supabase or WebSocket data
-    const activeStocks = supabaseStocks.length > 0 ? supabaseStocks : websocketStocks;
-    const activeStocksPercent = supabaseStocks.length > 0 ? stocksPercent : [];
-  
-    if (activeStocks.length > 0 && activeStocksPercent.length > 0) {
-      const price_percent = activeStocksPercent.find(
-        (ele) =>
-          ele.symbol === stocksData.symbol &&
-          ele.exchange === stocksData.exchange &&
-          ele.trading_date === today
-      );
-  
-      const New_price = activeStocks.find(
-        (ele) => ele?.exchange === stocksData?.exchange && ele?.trading_date === today
-      );
-      console.log('Starting data', New_price);
-  
-      if (New_price && price_percent) {
-        const price_change = New_price.price - price_percent.previous_close;
-        const percent_change = (price_change / price_percent.previous_close) * 100;
-        const isPositiveChange = percent_change > 0;
-  
-        setPriceData({
-          New_price: New_price.price,
-          price_change,
-          percent_change,
-          isPositiveChange,
-          icon: isPositiveChange ? (
-            <FaCaretUp style={{ color: "green" }} />
-          ) : (
-            <FaCaretDown style={{ color: "red" }} />
-          ),
-          percentageColor: isPositiveChange ? "success" : "error"
-        });
-      }
-    } else {
-      // Fallback for cases where only WebSocket data is available
-      const isPositiveChange = websocketStocks?.[0]?.intraday_percent_change > 0;
-  
-      setPriceData({
-        New_price: websocketStocks?.price,
-        price_change: websocketStocks?.price_change || 0,
-        percent_change: websocketStocks?.intraday_percent_change || 0,
-        isPositiveChange,
-        icon: isPositiveChange ? (
-          <FaCaretUp style={{ color: "green" }} />
-        ) : (
-          <FaCaretDown style={{ color: "red" }} />
-        ),
-        percentageColor: isPositiveChange ? "success" : "error"
-      });
-    }
-  }, [supabaseStocks, websocketStocks, stocksPercent, today, stocksData.symbol, stocksData.exchange]);
-  
+    // Reset price data when stock changes
+    setPriceData({
+        New_price: 0.0000,
+        price_change: 0.0000,
+        percent_change: 0.0000,
+        isPositiveChange: null,
+        icon: null,
+        percentageColor: ""
+    });
+}, [stockData?.stockData?.symbol, stockData?.stockData?.exchange]);
 
-  console.log('Starting Data',priceData);
-  
+// useEffect(() => {
+//     let NewWebsocketStocks = null;
+//     // Determine whether to use Supabase or WebSocket data
+//     if (
+//       stocksData?.symbol === websocketStocks?.symbol &&
+//       stocksData?.exchange === websocketStocks?.exchange &&
+//       websocketStocks?.price
+//     ) {
+//       NewWebsocketStocks = websocketStocks;
+      
+//     }
 
+//     // Only use NewWebsocketStocks as a fallback if it has data
+//     const activeStocks = supabaseStocks.length > 0 ? supabaseStocks : [];
+//     const activeStocksPercent = supabaseStocks.length > 0 ? stocksPercent : [];
 
+//     // console.log('activeStocks', activeStocks);
+
+//     if (activeStocks.length > 0 && activeStocksPercent.length > 0) {
+//       const New_price = activeStocks;
+//       const price_percent = activeStocksPercent;
+
+//       if (New_price && price_percent) {
+//         const price_change = New_price[0]?.price - price_percent[0]?.previous_close;
+//         const percent_change = (price_change / price_percent[0]?.previous_close) * 100;
+//         const isPositiveChange = percent_change > 0;
+
+//         setPriceData({
+//           New_price: New_price[0]?.price,
+//           price_change,
+//           percent_change,
+//           isPositiveChange,
+//           icon: isPositiveChange ? (
+//             <FaCaretUp style={{ color: "green" }} />
+//           ) : (
+//             <FaCaretDown style={{ color: "red" }} />
+//           ),
+//           percentageColor: isPositiveChange ? "success" : "error"
+//         });
+//       }
+//     } else if (NewWebsocketStocks) {
+//       // Fallback for cases where only WebSocket data is available
+//       console.log('activeStocks', NewWebsocketStocks);
+      
+
+//       const isPositiveChange = NewWebsocketStocks?.percent_change > 0;
+
+//       setPriceData({
+//         New_price: NewWebsocketStocks?.price,
+//         price_change: NewWebsocketStocks?.change || 0,
+//         percent_change: NewWebsocketStocks?.percent_change || 0,
+//         isPositiveChange,
+//         icon: isPositiveChange ? (
+//           <FaCaretUp style={{ color: "green" }} />
+//         ) : (
+//           <FaCaretDown style={{ color: "red" }} />
+//         ),
+//         percentageColor: isPositiveChange ? "success" : "error"
+//       });
+//     }
+//   }, [supabaseStocks, websocketStocks, stocksPercent, stocksData?.symbol, stocksData?.exchange]);
 
 useEffect(() => {
-  console.log('supabase Stocks', stocksData?.exchange);
+  if (!stockData?.stockData?.symbol || !stockData?.stockData?.exchange) return;
 
-  if (stocksData?.exchange === "NSE" || stocksData?.exchange === "BSE") {
-    setWebsocketStocks([]); // Clear WebSocket data for Indian stocks
-  } else {
-    setSupabaseStocks([]); // Clear Supabase data for foreign stocks
+  // Determine data source and update price
+  if (websocketStocks?.symbol === stockData?.stockData?.symbol && 
+      websocketStocks?.exchange === stockData?.stockData?.exchange && 
+      websocketConnected) {
+      
+      const isPositiveChange = websocketStocks?.percent_change > 0;
+      setPriceData({
+          New_price: websocketStocks?.price || 0,
+          price_change: websocketStocks?.change || 0,
+          percent_change: websocketStocks?.percent_change || 0,
+          isPositiveChange,
+          icon: isPositiveChange ? (
+              <FaCaretUp style={{ color: "green" }} />
+          ) : (
+              <FaCaretDown style={{ color: "red" }} />
+          ),
+          percentageColor: isPositiveChange ? "success" : "error"
+      });
+  } else if (supabaseStocks.length > 0 && stocksPercent.length > 0) {
+      const New_price = supabaseStocks[0]?.price;
+      const previous_close = stocksPercent[0]?.previous_close;
+
+      if (New_price && previous_close) {
+          const price_change = New_price - previous_close;
+          const percent_change = (price_change / previous_close) * 100;
+          const isPositiveChange = percent_change > 0;
+
+          setPriceData({
+              New_price,
+              price_change,
+              percent_change,
+              isPositiveChange,
+              icon: isPositiveChange ? (
+                  <FaCaretUp style={{ color: "green" }} />
+              ) : (
+                  <FaCaretDown style={{ color: "red" }} />
+              ),
+              percentageColor: isPositiveChange ? "success" : "error"
+          });
+      }
   }
-  
-  if (stocksData?.exchange === "NSE" || stocksData?.exchange === "BSE") {
-    // For Indian stocks, fetch from Supabase
-    fetchStockData();
-    fetchDailyStock();
-    console.log('Supabase', stocks);
+}, [supabaseStocks, websocketStocks, stocksPercent, stockData?.stockData, websocketConnected]);
 
-    const channel_1 = supabase
-      .channel("price-channel")
-      .on("postgres_changes", { event: "*", schema: "public", table: "price" }, (payload) => {
-        const { eventType, new: newStock } = payload;
-        
-        if (newStock.symbol === stocksData?.symbol) {
-          setSupabaseStocks(() => {
-            switch (eventType) {
-              case "INSERT":
-              case "UPDATE":
-                console.log("Realtime Update", newStock);
-                return [newStock];
-              case "DELETE":
-                return [];
-              default:
-                return [];
-            }
-          });
+
+  // const connect = useCallback(() => {
+  //   try {
+  //     if (wsRef.current) {
+  //       wsRef.current.close();
+  //       wsRef.current = null;
+  //     }
+
+  //     console.log('websocketStocks', stockData?.stockData?.symbol, stockData?.stockData?.exchange)
+  //     const ws = new WebSocket(`ws://172.235.16.92:8000/ws/${stockData?.stockData?.symbol}/${stockData?.stockData?.exchange}`);
+  //     wsRef.current = ws;
+
+  //     ws.onopen = () => setIsConnected(true);
+
+  //     ws.onmessage = (event) => {
+  //       try {
+  //         const data = JSON.parse(event.data);
+  //         if (data.type === 'realtime') {
+  //           setWebsocketStocks(data.data);
+  //         }
+  //       } catch (err) {
+  //         console.error('Parse error:', err);
+  //       }
+  //     };
+
+  //     ws.onclose = () => {
+  //       setIsConnected(false);
+  //       wsRef.current = null;
+  //       if (reconnectTimeoutRef.current) {
+  //         clearTimeout(reconnectTimeoutRef.current);
+  //       }
+  //       // Adding a 5-second delay before reconnecting to avoid overwhelming the server
+  //       reconnectTimeoutRef.current = setTimeout(connect, 5000);
+  //     };
+
+  //   } catch (err) {
+  //     console.error('Connection error:', err);
+  //   }
+  // }, [stockData?.stockData?.symbol, stockData?.stockData?.exchange]);
+
+  const connect = useCallback(() => {
+    try {
+        if (!stockData?.stockData?.symbol || !stockData?.stockData?.exchange) return;
+
+        if (wsRef.current) {
+            wsRef.current.close();
+            wsRef.current = null;
         }
-      })
-      .subscribe();
 
-    const channel_2 = supabase
-      .channel("stock_daily_summary-channel")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "stock_daily_summary" },
-        (payload) => {
-          setStocksPercent((prevStocks) => {
-            const { eventType, new: newStock, old: oldStock } = payload;
-
-            switch (eventType) {
-              case "INSERT":
-                return [...prevStocks, newStock];
-              case "UPDATE":
-                return prevStocks.map((stock) => (stock.id === newStock.id ? newStock : stock));
-              case "DELETE":
-                return prevStocks.filter((stock) => stock.id !== oldStock.id);
-              default:
-                return prevStocks;
-            }
-          });
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel_1);
-      supabase.removeChannel(channel_2);
-    };
-  } else {
-    // For foreign stocks, connect to WebSocket API
-    console.log('supabase Stocks', stocksData?.exchange, 'WebSocket API');
-
-    let ws;
-    const connectWebSocket = () => {
-      try {
-        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const wsUrl = `${protocol}//172.235.16.92:8000/ws/${stocksData?.symbol}/${stocksData?.exchange}`;
-        ws = new WebSocket(wsUrl);
+        const ws = new WebSocket(
+            `ws://172.235.16.92:8000/ws/${stockData?.stockData?.symbol}/${stockData?.stockData?.exchange}`
+        );
+        wsRef.current = ws;
 
         ws.onopen = () => {
-          console.log(`WebSocket Connected for ${stocksData?.symbol}`);
-          setIsConnected(true);
-          setError(null);
-          ws.send(JSON.stringify({ action: 'subscribe', symbol: stocksData?.symbol, exchange: stocksData?.exchange }));
+            setIsConnected(true);
+            setWebsocketConnected(true);
         };
 
         ws.onmessage = (event) => {
-          try {
-            const data = JSON.parse(event.data);
-            if (data.type === 'realtime') {
-              setWebsocketStocks(data.data);
-            } else {
-              console.log('Received non-realtime data, ignoring:', data);
+            try {
+                const data = JSON.parse(event.data);
+                if (data.type === 'realtime' && 
+                    data.data.symbol === stockData?.stockData?.symbol && 
+                    data.data.exchange === stockData?.stockData?.exchange) {
+                    setWebsocketStocks(data.data);
+                }
+            } catch (err) {
+                console.error('Parse error:', err);
             }
-          } catch (err) {
-            console.error('Error parsing message:', err);
+        };
+
+        ws.onclose = () => {
+            setIsConnected(false);
+            setWebsocketConnected(false);
+            wsRef.current = null;
+            
+            if (reconnectTimeoutRef.current) {
+                clearTimeout(reconnectTimeoutRef.current);
+            }
+            reconnectTimeoutRef.current = setTimeout(connect, 5000);
+        };
+
+    } catch (err) {
+        console.error('Connection error:', err);
+        setWebsocketConnected(false);
+    }
+}, [stockData?.stockData?.symbol, stockData?.stockData?.exchange]);
+
+
+  useEffect(() => {
+    console.log('supabase Stocks', stocksData?.exchange);
+
+    if (stocksData?.exchange === "NSE" || stocksData?.exchange === "BSE") {
+      setWebsocketStocks([]); // Clear WebSocket data for Indian stocks
+    } else {
+      setSupabaseStocks([]); // Clear Supabase data for foreign stocks
+    }
+
+    if (stocksData?.exchange === "NSE" || stocksData?.exchange === "BSE") {
+      // For Indian stocks, fetch from Supabase
+      fetchStockData();
+      fetchDailyStock();
+
+      const channel_1 = supabase
+        .channel("price-channel")
+        .on("postgres_changes", { event: "*", schema: "public", table: "price" }, (payload) => {
+          const { eventType, new: newStock } = payload;
+
+          if (newStock.symbol === stocksData?.symbol) {
+            setSupabaseStocks(() => {
+              switch (eventType) {
+                case "INSERT":
+                case "UPDATE":
+                  console.log("Realtime Update", newStock);
+                  return [newStock];
+                case "DELETE":
+                  return [];
+                default:
+                  return [];
+              }
+            });
           }
-        };
+        })
+        .subscribe();
 
-        ws.onerror = (error) => {
-          console.error(`WebSocket error for ${stocksData?.symbol}:`, error);
-          setError('Connection error');
-          setIsConnected(false);
-        };
+      const channel_2 = supabase
+        .channel("stock_daily_summary-channel")
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "stock_daily_summary" },
+          (payload) => {
+            setStocksPercent((prevStocks) => {
+              const { eventType, new: newStock, old: oldStock } = payload;
 
-        ws.onclose = (event) => {
-          console.log(`WebSocket disconnected for ${stocksData?.symbol}`, event.code, event.reason);
-          setIsConnected(false);
-          if (event.code !== 1000) {
-            setTimeout(connectWebSocket, 5000);
+              switch (eventType) {
+                case "INSERT":
+                  return [...prevStocks, newStock];
+                case "UPDATE":
+                  return prevStocks.map((stock) => (stock.id === newStock.id ? newStock : stock));
+                case "DELETE":
+                  return prevStocks.filter((stock) => stock.id !== oldStock.id);
+                default:
+                  return prevStocks;
+              }
+            });
           }
-        };
-      } catch (err) {
-        console.error(`WebSocket connection error for ${stocksData?.symbol}:`, err);
-        setError('Connection failed');
-        setIsConnected(false);
-      }
-    };
+        )
+        .subscribe();
 
-    connectWebSocket();
+      return () => {
+        supabase.removeChannel(channel_1);
+        supabase.removeChannel(channel_2);
+      };
+    } else {
+      // For foreign stocks, connect to WebSocket API
+      console.log('supabase Stocks', stocksData?.exchange, 'WebSocket API')
 
-    return () => {
-      if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.close(1000, 'Component unmounted');
-      }
-    };
-  }
-}, [stocksData?.symbol, stocksData?.exchange]);
-  
+      connect();
+      return () => {
+        if (reconnectTimeoutRef.current) {
+          clearTimeout(reconnectTimeoutRef.current);
+        }
+        if (wsRef.current) {
+          wsRef.current.close();
+          // wsRef.current = null;
+        }
+      };
+
+    }
+  }, [stocksData?.symbol, stocksData?.exchange, connect]);
+
 
   const getIcon = (title) => {
     switch (title) {
@@ -582,8 +696,8 @@ useEffect(() => {
                   text: (
                     <>
                       {priceData?.icon}
-                      {`${stocks?.intraday_change?.toFixed(2) || priceData?.price_change?.toFixed(2)} 
-                      (${stocks?.intraday_percent_change?.toFixed(2) || (priceData?.percent_change)?.toFixed(2)}%)`}
+                      {`${priceData?.price_change?.toFixed(2)} 
+                      (${(priceData?.percent_change)?.toFixed(2)}%)`}
                     </>
                   ),
                 }}

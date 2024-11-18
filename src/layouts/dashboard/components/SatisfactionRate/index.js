@@ -20,11 +20,10 @@ const SatisfactionRate = () => {
   const stockData = useContext(AuthContext);
 
   console.log('Volatility', data);
-
-  // https://1878-223-178-85-20.ngrok-free.app/volatility/tcs
+  // http://172.235.16.92:8000/volatility/AXISBANK
   useEffect(() => {
     axios
-      .get(`http://1878-223-178-85-20.ngrok-free.app/volatility/${stockData?.stockData?.symbol}`)
+      .get(`http://172.235.16.92:8000/volatility/${stockData?.stockData?.symbol}`)
       .then((response) => {
         setData(response.data.data);
         setLoading(false);

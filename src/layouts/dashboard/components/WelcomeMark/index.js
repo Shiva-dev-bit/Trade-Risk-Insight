@@ -125,7 +125,7 @@ const WelcomeMark = ({ stocksData }) => {
                 <strong>Company Description:</strong>
               </VuiTypography>
               <VuiTypography color="white" variant="h6" fontWeight="regular">
-                {getShortDescription(companyData.companyDescription)}
+                {getShortDescription(companyData?.companyDescription)}
               </VuiTypography>
             </Grid>
 
@@ -144,7 +144,7 @@ const WelcomeMark = ({ stocksData }) => {
                 <strong>Website:</strong>
               </VuiTypography>
               <VuiTypography color="white" variant="h6" fontWeight="regular" mb="8px">
-                <a href={`${companyData.website}`} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>
+                <a href={`${companyData?.website}`} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>
                   {companyData?.website}
                 </a>
               </VuiTypography>
@@ -168,7 +168,7 @@ const WelcomeMark = ({ stocksData }) => {
               </VuiTypography>
             </Grid>
 
-            {companyData.companyDescription.length > 100 && (
+            {companyData?.companyDescription?.length > 100 && (
               <Grid item xs={12} sm={6} md={3}>
                 <VuiTypography
                   variant="button"
@@ -214,7 +214,7 @@ const WelcomeMark = ({ stocksData }) => {
                       </VuiTypography>
 
                       <VuiTypography color="white" variant="h6" fontWeight="regular" mt={2} sx={{ textAlign: 'justify' }}>
-                        {companyData?.companyDescription?.length > 1000 ? companyData?.companyDescription?.substring(0, 1000) + '....' : companyData.companyDescription}
+                        {companyData?.companyDescription?.length > 1000 ? companyData?.companyDescription?.substring(0, 1000) + '....' : companyData?.companyDescription}
                       </VuiTypography>
                     </Grid>
 
@@ -319,7 +319,7 @@ const WelcomeMark = ({ stocksData }) => {
                           <strong>Country:</strong>
                         </VuiTypography>
                         <VuiTypography color="white" variant="h6" fontWeight="regular" mb="8px">
-                          {companyData.country}
+                          {companyData?.country}
                         </VuiTypography>
                       </Grid>
 
@@ -329,7 +329,7 @@ const WelcomeMark = ({ stocksData }) => {
                           <strong>MIC Code:</strong>
                         </VuiTypography>
                         <VuiTypography color="white" variant="h6" fontWeight="regular" mb="8px">
-                          {companyData.micCode}
+                          {companyData?.micCode}
                         </VuiTypography>
                       </Grid>
                     </Grid>
