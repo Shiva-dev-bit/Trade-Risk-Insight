@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Card, CircularProgress } from "@mui/material";
+import { Card, CircularProgress , CandlestickChartRoundedIcon} from "@mui/material";
 import VuiBox from "components/VuiBox";
 import VuiTypography from "components/VuiTypography";
-import { IoHappy, IoSad } from "react-icons/io5";
-import { FaFaceSmile } from "react-icons/fa6";
+import { IoHappy, IoSad,IoArrowUp, IoArrowForwardCircle } from "react-icons/io5";
+import { FaArrowDownUpAcrossLine, FaArrowDownUpLock, FaArrowsUpDown, FaFaceSmile } from "react-icons/fa6";
 import colors from "assets/theme/base/colors";
 import linearGradient from "assets/theme/functions/linearGradient";
 import { AuthContext } from "context/Authcontext";
 import { useContext } from "react";
-
+import { FaArrowsAlt, FaArrowsAltV } from "react-icons/fa";
+import CandlestickChartIcon from '@mui/icons-material/CandlestickChart';
 
 const SatisfactionRate = () => {
   const { info, gradients } = colors;
@@ -41,8 +42,8 @@ const SatisfactionRate = () => {
     <Card sx={{ height: "100%" }}>
       <VuiBox display="flex" flexDirection="column" padding={2} sx={{ textAlign: 'center' }}>
         <VuiBox>
-          <VuiTypography variant="h6" color="white" fontWeight="bold" mb="10px">
-            Volatility Score - {(data?.volatility_score*100).toFixed(2)}%
+          <VuiTypography variant="h5" color="white" fontWeight="bold" mb="45px">
+            <span style={{fontSize:'medium'}}>Volatility Score</span>
           </VuiTypography>
         </VuiBox>
         <VuiBox sx={{ alignSelf: "center", justifySelf: "center", zIndex: "-1" }}>
@@ -68,7 +69,6 @@ const SatisfactionRate = () => {
             >
               <VuiBox
                 sx={{
-                  background: info.main,
                   // transform: "translateY(-0%)",
                   width: "50px",
                   height: "50px",
@@ -78,19 +78,7 @@ const SatisfactionRate = () => {
                   alignItems: "center",
                 }}
               >
-                {/* {satisfactionRate > 50 ? (
-                  <IoHappy size="30px" color="#ffac33" />
-                ) : (
-                  <IoSad size="30px" color="#ffac33" />
-                )} */}
-
-                {data?.volatility_score === 1 ? (
-                  <FaFaceSmile size="26px" color="#fff" />
-                ) : data?.volatility_score > 0.5 ? (
-                  <IoHappy size="30px" color="#fff" />
-                ) : (
-                  <IoSad size="30px" color="#fff" />
-                )}
+                <FaArrowsAltV size="40px" color="#01b574" />
               </VuiBox>
             </VuiBox>
           </VuiBox>
@@ -124,7 +112,7 @@ const SatisfactionRate = () => {
               {(data?.volatility_score*100).toFixed(2)}%
             </VuiTypography>
             <VuiTypography color="text" variant="caption" fontWeight="regular" sx={{ fontSize: '10px' }}>
-              Based on Stocks
+              Based on APARCH model volatility
             </VuiTypography>
           </VuiBox>
           <VuiTypography color="text" variant="caption" display="inline-block" fontWeight="regular">

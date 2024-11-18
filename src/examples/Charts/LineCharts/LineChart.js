@@ -248,7 +248,7 @@ const LineChart = ({ newprice }) => {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          marginBottom: "20px",
+          marginBottom: "10px",
         }}
       >
         <Box
@@ -261,11 +261,11 @@ const LineChart = ({ newprice }) => {
           }}
         >
           <div style={{ textAlign: "center" }}>
-            <div>High</div>
+            <div>Today's High</div>
             <div style={{ fontWeight: 600, fontSize: "14px" }}>{currencySymbol}{selectedStocksHigh}</div>
           </div>
           <div style={{ textAlign: "center" }}>
-            <div>Low</div>
+            <div>Today's Low</div>
             <div style={{ fontWeight: 600, fontSize: "15px" }}>{currencySymbol}{selectedStocksLow}</div>
           </div>
           <div style={{ textAlign: "center" }}>

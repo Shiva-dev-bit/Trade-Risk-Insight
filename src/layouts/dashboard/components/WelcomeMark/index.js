@@ -121,7 +121,7 @@ const WelcomeMark = ({ stocksData }) => {
         <VuiBox>
           <Grid container spacing={3}>
             <Grid item xs={12}>
-              <VuiTypography color="text" variant="button" fontWeight="regular" mb="12px">
+              <VuiTypography color="white" variant="button" fontWeight="regular" mb="12px">
                 <strong>Company Description:</strong>
               </VuiTypography>
               <VuiTypography color="white" variant="h6" fontWeight="regular">
@@ -131,7 +131,7 @@ const WelcomeMark = ({ stocksData }) => {
 
             {/* Grid layout for company details */}
             <Grid item xs={12} sm={6} md={6}>
-              <VuiTypography color="text" variant="button" fontWeight="regular" mb="6px">
+              <VuiTypography color="white" variant="button" fontWeight="regular" mb="6px">
                 <strong>CEO:</strong>
               </VuiTypography>
               <VuiTypography color="white" variant="h6" fontWeight="regular" mb="8px">
@@ -140,7 +140,7 @@ const WelcomeMark = ({ stocksData }) => {
             </Grid>
 
             <Grid item xs={12} sm={6} md={6}>
-              <VuiTypography color="text" variant="button" fontWeight="regular" mb="6px">
+              <VuiTypography color="white" variant="button" fontWeight="regular" mb="6px">
                 <strong>Website:</strong>
               </VuiTypography>
               <VuiTypography color="white" variant="h6" fontWeight="regular" mb="8px">
@@ -151,7 +151,7 @@ const WelcomeMark = ({ stocksData }) => {
             </Grid>
 
             <Grid item xs={12} sm={6} md={6}>
-              <VuiTypography color="text" variant="button" fontWeight="regular" mb="6px">
+              <VuiTypography color="white" variant="button" fontWeight="regular" mb="6px">
                 <strong>Industry:</strong>
               </VuiTypography>
               <VuiTypography color="white" variant="h6" fontWeight="regular" mb="8px">
@@ -160,7 +160,7 @@ const WelcomeMark = ({ stocksData }) => {
             </Grid>
 
             <Grid item xs={12} sm={6} md={6}>
-              <VuiTypography color="text" variant="button" fontWeight="regular" mb="6px">
+              <VuiTypography color="white" variant="button" fontWeight="regular" mb="6px">
                 <strong>Country:</strong>
               </VuiTypography>
               <VuiTypography color="white" variant="h6" fontWeight="regular" mb="8px">

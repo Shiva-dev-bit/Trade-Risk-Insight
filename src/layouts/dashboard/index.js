@@ -363,122 +363,122 @@ function Dashboard() {
   useEffect(() => {
     // Reset price data when stock changes
     setPriceData({
-        New_price: 0.0000,
-        price_change: 0.0000,
-        percent_change: 0.0000,
-        isPositiveChange: null,
-        icon: null,
-        percentageColor: ""
+      New_price: 0.0000,
+      price_change: 0.0000,
+      percent_change: 0.0000,
+      isPositiveChange: null,
+      icon: null,
+      percentageColor: ""
     });
-}, [stockData?.stockData?.symbol, stockData?.stockData?.exchange]);
+  }, [stockData?.stockData?.symbol, stockData?.stockData?.exchange]);
 
-// useEffect(() => {
-//     let NewWebsocketStocks = null;
-//     // Determine whether to use Supabase or WebSocket data
-//     if (
-//       stocksData?.symbol === websocketStocks?.symbol &&
-//       stocksData?.exchange === websocketStocks?.exchange &&
-//       websocketStocks?.price
-//     ) {
-//       NewWebsocketStocks = websocketStocks;
-      
-//     }
+  // useEffect(() => {
+  //     let NewWebsocketStocks = null;
+  //     // Determine whether to use Supabase or WebSocket data
+  //     if (
+  //       stocksData?.symbol === websocketStocks?.symbol &&
+  //       stocksData?.exchange === websocketStocks?.exchange &&
+  //       websocketStocks?.price
+  //     ) {
+  //       NewWebsocketStocks = websocketStocks;
 
-//     // Only use NewWebsocketStocks as a fallback if it has data
-//     const activeStocks = supabaseStocks.length > 0 ? supabaseStocks : [];
-//     const activeStocksPercent = supabaseStocks.length > 0 ? stocksPercent : [];
+  //     }
 
-//     // console.log('activeStocks', activeStocks);
+  //     // Only use NewWebsocketStocks as a fallback if it has data
+  //     const activeStocks = supabaseStocks.length > 0 ? supabaseStocks : [];
+  //     const activeStocksPercent = supabaseStocks.length > 0 ? stocksPercent : [];
 
-//     if (activeStocks.length > 0 && activeStocksPercent.length > 0) {
-//       const New_price = activeStocks;
-//       const price_percent = activeStocksPercent;
+  //     // console.log('activeStocks', activeStocks);
 
-//       if (New_price && price_percent) {
-//         const price_change = New_price[0]?.price - price_percent[0]?.previous_close;
-//         const percent_change = (price_change / price_percent[0]?.previous_close) * 100;
-//         const isPositiveChange = percent_change > 0;
+  //     if (activeStocks.length > 0 && activeStocksPercent.length > 0) {
+  //       const New_price = activeStocks;
+  //       const price_percent = activeStocksPercent;
 
-//         setPriceData({
-//           New_price: New_price[0]?.price,
-//           price_change,
-//           percent_change,
-//           isPositiveChange,
-//           icon: isPositiveChange ? (
-//             <FaCaretUp style={{ color: "green" }} />
-//           ) : (
-//             <FaCaretDown style={{ color: "red" }} />
-//           ),
-//           percentageColor: isPositiveChange ? "success" : "error"
-//         });
-//       }
-//     } else if (NewWebsocketStocks) {
-//       // Fallback for cases where only WebSocket data is available
-//       console.log('activeStocks', NewWebsocketStocks);
-      
+  //       if (New_price && price_percent) {
+  //         const price_change = New_price[0]?.price - price_percent[0]?.previous_close;
+  //         const percent_change = (price_change / price_percent[0]?.previous_close) * 100;
+  //         const isPositiveChange = percent_change > 0;
 
-//       const isPositiveChange = NewWebsocketStocks?.percent_change > 0;
+  //         setPriceData({
+  //           New_price: New_price[0]?.price,
+  //           price_change,
+  //           percent_change,
+  //           isPositiveChange,
+  //           icon: isPositiveChange ? (
+  //             <FaCaretUp style={{ color: "green" }} />
+  //           ) : (
+  //             <FaCaretDown style={{ color: "red" }} />
+  //           ),
+  //           percentageColor: isPositiveChange ? "success" : "error"
+  //         });
+  //       }
+  //     } else if (NewWebsocketStocks) {
+  //       // Fallback for cases where only WebSocket data is available
+  //       console.log('activeStocks', NewWebsocketStocks);
 
-//       setPriceData({
-//         New_price: NewWebsocketStocks?.price,
-//         price_change: NewWebsocketStocks?.change || 0,
-//         percent_change: NewWebsocketStocks?.percent_change || 0,
-//         isPositiveChange,
-//         icon: isPositiveChange ? (
-//           <FaCaretUp style={{ color: "green" }} />
-//         ) : (
-//           <FaCaretDown style={{ color: "red" }} />
-//         ),
-//         percentageColor: isPositiveChange ? "success" : "error"
-//       });
-//     }
-//   }, [supabaseStocks, websocketStocks, stocksPercent, stocksData?.symbol, stocksData?.exchange]);
 
-useEffect(() => {
-  if (!stockData?.stockData?.symbol || !stockData?.stockData?.exchange) return;
+  //       const isPositiveChange = NewWebsocketStocks?.percent_change > 0;
 
-  // Determine data source and update price
-  if (websocketStocks?.symbol === stockData?.stockData?.symbol && 
-      websocketStocks?.exchange === stockData?.stockData?.exchange && 
+  //       setPriceData({
+  //         New_price: NewWebsocketStocks?.price,
+  //         price_change: NewWebsocketStocks?.change || 0,
+  //         percent_change: NewWebsocketStocks?.percent_change || 0,
+  //         isPositiveChange,
+  //         icon: isPositiveChange ? (
+  //           <FaCaretUp style={{ color: "green" }} />
+  //         ) : (
+  //           <FaCaretDown style={{ color: "red" }} />
+  //         ),
+  //         percentageColor: isPositiveChange ? "success" : "error"
+  //       });
+  //     }
+  //   }, [supabaseStocks, websocketStocks, stocksPercent, stocksData?.symbol, stocksData?.exchange]);
+
+  useEffect(() => {
+    if (!stockData?.stockData?.symbol || !stockData?.stockData?.exchange) return;
+
+    // Determine data source and update price
+    if (websocketStocks?.symbol === stockData?.stockData?.symbol &&
+      websocketStocks?.exchange === stockData?.stockData?.exchange &&
       websocketConnected) {
-      
+
       const isPositiveChange = websocketStocks?.percent_change > 0;
       setPriceData({
-          New_price: websocketStocks?.price || 0,
-          price_change: websocketStocks?.change || 0,
-          percent_change: websocketStocks?.percent_change || 0,
-          isPositiveChange,
-          icon: isPositiveChange ? (
-              <FaCaretUp style={{ color: "green" }} />
-          ) : (
-              <FaCaretDown style={{ color: "red" }} />
-          ),
-          percentageColor: isPositiveChange ? "success" : "error"
+        New_price: websocketStocks?.price || 0,
+        price_change: websocketStocks?.change || 0,
+        percent_change: websocketStocks?.percent_change || 0,
+        isPositiveChange,
+        icon: isPositiveChange ? (
+          <FaCaretUp style={{ color: "green" }} />
+        ) : (
+          <FaCaretDown style={{ color: "red" }} />
+        ),
+        percentageColor: isPositiveChange ? "success" : "error"
       });
-  } else if (supabaseStocks.length > 0 && stocksPercent.length > 0) {
+    } else if (supabaseStocks.length > 0 && stocksPercent.length > 0) {
       const New_price = supabaseStocks[0]?.price;
       const previous_close = stocksPercent[0]?.previous_close;
 
       if (New_price && previous_close) {
-          const price_change = New_price - previous_close;
-          const percent_change = (price_change / previous_close) * 100;
-          const isPositiveChange = percent_change > 0;
+        const price_change = New_price - previous_close;
+        const percent_change = (price_change / previous_close) * 100;
+        const isPositiveChange = percent_change > 0;
 
-          setPriceData({
-              New_price,
-              price_change,
-              percent_change,
-              isPositiveChange,
-              icon: isPositiveChange ? (
-                  <FaCaretUp style={{ color: "green" }} />
-              ) : (
-                  <FaCaretDown style={{ color: "red" }} />
-              ),
-              percentageColor: isPositiveChange ? "success" : "error"
-          });
+        setPriceData({
+          New_price,
+          price_change,
+          percent_change,
+          isPositiveChange,
+          icon: isPositiveChange ? (
+            <FaCaretUp style={{ color: "green" }} />
+          ) : (
+            <FaCaretDown style={{ color: "red" }} />
+          ),
+          percentageColor: isPositiveChange ? "success" : "error"
+        });
       }
-  }
-}, [supabaseStocks, websocketStocks, stocksPercent, stockData?.stockData, websocketConnected]);
+    }
+  }, [supabaseStocks, websocketStocks, stocksPercent, stockData?.stockData, websocketConnected]);
 
 
   // const connect = useCallback(() => {
@@ -798,13 +798,13 @@ useEffect(() => {
                   </VuiBox>
                   <VuiBox mb="10px">
                     <VuiTypography variant="lg" color="white" fontWeight="bold">
-                      Metrics
+                      Financials
                     </VuiTypography>
                   </VuiBox>
                   <Grid container spacing="5px">
                     <Grid item xs={6} md={3} lg={6}>
                       <Stack direction="row" spacing={{ sm: "10px", xl: "1px", xxl: "10px" }} mb="6px">
-                        <VuiTypography color="text" variant="button">Forward/PE</VuiTypography>
+                        <VuiTypography color="text" variant="button">Forward P/E</VuiTypography>
                       </Stack>
                       <VuiTypography color="white" variant="lg" fontWeight="bold" mb="8px">
                         {(StatisticsData?.statistics?.valuations_metrics?.forward_pe ?? 0).toFixed(3)}
@@ -814,7 +814,7 @@ useEffect(() => {
 
                     <Grid item xs={6} md={3} lg={6}>
                       <Stack direction="row" spacing={{ sm: "10px", xl: "1px", xxl: "10px" }} mb="6px">
-                        <VuiTypography color="text" variant="button">Price/Sales</VuiTypography>
+                        <VuiTypography color="text" variant="button">Price/Sales (P/S)</VuiTypography>
                       </Stack>
                       <VuiTypography color="white" variant="lg" fontWeight="bold" mb="8px">
                         {(StatisticsData?.statistics?.valuations_metrics?.price_to_sales_ttm ?? 0).toFixed(3)}
@@ -824,7 +824,7 @@ useEffect(() => {
 
                     <Grid item xs={6} md={3} lg={6}>
                       <Stack direction="row" spacing={{ sm: "10px", xl: "1px", xxl: "10px" }} mb="6px">
-                        <VuiTypography color="text" variant="button">Enterprise/Value</VuiTypography>
+                        <VuiTypography color="text" variant="button">Enterprise Value / EBITDA</VuiTypography>
                       </Stack>
                       <VuiTypography color="white" variant="lg" fontWeight="bold" mb="8px">
                         {(StatisticsData?.statistics?.valuations_metrics?.enterprise_to_ebitda ?? 0).toFixed(3)}
@@ -834,7 +834,7 @@ useEffect(() => {
 
                     <Grid item xs={6} md={3} lg={6}>
                       <Stack direction="row" spacing={{ sm: "10px", xl: "1px", xxl: "10px" }} mb="6px">
-                        <VuiTypography color="text" variant="button">Forward/annual/Rate</VuiTypography>
+                        <VuiTypography color="text" variant="button">Forward Annual Dividend Rate</VuiTypography>
                       </Stack>
                       <VuiTypography color="white" variant="lg" fontWeight="bold" mb="8px">
                         {(StatisticsData?.statistics?.dividends_and_splits?.forward_annual_dividend_yield ?? 0).toFixed(3)}

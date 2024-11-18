@@ -44,7 +44,7 @@ function ReferralTracking() {
       }}
     >
       <VuiBox sx={{ width: "100%" }}>
-        <VuiBox sx={{ width: "100%" }} mb="40px">
+        <VuiBox sx={{ width: "100%" }} mb="40px" mt="20px">
           <Typography variant="h5" color="#fff" fontWeight="bold">
             <span style={{fontSize:'medium'}}>{data?.title || "Safety Score"}</span>
           </Typography>
@@ -82,10 +82,12 @@ function ReferralTracking() {
             })}
           >
             <VuiBox
+              
               display="flex"
               width="220px"
               p="20px 22px"
               flexDirection="column"
+              style={{ marginBottom:"90px" }}
               sx={({ breakpoints }) => ({
                 background: linearGradient(cardContent.main, cardContent.state, cardContent.deg),
                 borderRadius: "20px",
@@ -98,11 +100,8 @@ function ReferralTracking() {
                 },
               })}
             >
-              <VuiTypography color="text" variant="button" fontWeight="regular" mb="5px">
+              <VuiTypography color="white" variant="button" fontWeight="regular" mb="5px">
                 {data?.analyzed_metrics}
-              </VuiTypography>
-              <VuiTypography color="white" variant="lg" fontWeight="bold">
-                <span style={{ fontSize: "small" }}>Sentiment: {data?.sentiment_analysis}</span>
               </VuiTypography>
             </VuiBox>
             <VuiBox
@@ -122,11 +121,12 @@ function ReferralTracking() {
                 },
               })}
             >
-              <VuiTypography color="text" variant="button" fontWeight="regular" mb="5px">
-                {data?.risk_level_label}
+              <VuiTypography color="white" variant="button" fontWeight="regular" mb="5px">
+                <span></span>Sentiment:<br/>
+                {data?.sentiment_analysis}
               </VuiTypography>
               <VuiTypography color="white" variant="lg" fontWeight="bold" fontSize='small'>
-                <span style={{ fontSize: "small" }}>Safety Score: {data?.safety_score}</span>
+                <span style={{ fontSize: "medium" }}></span>
               </VuiTypography>
             </VuiBox>
           </Stack>
