@@ -493,7 +493,7 @@ function Dashboard() {
   //         }
 
   //         const ws = new WebSocket(
-  //             `ws://172.235.16.92:8000/ws/${stockData?.stockData?.symbol}/${stockData?.stockData?.exchange}`
+  //             `ws://216b-223-178-84-15.ngrok-free.app/ws/${stockData?.stockData?.symbol}/${stockData?.stockData?.exchange}`
   //         );
   //         wsRef.current = ws;
 
@@ -558,7 +558,7 @@ function Dashboard() {
         return;
       }
 
-      const ws = new WebSocket(`ws://172.235.16.92:8000/ws/${stockData?.stockData?.symbol}/${stockData?.stockData?.exchange}`);
+      const ws = new WebSocket(`ws://216b-223-178-84-15.ngrok-free.app/ws/${stockData?.stockData?.symbol}/${stockData?.stockData?.exchange}`);
       wsRef.current = ws;
 
       ws.onopen = () => {
