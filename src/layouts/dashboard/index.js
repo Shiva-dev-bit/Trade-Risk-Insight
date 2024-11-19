@@ -318,8 +318,8 @@ function Dashboard() {
     try {
       const { data, error } = await supabase.from("price")
         .select("*")
-        .eq("symbol", `${stocksData?.symbol}`)
-        .eq("exchange", `${stocksData?.exchange}`)
+        .eq("symbol", `${stockData?.stockData?.symbol}`)
+        .eq("exchange", `${stockData?.stockData?.exchange}`)
         .order("trading_date", { ascending: false }) // Sort by 'trading_date' in descending order
         .limit(1);
       // .eq("trading_date",today)
@@ -340,8 +340,8 @@ function Dashboard() {
       const { data, error } = await supabase
         .from("stock_daily_summary")
         .select("*")
-        .eq("symbol", `${stocksData?.symbol}`)
-        .eq("exchange", `${stocksData?.exchange}`)
+        .eq("symbol", `${stockData?.stockData?.symbol}`)
+        .eq("exchange", `${stockData?.stockData?.exchange}`)
         .order("trading_date", { ascending: false }) // Sort by 'trading_date' in descending order
         .limit(1);
 
@@ -457,6 +457,7 @@ function Dashboard() {
         percentageColor: isPositiveChange ? "success" : "error"
       });
     } else if (supabaseStocks.length > 0 && stocksPercent.length > 0) {
+      console.log('supabaseStockssupabaseStocks',supabaseStocks);
       const New_price = supabaseStocks[0]?.price;
       const previous_close = stocksPercent[0]?.previous_close;
 
@@ -479,7 +480,7 @@ function Dashboard() {
         });
       }
     }
-  }, [supabaseStocks, websocketStocks, stocksPercent, stockData?.stockData]);
+  }, [supabaseStocks, websocketStocks, stocksPercent, stockData?.stockData?.symbol]);
 
 
 
