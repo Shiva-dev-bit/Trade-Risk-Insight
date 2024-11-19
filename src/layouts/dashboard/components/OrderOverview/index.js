@@ -274,6 +274,7 @@ const getComparisonIcon = (current, previous) => {
       <VuiBox
         sx={{
           maxHeight: "420px",
+          minHeight: "420px",
           overflowY: "auto",
           "&::-webkit-scrollbar": {
             width: "6px",

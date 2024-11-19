@@ -34,153 +34,150 @@ function ReferralTracking() {
   }, [stockData?.stockData?.symbol]);
   return (
     <Card
-      sx={{
-        height: "100%",
-        background: linearGradient(
-          gradients.cardDark.main,
-          gradients.cardDark.state,
-          gradients.cardDark.deg
-        ),
-      }}
+  sx={{
+    height: "100%",
+    background: linearGradient(
+      gradients.cardDark.main,
+      gradients.cardDark.state,
+      gradients.cardDark.deg
+    ),
+    padding: "16px",
+  }}
+>
+  <VuiBox sx={{ width: "100%" }}>
+    <VuiBox sx={{ width: "100%" }} mb="20px" mt="20px">
+      <Typography variant="h5" color="#fff" fontWeight="bold">
+        <span style={{ fontSize: "medium" }}>{data?.title || "Safety Score"}</span>
+      </Typography>
+    </VuiBox>   
+    <VuiBox
+      display="flex"
+      flexWrap="wrap" // Enable wrapping for content
+      justifyContent="center"
+      alignItems="center"
+      gap="24px" // Add spacing between elements
     >
-      <VuiBox sx={{ width: "100%" }}>
-        <VuiBox sx={{ width: "100%" }} mb="40px" mt="20px">
-          <Typography variant="h5" color="#fff" fontWeight="bold">
-            <span style={{fontSize:'medium'}}>{data?.title || "Safety Score"}</span>
-          </Typography>
-        </VuiBox>
+      {/* Circular Progress for Safety Score */}
+      <VuiBox
+        sx={{
+          position: "relative",
+          display: "inline-flex",
+          mt: "24px",
+          width: { xs: "100%", sm: "auto" }, // Adjust width for small screens
+          justifyContent: "center",
+        }}
+      >
+        <CircularProgress
+          variant="determinate"
+          value={data?.safety_score * 10 || 0} // Convert safety score to percentage
+          disableShrink={true}
+          size={154} // Adjust size for laptops
+          color="success"
+        />
         <VuiBox
-          display="flex"
-          sx={({ breakpoints }) => ({
-            [breakpoints.up("xs")]: {
-              flexDirection: "column",
-              gap: "16px",
-              justifyContent: "center",
-              alignItems: "center",
-            },
-            [breakpoints.up("md")]: {
-              flexDirection: "row",
-              justifyContent: "flex-start",
-              alignItems: "center",
-            },
-          })}
+          sx={{
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+            position: "absolute",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
         >
-          <Stack
-            direction="column"
-            spacing="20px"
-            width="500px"
-            maxWidth="50%"
-            sx={({ breakpoints }) => ({
-              mr: "auto",
-              [breakpoints.only("md")]: {
-                mr: "75px",
-              },
-              [breakpoints.only("xl")]: {
-                width: "500px",
-                maxWidth: "40%",
-              },
-            })}
+          <VuiBox
+            display="flex"
+            flexDirection="column"
+            justifyContent="center"
+            alignItems="center"
           >
-            <VuiBox
-              
-              display="flex"
-              width="220px"
-              p="20px 22px"
-              flexDirection="column"
-              style={{ marginBottom:"90px" }}
+            <VuiTypography color="text" variant="button" mb="4px">
+              Safety
+            </VuiTypography>
+            <VuiTypography
+              color="white"
+              variant="d5"
+              fontWeight="bold"
+              mb="4px"
               sx={({ breakpoints }) => ({
-                background: linearGradient(cardContent.main, cardContent.state, cardContent.deg),
-                borderRadius: "20px",
-                [breakpoints.up("xl")]: {
-                  maxWidth: "110px !important",
-                },
-                [breakpoints.up("xxl")]: {
-                  minWidth: "180px",
-                  maxWidth: "100% !important",
+                [breakpoints.only("xl")]: {
+                  fontSize: "32px",
                 },
               })}
             >
-              <VuiTypography color="white" variant="button" fontWeight="regular" mb="5px">
-                {data?.analyzed_metrics}
-              </VuiTypography>
-            </VuiBox>
-            <VuiBox
-              display="flex"
-              width="220px"
-              p="20px 22px"
-              flexDirection="column"
-              sx={({ breakpoints }) => ({
-                background: linearGradient(cardContent.main, cardContent.state, cardContent.deg),
-                borderRadius: "20px",
-                [breakpoints.up("xl")]: {
-                  maxWidth: "110px !important",
-                },
-                [breakpoints.up("xxl")]: {
-                  minWidth: "180px",
-                  maxWidth: "100% !important",
-                },
-              })}
-            >
-              <VuiTypography color="white" variant="button" fontWeight="regular" mb="5px">
-                <span></span>Sentiment:<br/>
-                {data?.sentiment_analysis}
-              </VuiTypography>
-              <VuiTypography color="white" variant="lg" fontWeight="bold" fontSize='small'>
-                <span style={{ fontSize: "medium" }}></span>
-              </VuiTypography>
-            </VuiBox>
-          </Stack>
-          <VuiBox sx={{ position: "relative", display: "inline-flex" }}>
-            <CircularProgress
-              variant="determinate"
-              value={data?.safety_score * 10} // Convert safety score to percentage
-              disableShrink={true}
-              size={window.innerWidth >= 1024 ? 200 : window.innerWidth >= 768 ? 170 : 200}
-              color="success"
-            />
-            <VuiBox
-              sx={{
-                top: 0,
-                left: 0,
-                bottom: 0,
-                right: 0,
-                position: "absolute",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <VuiBox
-                display="flex"
-                flexDirection="column"
-                justifyContent="center"
-                alignItems="center"
-              >
-                <VuiTypography color="text" variant="button" mb="4px">
-                  Safety
-                </VuiTypography>
-                <VuiTypography
-                  color="white"
-                  variant="d5"
-                  fontWeight="bold"
-                  mb="4px"
-                  sx={({ breakpoints }) => ({
-                    [breakpoints.only("xl")]: {
-                      fontSize: "32px",
-                    },
-                  })}
-                >
-                  {data?.safety_score}
-                </VuiTypography>
-                <VuiTypography color="text" variant="button">
-                  Total Score
-                </VuiTypography>
-              </VuiBox>
-            </VuiBox>
+              {data?.safety_score || "0"}
+            </VuiTypography>
+            <VuiTypography color="text" variant="button">
+              Total Score
+            </VuiTypography>
           </VuiBox>
         </VuiBox>
       </VuiBox>
-    </Card>
+      {/* Metrics and Sentiment Boxes */}
+      <VuiBox
+        display="flex"
+        flexDirection={{ xs: "column", md: "row" }} // Responsive direction
+        justifyContent="center"
+        alignItems="center"
+        gap="24px"
+        width="100%"
+      >
+        {/* Analyzed Metrics Box */}
+        <VuiBox
+          display="flex"
+          width={{ xs: "100%", sm: "220px" }} // Responsive width
+          p="20px 22px"
+          flexDirection="column"
+          sx={{
+            background: linearGradient(
+              cardContent.main,
+              cardContent.state,
+              cardContent.deg
+            ),
+            borderRadius: "20px",
+          }}
+        >
+          <VuiTypography
+            color="white"
+            variant="button"
+            fontWeight="regular"
+            mb="5px"
+          >
+            {data?.analyzed_metrics || "Analyzed Metrics"}
+          </VuiTypography>
+        </VuiBox>
+
+        {/* Sentiment Box */}
+        <VuiBox
+          display="flex"
+          width={{ xs: "100%", sm: "220px" }} // Responsive width
+          p="20px 22px"
+          flexDirection="column"
+          sx={{
+            background: linearGradient(
+              cardContent.main,
+              cardContent.state,
+              cardContent.deg
+            ),
+            borderRadius: "20px",
+          }}
+        >
+          <VuiTypography
+            color="white"
+            variant="button"
+            fontWeight="regular"
+            mb="5px"
+          >
+            Sentiment:
+            <br />
+            {data?.sentiment_analysis || "N/A"}
+          </VuiTypography>
+        </VuiBox>
+      </VuiBox>  
+    </VuiBox>
+  </VuiBox>
+</Card>
   );
 }
 export default ReferralTracking;

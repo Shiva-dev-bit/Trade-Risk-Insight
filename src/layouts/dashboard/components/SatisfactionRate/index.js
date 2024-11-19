@@ -46,7 +46,7 @@ const SatisfactionRate = () => {
             <span style={{fontSize:'medium'}}>Volatility Score</span>
           </VuiTypography>
         </VuiBox>
-        <VuiBox sx={{ alignSelf: "center", justifySelf: "center", zIndex: "-1" }}>
+        <VuiBox sx={{ alignSelf: "center", justifySelf: "center", zIndex: "-1" ,mb:4}}>
           <VuiBox sx={{ position: "relative", display: "inline-flex" }}>
             <CircularProgress
               variant="determinate"
