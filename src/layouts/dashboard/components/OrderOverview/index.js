@@ -206,7 +206,7 @@ const OrdersOverview = () => {
       const fetchFinancial = async () => {
         try {
           setLoading(true);
-          const res_data = await axios.get(`http://172.235.16.92:8000/fund_info/${stockData.symbol}/${stockData.exchange}`);
+          const res_data = await axios.get(`https://216b-223-178-84-15.ngrok-free.app/fund_info/${stockData.symbol}/${stockData.exchange}`);
           setFinancialData(res_data.data);
         } catch (error) {
           console.error("Error fetching financial data:", error);

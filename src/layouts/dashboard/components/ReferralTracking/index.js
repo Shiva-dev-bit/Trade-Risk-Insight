@@ -22,7 +22,7 @@ function ReferralTracking() {
     // Fetch the data from the API
     const fetchData = async () => {
       try {
-        const response = await axios(`http://172.235.16.92:8000/svs-widget/${stockData?.stockData?.symbol}`);
+        const response = await axios(`https://216b-223-178-84-15.ngrok-free.app/svs-widget/${stockData?.stockData?.symbol}`);
         const result = await response.data;
         console.log('referal',result);
         setData(result);

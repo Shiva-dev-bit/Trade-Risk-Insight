@@ -166,7 +166,7 @@ export default function App() {
   const fetchStockFromAPI = async (symbol, exchange) => {
     try {
       const response = await axios.get(
-        `http://172.235.16.92:8000/search/${symbol}`
+        `https://216b-223-178-84-15.ngrok-free.app/search/${symbol}`
       );
       const data = response.data;
 

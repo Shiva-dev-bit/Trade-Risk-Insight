@@ -265,7 +265,7 @@ function Dashboard() {
 
   const fetchStatistics = async () => {
     try {
-      const response = await axios(`http://172.235.16.92:8000/statistics/${stockData?.stockData?.symbol}`);
+      const response = await axios(`https://216b-223-178-84-15.ngrok-free.app/statistics/${stockData?.stockData?.symbol}`);
       const data = response.data;
 
       if (data) {
@@ -281,7 +281,7 @@ function Dashboard() {
 
   const fetchIndicators = async () => {
     try {
-      const response = await axios(`http://172.235.16.92:8000/technical-analysis/${stocksData?.symbol}?exchange=${stocksData?.exchange}`);
+      const response = await axios(`https://216b-223-178-84-15.ngrok-free.app/technical-analysis/${stocksData?.symbol}?exchange=${stocksData?.exchange}`);
       const data = response.data;
       if (data) {
         console.log('indicators', data);
@@ -538,7 +538,7 @@ function Dashboard() {
       if (wsRef.current) {
         if (wsRef.current.connection_id) {
           try {
-            await fetch(`http://172.235.16.92:8000/close-connection/${wsRef.current.connection_id}`, {
+            await fetch(`https://216b-223-178-84-15.ngrok-free.app/close-connection/${wsRef.current.connection_id}`, {
               method: 'POST'
             });
           } catch (err) {
@@ -679,7 +679,7 @@ function Dashboard() {
 
     return () => {
       if (wsRef.current?.connection_id) {
-        fetch(`http://172.235.16.92:8000/close-connection/${wsRef.current.connection_id}`, {
+        fetch(`https://216b-223-178-84-15.ngrok-free.app/close-connection/${wsRef.current.connection_id}`, {
           method: 'POST'
         }).catch(console.error);
       }

@@ -51,7 +51,7 @@ const WelcomeMark = ({ stocksData }) => {
         // Reset company data if no data is found
 
         console.log('symbol',symbol);
-        const response = await axios.get(`http://172.235.16.92:8000/company-profile/${symbol}/${stocksData?.exchange}`);
+        const response = await axios.get(`https://216b-223-178-84-15.ngrok-free.app/company-profile/${symbol}/${stocksData?.exchange}`);
         const companyData = response.data;
 
         console.log('companyData',companyData);

@@ -180,7 +180,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
 
     try {
       const response = await axios.get(
-        `http://172.235.16.92:8000/search/${query}`
+        `https://216b-223-178-84-15.ngrok-free.app/search/${query}`
       );
       let results = response.data || [];
 

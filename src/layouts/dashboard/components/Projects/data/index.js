@@ -32,9 +32,9 @@ export default function data() {
   const [newsData,setNewsData] = useState([]);
   
   const fetchNews = async () => {
-    let api = 'http://172.235.16.92:8000/news/general';
+    let api = 'https://216b-223-178-84-15.ngrok-free.app/news/general';
     if(stockData?.company_name){
-      api = `http://172.235.16.92:8000/news/stock/${stockData?.company_name}`;
+      api = `https://216b-223-178-84-15.ngrok-free.app/news/stock/${stockData?.company_name}`;
     }
    
     try {
@@ -46,7 +46,7 @@ export default function data() {
         console.log("News data", data);
       } else{
         console.log("No news data");
-        api = `http://172.235.16.92:8000/news/stock/${stockData?.symbol}`;
+        api = `https://216b-223-178-84-15.ngrok-free.app/news/stock/${stockData?.symbol}`;
         const response = await axios.get(api);
         const data = response.data;
 
