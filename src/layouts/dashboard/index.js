@@ -558,7 +558,7 @@ function Dashboard() {
         return;
       }
 
-      const ws = new WebSocket(`ws://216b-223-178-84-15.ngrok-free.app/ws/${stockData?.stockData?.symbol}/${stockData?.stockData?.exchange}`);
+      const ws = new WebSocket(`wss://216b-223-178-84-15.ngrok-free.app/ws/${stockData?.stockData?.symbol}/${stockData?.stockData?.exchange}`);
       wsRef.current = ws;
 
       ws.onopen = () => {
