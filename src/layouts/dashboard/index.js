@@ -80,6 +80,7 @@ function Dashboard() {
   const [stocksPercent, setStocksPercent] = useState([]);
   const [websocketConnected, setWebsocketConnected] = useState(false);
 
+  console.log('websocketStocks', websocketStocks);
 
   const initialStockData = {
     symbol: "TCS",
@@ -299,10 +300,10 @@ function Dashboard() {
       setStocksData(initialStockData);
     } else {
       fetchStatistics();
-      fetchIndicators();
+      // fetchIndicators();
       setStocksData(stockData.stockData);
     }
-  }, [stockData,stocksData?.symbol,stocksData?.exchange]);
+  }, [stockData, stocksData?.symbol, stocksData?.exchange]);
 
 
   var today = new Date();
@@ -439,8 +440,8 @@ function Dashboard() {
 
     // Determine data source and update price
     if (websocketStocks?.symbol === stockData?.stockData?.symbol &&
-      websocketStocks?.exchange === stockData?.stockData?.exchange &&
-      websocketConnected) {
+      websocketStocks?.exchange === stockData?.stockData?.exchange
+    ) {
 
       const isPositiveChange = websocketStocks?.percent_change > 0;
       setPriceData({
@@ -478,109 +479,146 @@ function Dashboard() {
         });
       }
     }
-  }, [supabaseStocks, websocketStocks, stocksPercent, stockData?.stockData, websocketConnected]);
+  }, [supabaseStocks, websocketStocks, stocksPercent, stockData?.stockData]);
 
 
-  // const connect = useCallback(() => {
-  //   try {
-  //     if (wsRef.current) {
-  //       wsRef.current.close();
-  //       wsRef.current = null;
-  //     }
 
-  //     console.log('websocketStocks', stockData?.stockData?.symbol, stockData?.stockData?.exchange)
-  //     const ws = new WebSocket(`ws://172.235.16.92:8000/ws/${stockData?.stockData?.symbol}/${stockData?.stockData?.exchange}`);
-  //     wsRef.current = ws;
+  //   const connect = useCallback(() => {
+  //     try {
+  //         if (!stockData?.stockData?.symbol || !stockData?.stockData?.exchange) return;
 
-  //     ws.onopen = () => setIsConnected(true);
-
-  //     ws.onmessage = (event) => {
-  //       try {
-  //         const data = JSON.parse(event.data);
-  //         if (data.type === 'realtime') {
-  //           setWebsocketStocks(data.data);
+  //         if (wsRef.current) {
+  //             wsRef.current.close();
+  //             wsRef.current = null;
   //         }
-  //       } catch (err) {
-  //         console.error('Parse error:', err);
-  //       }
-  //     };
 
-  //     ws.onclose = () => {
-  //       setIsConnected(false);
-  //       wsRef.current = null;
-  //       if (reconnectTimeoutRef.current) {
-  //         clearTimeout(reconnectTimeoutRef.current);
-  //       }
-  //       // Adding a 5-second delay before reconnecting to avoid overwhelming the server
-  //       reconnectTimeoutRef.current = setTimeout(connect, 5000);
-  //     };
+  //         const ws = new WebSocket(
+  //             `ws://172.235.16.92:8000/ws/${stockData?.stockData?.symbol}/${stockData?.stockData?.exchange}`
+  //         );
+  //         wsRef.current = ws;
 
-  //   } catch (err) {
-  //     console.error('Connection error:', err);
-  //   }
+  //         ws.onopen = () => {
+  //             setIsConnected(true);
+  //             setWebsocketConnected(true);
+  //         };
+
+  //         ws.onmessage = (event) => {
+  //             try {
+  //                 const data = JSON.parse(event.data);
+  //                 if (data.type === 'realtime' && 
+  //                     data.data.symbol === stockData?.stockData?.symbol && 
+  //                     data.data.exchange === stockData?.stockData?.exchange) {
+  //                     setWebsocketStocks(data.data);
+  //                 }
+  //             } catch (err) {
+  //                 console.error('Parse error:', err);
+  //             }
+  //         };
+
+  //         ws.onclose = () => {
+  //             setIsConnected(false);
+  //             setWebsocketConnected(false);
+  //             wsRef.current = null;
+
+  //             if (reconnectTimeoutRef.current) {
+  //                 clearTimeout(reconnectTimeoutRef.current);
+  //             }
+  //             reconnectTimeoutRef.current = setTimeout(connect, 5000);
+  //         };
+
+  //     } catch (err) {
+  //         console.error('Connection error:', err);
+  //         setWebsocketConnected(false);
+  //     }
   // }, [stockData?.stockData?.symbol, stockData?.stockData?.exchange]);
 
-//   const connect = useCallback(() => {
-//     try {
-//         if (!stockData?.stockData?.symbol || !stockData?.stockData?.exchange) return;
+  const connectWebSocket = async () => {
+    try {
+      // First, close existing connection properly
+      if (wsRef.current) {
+        if (wsRef.current.connection_id) {
+          try {
+            await fetch(`http://172.235.16.92:8000/close-connection/${wsRef.current.connection_id}`, {
+              method: 'POST'
+            });
+          } catch (err) {
+            console.error('Error closing connection:', err);
+          }
+        }
+        wsRef.current.close();
+        setIsConnected(false);
+      }
 
-//         if (wsRef.current) {
-//             wsRef.current.close();
-//             wsRef.current = null;
-//         }
+      // Clear previous data when changing symbols
+      setWebsocketStocks(null);
 
-//         const ws = new WebSocket(
-//             `ws://172.235.16.92:8000/ws/${stockData?.stockData?.symbol}/${stockData?.stockData?.exchange}`
-//         );
-//         wsRef.current = ws;
+      // Validate inputs
+      if (!stockData?.stockData?.symbol || !stockData?.stockData?.exchange) {
+        setError('Invalid symbol or exchange');
+        return;
+      }
 
-//         ws.onopen = () => {
-//             setIsConnected(true);
-//             setWebsocketConnected(true);
-//         };
+      const ws = new WebSocket(`ws://172.235.16.92:8000/ws/${stockData?.stockData?.symbol}/${stockData?.stockData?.exchange}`);
+      wsRef.current = ws;
 
-//         ws.onmessage = (event) => {
-//             try {
-//                 const data = JSON.parse(event.data);
-//                 if (data.type === 'realtime' && 
-//                     data.data.symbol === stockData?.stockData?.symbol && 
-//                     data.data.exchange === stockData?.stockData?.exchange) {
-//                     setWebsocketStocks(data.data);
-//                 }
-//             } catch (err) {
-//                 console.error('Parse error:', err);
-//             }
-//         };
+      ws.onopen = () => {
+        setIsConnected(true);
+        setError(null);
+        console.log(`Connected to ${stockData?.stockData?.symbol} ${stockData?.stockData?.exchange}`);
+      };
 
-//         ws.onclose = () => {
-//             setIsConnected(false);
-//             setWebsocketConnected(false);
-//             wsRef.current = null;
-            
-//             if (reconnectTimeoutRef.current) {
-//                 clearTimeout(reconnectTimeoutRef.current);
-//             }
-//             reconnectTimeoutRef.current = setTimeout(connect, 5000);
-//         };
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          console.log("event data", data);
 
-//     } catch (err) {
-//         console.error('Connection error:', err);
-//         setWebsocketConnected(false);
-//     }
-// }, [stockData?.stockData?.symbol, stockData?.stockData?.exchange]);
+          // Validate that the data matches the current symbol
+          if (data.type === 'realtime' &&
+            data.data &&
+            data.data.symbol === stockData?.stockData?.symbol &&
+            data.data.exchange === stockData?.stockData?.exchange) {
+
+            setWebsocketStocks(data.data);
+
+            if (data.connection_id) {
+              wsRef.current.connection_id = data.connection_id;
+            }
+          }
+        } catch (e) {
+          console.error('Error parsing message:', e);
+        }
+      };
+
+      ws.onerror = (error) => {
+        setError('WebSocket error occurred');
+        setIsConnected(false);
+        console.error('WebSocket error:', error);
+      };
+
+      ws.onclose = () => {
+        setIsConnected(false);
+        setWebsocketStocks(null); // Clear data on disconnect
+        console.log(`Disconnected from ${stockData?.stockData?.symbol} ${stockData?.stockData?.exchange}`);
+      };
+
+    } catch (err) {
+      setError('Failed to connect to WebSocket');
+      console.error('Connection error:', err);
+    }
+  };
 
 
   useEffect(() => {
     console.log('supabase Stocks', stocksData?.exchange);
 
-    if (stocksData?.exchange === "NSE" || stocksData?.exchange === "BSE") {
-      setWebsocketStocks([]); // Clear WebSocket data for Indian stocks
-    } else {
-      setSupabaseStocks([]); // Clear Supabase data for foreign stocks
-    }
+    if (!stockData?.stockData?.symbol || !stockData?.stockData?.exchange) return;
 
-    if (stocksData?.exchange === "NSE" || stocksData?.exchange === "BSE") {
-      // For Indian stocks, fetch from Supabase
+    // Clear previous data when changing stocks
+    setWebsocketStocks(null);
+    setSupabaseStocks([]);
+
+    if (stockData?.stockData?.exchange === "NSE" || stockData?.stockData?.exchange === "BSE") {
+      // For Indian stocks
       fetchStockData();
       fetchDailyStock();
 
@@ -634,23 +672,22 @@ function Dashboard() {
         supabase.removeChannel(channel_1);
         supabase.removeChannel(channel_2);
       };
-    // } else {
-    //   // For foreign stocks, connect to WebSocket API
-    //   console.log('supabase Stocks', stocksData?.exchange, 'WebSocket API')
-
-    //   connect();
-    //   return () => {
-    //     if (reconnectTimeoutRef.current) {
-    //       clearTimeout(reconnectTimeoutRef.current);
-    //     }
-    //     if (wsRef.current) {
-    //       wsRef.current.close();
-    //       // wsRef.current = null;
-    //     }
-    //   };
-
+    } else {
+      // For foreign stocks
+      connectWebSocket();
     }
-  }, [stocksData?.symbol, stocksData?.exchange]);
+
+    return () => {
+      if (wsRef.current?.connection_id) {
+        fetch(`http://172.235.16.92:8000/close-connection/${wsRef.current.connection_id}`, {
+          method: 'POST'
+        }).catch(console.error);
+      }
+      if (wsRef.current) {
+        wsRef.current.close();
+      }
+    };
+  }, [stockData?.stockData?.symbol, stockData?.stockData?.exchange]);
 
 
   const getIcon = (title) => {
