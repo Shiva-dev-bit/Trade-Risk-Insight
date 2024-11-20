@@ -10,7 +10,7 @@ import { AuthContext } from "context/Authcontext";
 import { useContext } from "react";
 import { FaArrowsAlt, FaArrowsAltV } from "react-icons/fa";
 import CandlestickChartIcon from '@mui/icons-material/CandlestickChart';
-import { axiosInstance } from "SSL_disable";
+import  axios  from "axios";
 
 const SatisfactionRate = () => {
   const { info, gradients } = colors;
@@ -23,8 +23,8 @@ const SatisfactionRate = () => {
   console.log('Volatility', data);
   // volatility/AXISBANK
   useEffect(() => {
-    axiosInstance
-      .get(`volatility/${stockData?.stockData?.symbol}`)
+    axios
+      .get(`https://172.235.16.92:8000/volatility/${stockData?.stockData?.symbol}`)
       .then((response) => {
         setData(response.data.data);
         setLoading(false);

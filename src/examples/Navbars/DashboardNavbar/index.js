@@ -53,9 +53,9 @@ import {
 import { supabase } from "lib/supabase";
 import { BsCheckLg, BsChevronDown } from "react-icons/bs";
 import StockPrice from "./StockPrice";
-import { axiosInstance } from "SSL_disable";
 import { Add, Logout } from "@mui/icons-material";
 import { AuthContext } from "context/Authcontext";
+import axios from "axios";
 
 function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPortfolio }) {
   const [navbarType, setNavbarType] = useState();
@@ -179,8 +179,8 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
     setLoading(true); // Set loading to true before fetching
 
     try {
-      const response = await axiosInstance.get(
-        `/search/${query}`
+      const response = await axios.get(
+        `https://172.235.16.92:8000/search/${query}`
       );
       let results = response.data || [];
 

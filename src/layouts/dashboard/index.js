@@ -64,7 +64,7 @@ import { barChartOptionsDashboard } from "layouts/dashboard/data/barChartOptions
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "context/Authcontext";
 import { supabase } from "lib/supabase";
-import { axiosInstance } from "SSL_disable";
+import  axios  from "axios";
 
 function Dashboard() {
   const { gradients } = colors;
@@ -265,7 +265,7 @@ function Dashboard() {
 
   const fetchStatistics = async () => {
     try {
-      const response = await axiosInstance(`statistics/${stockData?.stockData?.symbol}`);
+      const response = await axios(`https://172.235.16.92:8000/statistics/${stockData?.stockData?.symbol}`);
       const data = response.data;
 
       if (data) {
@@ -281,7 +281,7 @@ function Dashboard() {
 
   const fetchIndicators = async () => {
     try {
-      const response = await axiosInstance(`technical-analysis/${stocksData?.symbol}?exchange=${stocksData?.exchange}`);
+      const response = await axios(`https://172.235.16.92:8000/technical-analysis/${stocksData?.symbol}?exchange=${stocksData?.exchange}`);
       const data = response.data;
       if (data) {
         console.log('indicators', data);

@@ -24,7 +24,7 @@ import VuiTypography from "components/VuiTypography";
 import TimelineItem from "examples/Timeline/TimelineItem";
 import VuiBox from "components/VuiBox";
 import { AuthContext } from "context/Authcontext";
-import { axiosInstance } from "SSL_disable";
+import  axios  from "axios";
 
 const OrdersOverview = () => {
   const { stockData } = useContext(AuthContext);
@@ -206,7 +206,7 @@ const OrdersOverview = () => {
       const fetchFinancial = async () => {
         try {
           setLoading(true);
-          const res_data = await axiosInstance.get(`fund_info/${stockData.symbol}/${stockData.exchange}`);
+          const res_data = await axios.get(`https://172.235.16.92:8000/fund_info/${stockData.symbol}/${stockData.exchange}`);
           setFinancialData(res_data.data);
         } catch (error) {
           console.error("Error fetching financial data:", error);

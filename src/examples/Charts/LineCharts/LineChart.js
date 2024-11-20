@@ -4,7 +4,7 @@ import moment from "moment-timezone";
 import { AuthContext } from "context/Authcontext";
 import { Box } from "@mui/material";
 import { FaCaretDown, FaCaretUp } from "react-icons/fa";
-import { axiosInstance } from "SSL_disable";
+import  axios  from "axios";
 
 const LineChart = ({ newprice }) => {
   const [chartData, setChartData] = useState([]);
@@ -95,8 +95,8 @@ const LineChart = ({ newprice }) => {
       setLoading(true);
       setError(null);
 
-      const response = await axiosInstance.get(
-        `stock_graph/${selectedSymbol}/${timePeriod}/${selectedExchange}`
+      const response = await axios.get(
+        `https://172.235.16.92:8000/stock_graph/${selectedSymbol}/${timePeriod}/${selectedExchange}`
       );
 
       if (!response?.data) {

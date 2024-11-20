@@ -52,8 +52,8 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import { supabase } from "lib/supabase";
 import { Snackbar, SnackbarContent } from "@mui/material";
-import { axiosInstance } from "SSL_disable";
 import { useStockContext } from "context/StockContext";
+import axios from "axios";
 
 export default function App() {
   const [controller, dispatch] = useVisionUIController();
@@ -165,8 +165,8 @@ export default function App() {
 
   const fetchStockFromAPI = async (symbol, exchange) => {
     try {
-      const response = await axiosInstance.get(
-        `/search/${symbol}`
+      const response = await axios.get(
+        `https://172.235.16.92:8000/search/${symbol}`
       );
       const data = response.data;
 

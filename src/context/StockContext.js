@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "lib/supabase";
-import { axiosInstance } from "SSL_disable";
+import axios from "axios";
 
 const StockContext = createContext();
 
@@ -9,8 +9,8 @@ export const StockProvider = ({ children }) => {
 
   const fetchStockFromAPI = async (symbol, exchange) => {
     try {
-      const response = await axiosInstance.get(
-        `/search/${symbol}`
+      const response = await axios.get(
+        `https://172.235.16.92:8000/search/${symbol}`
       );
       const data = response.data;
       const stockData = data.filter((stock) => stock?.exchange === exchange) || {};
