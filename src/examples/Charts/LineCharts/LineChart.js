@@ -4,7 +4,7 @@ import moment from "moment-timezone";
 import { AuthContext } from "context/Authcontext";
 import { Box } from "@mui/material";
 import { FaCaretDown, FaCaretUp } from "react-icons/fa";
-import axios from "axios";
+import { axiosInstance } from "SSL_disable";
 
 const LineChart = ({ newprice }) => {
   const [chartData, setChartData] = useState([]);
@@ -95,8 +95,8 @@ const LineChart = ({ newprice }) => {
       setLoading(true);
       setError(null);
 
-      const response = await axios.get(
-        `https://216b-223-178-84-15.ngrok-free.app/stock_graph/${selectedSymbol}/${timePeriod}/${selectedExchange}`
+      const response = await axiosInstance.get(
+        `stock_graph/${selectedSymbol}/${timePeriod}/${selectedExchange}`
       );
 
       if (!response?.data) {

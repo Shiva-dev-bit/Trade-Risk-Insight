@@ -64,7 +64,7 @@ import { barChartOptionsDashboard } from "layouts/dashboard/data/barChartOptions
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "context/Authcontext";
 import { supabase } from "lib/supabase";
-import axios from "axios";
+import { axiosInstance } from "SSL_disable";
 
 function Dashboard() {
   const { gradients } = colors;
@@ -265,7 +265,7 @@ function Dashboard() {
 
   const fetchStatistics = async () => {
     try {
-      const response = await axios(`https://216b-223-178-84-15.ngrok-free.app/statistics/${stockData?.stockData?.symbol}`);
+      const response = await axiosInstance(`statistics/${stockData?.stockData?.symbol}`);
       const data = response.data;
 
       if (data) {
@@ -281,7 +281,7 @@ function Dashboard() {
 
   const fetchIndicators = async () => {
     try {
-      const response = await axios(`https://216b-223-178-84-15.ngrok-free.app/technical-analysis/${stocksData?.symbol}?exchange=${stocksData?.exchange}`);
+      const response = await axiosInstance(`technical-analysis/${stocksData?.symbol}?exchange=${stocksData?.exchange}`);
       const data = response.data;
       if (data) {
         console.log('indicators', data);
@@ -539,7 +539,7 @@ function Dashboard() {
       if (wsRef.current) {
         if (wsRef.current.connection_id) {
           try {
-            await fetch(`https://216b-223-178-84-15.ngrok-free.app/close-connection/${wsRef.current.connection_id}`, {
+            await fetch(`close-connection/${wsRef.current.connection_id}`, {
               method: 'POST'
             });
           } catch (err) {
@@ -559,7 +559,7 @@ function Dashboard() {
         return;
       }
 
-      const ws = new WebSocket(`wss://216b-223-178-84-15.ngrok-free.app/ws/${stockData?.stockData?.symbol}/${stockData?.stockData?.exchange}`);
+      const ws = new WebSocket(`wss://172.235.16.92:8000/ws/${stockData?.stockData?.symbol}/${stockData?.stockData?.exchange}`);
       wsRef.current = ws;
 
       ws.onopen = () => {
@@ -680,7 +680,7 @@ function Dashboard() {
 
     return () => {
       if (wsRef.current?.connection_id) {
-        fetch(`https://216b-223-178-84-15.ngrok-free.app/close-connection/${wsRef.current.connection_id}`, {
+        fetch(`close-connection/${wsRef.current.connection_id}`, {
           method: 'POST'
         }).catch(console.error);
       }

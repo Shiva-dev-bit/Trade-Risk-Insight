@@ -53,7 +53,7 @@ import {
 import { supabase } from "lib/supabase";
 import { BsCheckLg, BsChevronDown } from "react-icons/bs";
 import StockPrice from "./StockPrice";
-import axios from "axios";
+import { axiosInstance } from "SSL_disable";
 import { Add, Logout } from "@mui/icons-material";
 import { AuthContext } from "context/Authcontext";
 
@@ -179,8 +179,8 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
     setLoading(true); // Set loading to true before fetching
 
     try {
-      const response = await axios.get(
-        `https://216b-223-178-84-15.ngrok-free.app/search/${query}`
+      const response = await axiosInstance.get(
+        `/search/${query}`
       );
       let results = response.data || [];
 

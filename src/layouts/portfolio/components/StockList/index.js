@@ -18,7 +18,7 @@ const StockList = ({ stocks, fetchUserStocks }) => {
 
   const fetchCompanyName = async (symbol, exchange) => {
     try {
-      const response = await fetch(`https://216b-223-178-84-15.ngrok-free.app/search/${symbol}`);
+      const response = await fetch(`/search/${symbol}`);
       const data = await response.json();
 
       // Find the matching company based on both symbol and exchange
@@ -333,7 +333,7 @@ export default StockList;
 
 //   const fetchCompanyName = async (symbol, exchange) => {
 //     try {
-//       const response = await fetch(`https://216b-223-178-84-15.ngrok-free.app/search/${symbol}`);
+//       const response = await fetch(`search/${symbol}`);
 //       const data = await response.json();
 
 //       // Find the matching company based on both symbol and exchange

@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import { supabase } from "lib/supabase";
 import React, { useContext, useEffect, useState } from "react";
-import axios from "axios";
+import { axiosInstance } from "SSL_disable";
 import StockList from "./components/StockList";
 import Header from "./components/Header";
 import { AuthContext } from "context/Authcontext";
@@ -51,8 +51,8 @@ const Portfolio = () => {
 
   const fetchStockFromAPI = async (symbol, exchange) => {
     try {
-      const response = await axios.get(
-        `https://216b-223-178-84-15.ngrok-free.app/search/${symbol}`
+      const response = await axiosInstance.get(
+        `/search/${symbol}`
       );
       const data = response.data;
       const stockData = data.filter((stock) => stock?.exchange === exchange) || {};

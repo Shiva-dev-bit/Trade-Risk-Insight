@@ -22,7 +22,7 @@ import TrendingUp from '@mui/icons-material/TrendingUp';
 import TrendingDown from '@mui/icons-material/TrendingDown';
 import Assessment from '@mui/icons-material/Assessment';
 import { useContext, useEffect, useState } from "react";
-import axios from "axios";
+import { axiosInstance } from "SSL_disable";
 import { AuthContext } from "context/Authcontext";
 import { format } from "date-fns";
 
@@ -32,13 +32,13 @@ export default function data() {
   const [newsData,setNewsData] = useState([]);
   
   const fetchNews = async () => {
-    let api = 'https://216b-223-178-84-15.ngrok-free.app/news/general';
+    let api = 'news/general';
     if(stockData?.company_name){
-      api = `https://216b-223-178-84-15.ngrok-free.app/news/stock/${stockData?.company_name}`;
+      api = `news/stock/${stockData?.company_name}`;
     }
    
     try {
-      const response = await axios.get(api);
+      const response = await axiosInstance.get(api);
       const data = response.data;
 
       if (data && data.news.length > 0) {
@@ -46,8 +46,8 @@ export default function data() {
         console.log("News data", data);
       } else{
         console.log("No news data");
-        api = `https://216b-223-178-84-15.ngrok-free.app/news/stock/${stockData?.symbol}`;
-        const response = await axios.get(api);
+        api = `news/stock/${stockData?.symbol}`;
+        const response = await axiosInstance.get(api);
         const data = response.data;
 
         setNewsData(data);

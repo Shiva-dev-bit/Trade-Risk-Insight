@@ -52,7 +52,7 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import { supabase } from "lib/supabase";
 import { Snackbar, SnackbarContent } from "@mui/material";
-import axios from "axios";
+import { axiosInstance } from "SSL_disable";
 import { useStockContext } from "context/StockContext";
 
 export default function App() {
@@ -165,8 +165,8 @@ export default function App() {
 
   const fetchStockFromAPI = async (symbol, exchange) => {
     try {
-      const response = await axios.get(
-        `https://216b-223-178-84-15.ngrok-free.app/search/${symbol}`
+      const response = await axiosInstance.get(
+        `/search/${symbol}`
       );
       const data = response.data;
 

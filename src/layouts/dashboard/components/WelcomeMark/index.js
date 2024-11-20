@@ -5,7 +5,7 @@ import VuiTypography from "components/VuiTypography";
 import { supabase } from "lib/supabase";
 import gif from "assets/images/cardimgfree.png";
 import CloseIcon from '@mui/icons-material/Close';
-import axios from "axios";
+import { axiosInstance } from "SSL_disable";
 
 const WelcomeMark = ({ stocksData }) => {
 
@@ -51,7 +51,7 @@ const WelcomeMark = ({ stocksData }) => {
         // Reset company data if no data is found
 
         console.log('symbol',symbol);
-        const response = await axios.get(`https://216b-223-178-84-15.ngrok-free.app/company-profile/${symbol}/${stocksData?.exchange}`);
+        const response = await axiosInstance.get(`company-profile/${symbol}/${stocksData?.exchange}`);
         const companyData = response.data;
 
         console.log('companyData',companyData);

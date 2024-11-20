@@ -6,7 +6,7 @@ import colors from "assets/theme/base/colors";
 import { FaEllipsisH } from "react-icons/fa";
 import linearGradient from "assets/theme/functions/linearGradient";
 import CircularProgress from "@mui/material/CircularProgress";
-import axios from "axios";
+import { axiosInstance } from "SSL_disable";
 import { AuthContext } from "context/Authcontext";
 import { useContext } from "react";
 
@@ -22,7 +22,7 @@ function ReferralTracking() {
     // Fetch the data from the API
     const fetchData = async () => {
       try {
-        const response = await axios(`https://216b-223-178-84-15.ngrok-free.app/svs-widget/${stockData?.stockData?.symbol}`);
+        const response = await axiosInstance(`svs-widget/${stockData?.stockData?.symbol}`);
         const result = await response.data;
         console.log('referal',result);
         setData(result);

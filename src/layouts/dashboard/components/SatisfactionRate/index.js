@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { Card, CircularProgress , CandlestickChartRoundedIcon} from "@mui/material";
 import VuiBox from "components/VuiBox";
 import VuiTypography from "components/VuiTypography";
@@ -11,6 +10,7 @@ import { AuthContext } from "context/Authcontext";
 import { useContext } from "react";
 import { FaArrowsAlt, FaArrowsAltV } from "react-icons/fa";
 import CandlestickChartIcon from '@mui/icons-material/CandlestickChart';
+import { axiosInstance } from "SSL_disable";
 
 const SatisfactionRate = () => {
   const { info, gradients } = colors;
@@ -21,10 +21,10 @@ const SatisfactionRate = () => {
   const stockData = useContext(AuthContext);
 
   console.log('Volatility', data);
-  // https://216b-223-178-84-15.ngrok-free.app/volatility/AXISBANK
+  // volatility/AXISBANK
   useEffect(() => {
-    axios
-      .get(`https://216b-223-178-84-15.ngrok-free.app/volatility/${stockData?.stockData?.symbol}`)
+    axiosInstance
+      .get(`volatility/${stockData?.stockData?.symbol}`)
       .then((response) => {
         setData(response.data.data);
         setLoading(false);
@@ -35,7 +35,6 @@ const SatisfactionRate = () => {
       });
     }, [stockData?.stockData?.symbol]);
     
-  if (loading) return <CircularProgress />;
 
 
   return (
