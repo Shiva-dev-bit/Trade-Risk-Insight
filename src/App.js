@@ -163,20 +163,20 @@ export default function App() {
 
   const [stocks, setStocks] = useState([]);
 
-  const fetchStockFromAPI = async (symbol, exchange) => {
-    try {
-      const response = await axios.get(
-        `https://172.235.16.92:8000/search/${symbol}`
-      );
-      const data = response.data;
+  // const fetchStockFromAPI = async (symbol, exchange) => {
+  //   try {
+  //     const response = await axios.get(
+  //       `https://172.235.16.92:8000/search/${symbol}`
+  //     );
+  //     const data = response.data;
 
-      // Filter data by exchange
-      return data.find((stock) => stock?.exchange === exchange) || {};
-    } catch (error) {
-      console.error(`Error fetching stock for in fetchStockFromAPI ${symbol}:`, error);
-      return {}; // Return empty object in case of error
-    }
-  };
+  //     // Filter data by exchange
+  //     return data.find((stock) => stock?.exchange === exchange) || {};
+  //   } catch (error) {
+  //     console.error(`Error fetching stock for in fetchStockFromAPI ${symbol}:`, error);
+  //     return {}; // Return empty object in case of error
+  //   }
+  // };
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [colorstatus, setColorstatus] = useState("");

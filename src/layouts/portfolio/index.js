@@ -50,6 +50,7 @@ const Portfolio = () => {
   };
 
   const fetchStockFromAPI = async (symbol, exchange) => {
+
     try {
       const response = await axios.get(
         `https://172.235.16.92:8000/search/${symbol}`

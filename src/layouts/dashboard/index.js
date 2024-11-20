@@ -64,7 +64,8 @@ import { barChartOptionsDashboard } from "layouts/dashboard/data/barChartOptions
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "context/Authcontext";
 import { supabase } from "lib/supabase";
-import  axios  from "axios";
+import axios from "axios";
+import CompanyDescription from "./components/CompanySummary";
 
 function Dashboard() {
   const { gradients } = colors;
@@ -281,7 +282,7 @@ function Dashboard() {
 
   const fetchIndicators = async () => {
     try {
-      const response = await axios(`https://172.235.16.92:8000/technical-analysis/${stocksData?.symbol}?exchange=${stocksData?.exchange}`);
+      const response = await axios(`https://172.235.16.92:8000/technical-analysis/${stocksData?.symbol}/${stocksData?.exchange}`);
       const data = response.data;
       if (data) {
         console.log('indicators', data);
@@ -300,7 +301,7 @@ function Dashboard() {
       setStocksData(initialStockData);
     } else {
       fetchStatistics();
-      // fetchIndicators();
+      fetchIndicators();
       setStocksData(stockData.stockData);
     }
   }, [stockData, stocksData?.symbol, stocksData?.exchange]);
@@ -373,68 +374,6 @@ function Dashboard() {
     });
   }, [stockData?.stockData?.symbol, stockData?.stockData?.exchange]);
 
-  // useEffect(() => {
-  //     let NewWebsocketStocks = null;
-  //     // Determine whether to use Supabase or WebSocket data
-  //     if (
-  //       stocksData?.symbol === websocketStocks?.symbol &&
-  //       stocksData?.exchange === websocketStocks?.exchange &&
-  //       websocketStocks?.price
-  //     ) {
-  //       NewWebsocketStocks = websocketStocks;
-
-  //     }
-
-  //     // Only use NewWebsocketStocks as a fallback if it has data
-  //     const activeStocks = supabaseStocks.length > 0 ? supabaseStocks : [];
-  //     const activeStocksPercent = supabaseStocks.length > 0 ? stocksPercent : [];
-
-  //     // console.log('activeStocks', activeStocks);
-
-  //     if (activeStocks.length > 0 && activeStocksPercent.length > 0) {
-  //       const New_price = activeStocks;
-  //       const price_percent = activeStocksPercent;
-
-  //       if (New_price && price_percent) {
-  //         const price_change = New_price[0]?.price - price_percent[0]?.previous_close;
-  //         const percent_change = (price_change / price_percent[0]?.previous_close) * 100;
-  //         const isPositiveChange = percent_change > 0;
-
-  //         setPriceData({
-  //           New_price: New_price[0]?.price,
-  //           price_change,
-  //           percent_change,
-  //           isPositiveChange,
-  //           icon: isPositiveChange ? (
-  //             <FaCaretUp style={{ color: "green" }} />
-  //           ) : (
-  //             <FaCaretDown style={{ color: "red" }} />
-  //           ),
-  //           percentageColor: isPositiveChange ? "success" : "error"
-  //         });
-  //       }
-  //     } else if (NewWebsocketStocks) {
-  //       // Fallback for cases where only WebSocket data is available
-  //       console.log('activeStocks', NewWebsocketStocks);
-
-
-  //       const isPositiveChange = NewWebsocketStocks?.percent_change > 0;
-
-  //       setPriceData({
-  //         New_price: NewWebsocketStocks?.price,
-  //         price_change: NewWebsocketStocks?.change || 0,
-  //         percent_change: NewWebsocketStocks?.percent_change || 0,
-  //         isPositiveChange,
-  //         icon: isPositiveChange ? (
-  //           <FaCaretUp style={{ color: "green" }} />
-  //         ) : (
-  //           <FaCaretDown style={{ color: "red" }} />
-  //         ),
-  //         percentageColor: isPositiveChange ? "success" : "error"
-  //       });
-  //     }
-  //   }, [supabaseStocks, websocketStocks, stocksPercent, stocksData?.symbol, stocksData?.exchange]);
-
   useEffect(() => {
     if (!stockData?.stockData?.symbol || !stockData?.stockData?.exchange) return;
 
@@ -457,7 +396,7 @@ function Dashboard() {
         percentageColor: isPositiveChange ? "success" : "error"
       });
     } else if (supabaseStocks.length > 0 && stocksPercent.length > 0) {
-      console.log('supabaseStockssupabaseStocks',supabaseStocks);
+      console.log('supabaseStockssupabaseStocks', supabaseStocks);
       const New_price = supabaseStocks[0]?.price;
       const previous_close = stocksPercent[0]?.previous_close;
 
@@ -482,56 +421,6 @@ function Dashboard() {
     }
   }, [supabaseStocks, websocketStocks, stocksPercent, stockData?.stockData?.symbol]);
 
-
-
-  //   const connect = useCallback(() => {
-  //     try {
-  //         if (!stockData?.stockData?.symbol || !stockData?.stockData?.exchange) return;
-
-  //         if (wsRef.current) {
-  //             wsRef.current.close();
-  //             wsRef.current = null;
-  //         }
-
-  //         const ws = new WebSocket(
-  //             `ws://216b-223-178-84-15.ngrok-free.app/ws/${stockData?.stockData?.symbol}/${stockData?.stockData?.exchange}`
-  //         );
-  //         wsRef.current = ws;
-
-  //         ws.onopen = () => {
-  //             setIsConnected(true);
-  //             setWebsocketConnected(true);
-  //         };
-
-  //         ws.onmessage = (event) => {
-  //             try {
-  //                 const data = JSON.parse(event.data);
-  //                 if (data.type === 'realtime' && 
-  //                     data.data.symbol === stockData?.stockData?.symbol && 
-  //                     data.data.exchange === stockData?.stockData?.exchange) {
-  //                     setWebsocketStocks(data.data);
-  //                 }
-  //             } catch (err) {
-  //                 console.error('Parse error:', err);
-  //             }
-  //         };
-
-  //         ws.onclose = () => {
-  //             setIsConnected(false);
-  //             setWebsocketConnected(false);
-  //             wsRef.current = null;
-
-  //             if (reconnectTimeoutRef.current) {
-  //                 clearTimeout(reconnectTimeoutRef.current);
-  //             }
-  //             reconnectTimeoutRef.current = setTimeout(connect, 5000);
-  //         };
-
-  //     } catch (err) {
-  //         console.error('Connection error:', err);
-  //         setWebsocketConnected(false);
-  //     }
-  // }, [stockData?.stockData?.symbol, stockData?.stockData?.exchange]);
 
   const connectWebSocket = async () => {
     try {
@@ -777,6 +666,14 @@ function Dashboard() {
             </Grid>
           </Grid>
         </VuiBox>
+        <VuiBox mb={3}>
+          <Grid container spacing="0px">
+            <Grid item xs={12}>
+              <CompanyDescription />
+            </Grid>
+          </Grid>
+        </VuiBox>
+
         <VuiBox mb={3}>
           <Grid container spacing="18px">
             <Grid item xs={12} lg={12} xl={5}>

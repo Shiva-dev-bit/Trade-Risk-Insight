@@ -17,6 +17,7 @@ const StockList = ({ stocks, fetchUserStocks }) => {
   console.log('companyNames',companyNames);
 
   const fetchCompanyName = async (symbol, exchange) => {
+
     try {
       const response = await fetch(`https://172.235.16.92:8000/search/${symbol}`);
       const data = await response.json();

@@ -177,27 +177,28 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
 
   const fetchSearchData = async (query) => {
     setLoading(true); // Set loading to true before fetching
-
-    try {
-      const response = await axios.get(
-        `https://172.235.16.92:8000/search/${query}`
-      );
-      let results = response.data || [];
-
-      Object.entries(selectedFilters).forEach(([category, selectedValues]) => {
-        if (selectedValues.length > 0) {
-          const key = filterCategories[category].key;
-          results =
-            results.length > 0 && results.filter((item) => selectedValues.includes(item[key]));
-        }
-      });
-
-      setFilteredData(results);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setFilteredData([]);
-    } finally {
-      setLoading(false); // Set loading to false after fetching
+    if(query.length >= 3){
+      try {
+        const response = await axios.get(
+          `https://172.235.16.92:8000/search/${query}`
+        );
+        let results = response.data || [];
+  
+        Object.entries(selectedFilters).forEach(([category, selectedValues]) => {
+          if (selectedValues.length > 0) {
+            const key = filterCategories[category].key;
+            results =
+              results.length > 0 && results.filter((item) => selectedValues.includes(item[key]));
+          }
+        });
+  
+        setFilteredData(results);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setFilteredData([]);
+      } finally {
+        setLoading(false); // Set loading to false after fetching
+      }
     }
   };
 
