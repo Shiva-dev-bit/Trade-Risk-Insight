@@ -355,9 +355,16 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
               <Box
                 sx={(theme) => ({
                   backgroundColor: "info.main !important",
-                  width: "800px",
+                  width: "300px",
                   position: "relative",
-                  [theme.breakpoints.down("sm")]: { maxWidth: "80px" },
+                  [theme.breakpoints.down("xs")]: { width: "50px" }, // Extra small screens
+                  [theme.breakpoints.between("xs", "sm")]: { width: "100px" }, // Small screens
+                  [theme.breakpoints.between("sm", "md")]: { width: "200px" }, // Medium screens
+                  [theme.breakpoints.between("md", "lg")]: { width: "300px" }, // Large screens
+                  [theme.breakpoints.up("lg")]: { width: "700px" }, // Extra large screens
+                  "@media (max-width: 1024px)": {
+                    width: "250px", // Custom style for 1024x609 px
+                  },
                 })}
               >
                 <VuiInput
@@ -404,7 +411,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
                       }
                       label={
                         <Typography sx={{ color: "#fff", fontSize: "14px" }}>
-                          Advance search
+                          Global search
                         </Typography>
                       }
                     />
@@ -506,9 +513,9 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
                                       open={openModal}
                                       onClose={handleModalClose}
                                       disableEnforceFocus
-                                      // BackdropProps={{
-                                      //   style: { backgroundColor: "rgba(0, 0, 0, 0.5)" },
-                                      // }}
+                                    // BackdropProps={{
+                                    //   style: { backgroundColor: "rgba(0, 0, 0, 0.5)" },
+                                    // }}
                                     >
                                       <Box
                                         onClick={(e) => e.stopPropagation()}

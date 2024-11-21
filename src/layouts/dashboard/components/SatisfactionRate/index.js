@@ -42,7 +42,8 @@ const SatisfactionRate = () => {
       <VuiBox display="flex" flexDirection="column" padding={2} sx={{ textAlign: 'center' }}>
         <VuiBox>
           <VuiTypography variant="h5" color="white" fontWeight="bold" mb="45px">
-            <span style={{fontSize:'medium'}}>Volatility Score</span>
+            <span style={{fontSize:'medium'}}>Volatility Score </span>
+            <span style={{fontSize:'medium'}}> {stockData?.stockData?.symbol}</span>
           </VuiTypography>
         </VuiBox>
         <VuiBox sx={{ alignSelf: "center", justifySelf: "center", zIndex: "-1" ,mb:4}}>
