@@ -22,7 +22,7 @@ function ReferralTracking() {
     // Fetch the data from the API
     const fetchData = async () => {
       try {
-        const response = await axios(`https://172.235.16.92:8000/svs-widget/${stockData?.stockData?.symbol}`);
+        const response = await axios(`https://rcapidev.neosme.co:2053/svs-widget/${stockData?.stockData?.symbol}`);
         const result = await response.data;
         console.log('referal',result);
         setData(result);

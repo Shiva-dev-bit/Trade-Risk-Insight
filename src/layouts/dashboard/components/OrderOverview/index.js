@@ -24,7 +24,7 @@ import VuiTypography from "components/VuiTypography";
 import TimelineItem from "examples/Timeline/TimelineItem";
 import VuiBox from "components/VuiBox";
 import { AuthContext } from "context/Authcontext";
-import  axios  from "axios";
+import axios from "axios";
 
 const OrdersOverview = () => {
   const { stockData } = useContext(AuthContext);
@@ -206,7 +206,7 @@ const OrdersOverview = () => {
       const fetchFinancial = async () => {
         try {
           setLoading(true);
-          const res_data = await axios.get(`https://172.235.16.92:8000/fund_info/${stockData.symbol}/${stockData.exchange}`);
+          const res_data = await axios.get(`https://rcapidev.neosme.co:2053/fund_info/${stockData.symbol}/${stockData.exchange}`);
           setFinancialData(res_data.data);
         } catch (error) {
           console.error("Error fetching financial data:", error);
@@ -232,7 +232,7 @@ const OrdersOverview = () => {
     }
   };
 
-const getComparisonIcon = (current, previous) => {
+  const getComparisonIcon = (current, previous) => {
     if (current > previous) {
       return <FaArrowUp color="green" />;
     } else if (current < previous) {
@@ -252,8 +252,8 @@ const getComparisonIcon = (current, previous) => {
         comparison: {
           sales: getComparisonIcon(item?.sales, previous?.sales),
           cost_of_goods: getComparisonIcon(item?.cost_of_goods, previous?.cost_of_goods),
-          gross_profit : getComparisonIcon(item?.gross_profit,previous?.gross_profit),
-          operating_income : getComparisonIcon(item?.operating_income,previous?.operating_income),
+          gross_profit: getComparisonIcon(item?.gross_profit, previous?.gross_profit),
+          operating_income: getComparisonIcon(item?.operating_income, previous?.operating_income),
           net_income: getComparisonIcon(item?.net_income, previous?.net_income),
           ebitda: getComparisonIcon(item?.ebitda, previous?.ebitda),
         },
@@ -301,15 +301,23 @@ const getComparisonIcon = (current, previous) => {
                   sx={{ fontSize: "15px", lineHeight: "1.2" }}
                   color="white"
                 >
-                  {`Quarter ${holder.quarter} - ${holder.year}`}
+                  {new Date(holder.fiscal_date).toLocaleDateString("en-US", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })}                
                 </VuiTypography>
               }
-              dateTime={
-                <VuiTypography variant="caption" color="textSecondary">
-                  Quarter Ending:{" "}
-                  {new Date(holder.fiscal_date)?.toLocaleDateString()}
-                </VuiTypography>
-              }
+              // dateTime={
+              //   <VuiTypography variant="caption" color="textSecondary">
+              //     {new Date(holder.fiscal_date).toLocaleDateString("en-US", {
+              //       day: "2-digit",
+              //       month: "short",
+              //       year: "numeric",
+              //     })}
+              //   </VuiTypography>
+              // }
+
               description={
                 <VuiBox sx={{ width: "100%" }}>
                   <VuiTypography

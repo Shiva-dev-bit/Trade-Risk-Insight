@@ -30,36 +30,36 @@ export default function data() {
   const { stockData } = useContext(AuthContext);
 
   const [newsData,setNewsData] = useState([]);
+
   
   const fetchNews = async () => {
-    let api = 'https://172.235.16.92:8000/news/general';
-    if(stockData?.company_name){
-      api = `https://172.235.16.92:8000/news/stock/${stockData?.company_name}`;
-    }
-   
+    const api = "http://172.235.16.92:8080/stock_news_and_sentiment";
+  
     try {
-      const response = await axios.get(api);
+      const response = await axios.post(
+        api,
+        {
+          stock_name: stockData?.company_name || "stock latest news",
+        },
+        {
+          headers: { "Content-Type": "application/json" }, // Explicit header
+        }
+      );
       const data = response.data;
-
-      if (data && data.news.length > 0) {
-        setNewsData(data);
-        console.log("News data", data);
-      } else{
-        console.log("No news data");
-        api = `https://172.235.16.92:8000/news/stock/${stockData?.symbol}`;
-        const response = await axios.get(api);
-        const data = response.data;
-
+      console.log("News data received:", data, stockData?.company_name);
+  
+      if (data && data?.length > 0) {
         setNewsData(data);
       }
     } catch (error) {
-      console.log("error", error);
+      console.error("Fetch news error:", error.response?.data || error.message);
     }
   };
+  
 
   useEffect(() => {
     fetchNews();
-  }, [stockData?.symbol]);
+  }, [stockData?.company_name]);
 
   return {
     columns: [
@@ -67,28 +67,28 @@ export default function data() {
       { name: "datetime", align: "center" },
       { name: "sentiment", align: "center" },
     ],
-  
-    rows: newsData?.news?.map((item) => ({
+
+    rows: newsData.map((item) => ({
       headline: (
         <>
           <VuiTypography variant="button" fontWeight="medium" color="white">
-            <a href={item.url} target="_blank" rel="noopener noreferrer" style={{ color: "inherit", textDecoration: "none" }}>
-              {item.title.substring(0, 50)}
+            <a href={item.link} target="_blank" rel="noopener noreferrer" style={{ color: "inherit", textDecoration: "none" }}>
+              {item.headline.substring(0, 50)}
             </a>
           </VuiTypography>
           <VuiTypography variant="body2" color="white">
-            <a href={item.url} style={{ color: "inherit" }}>{item.text.substring(0, 50)}... </a>
+            <a href={item.link} style={{ color: "inherit" }}>{item.summary.substring(0, 50)}... </a>
           </VuiTypography>
         </>
       ),
       datetime: (
         <VuiTypography variant="caption" fontWeight="regular" color="white">
-          {format(new Date(item.publish_date), "dd-MM-yyyy,' 'HH:mm:ss")}
+          {format(new Date(item.datePublished), "dd-MM-yyyy, HH:mm:ss")}
         </VuiTypography>
       ),
       sentiment: (
-        <VuiTypography variant="button" fontWeight="bold" sx={{color : item.sentiment > 0 ? "#24fc03" : "#db2c40"}}>
-          {item.sentiment > 0 ? '+'+item.sentiment : item.sentiment}
+        <VuiTypography variant="button" fontWeight="bold" sx={{color: item.sentiment === "positive" ? "#24fc03" : (item.sentiment === "negative" ? "#db2c40" : "#f7a800")}}>
+          {item.sentiment === "positive" ? "+" + item.confidence.toFixed(2) : (item.sentiment === "negative" ? "-" + item.confidence.toFixed(2) : item.confidence.toFixed(2))}
         </VuiTypography>
       ),
     })),

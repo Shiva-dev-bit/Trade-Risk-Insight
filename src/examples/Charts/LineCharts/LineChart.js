@@ -96,7 +96,7 @@ const LineChart = ({ newprice }) => {
       setError(null);
 
       const response = await axios.get(
-        `https://172.235.16.92:8000/stock_graph/${selectedSymbol}/${timePeriod}/${selectedExchange}`
+        `https://rcapidev.neosme.co:2053/stock_graph/${selectedSymbol}/${timePeriod}/${selectedExchange}`
       );
 
       if (!response?.data) {

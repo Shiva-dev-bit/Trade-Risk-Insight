@@ -53,7 +53,7 @@ const Portfolio = () => {
 
     try {
       const response = await axios.get(
-        `https://172.235.16.92:8000/search/${symbol}`
+        `https://rcapidev.neosme.co:2053/search/${symbol}`
       );
       const data = response.data;
       const stockData = data.filter((stock) => stock?.exchange === exchange) || {};

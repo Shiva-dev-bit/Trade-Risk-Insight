@@ -19,7 +19,7 @@ const StockList = ({ stocks, fetchUserStocks }) => {
   const fetchCompanyName = async (symbol, exchange) => {
 
     try {
-      const response = await fetch(`https://172.235.16.92:8000/search/${symbol}`);
+      const response = await fetch(`https://rcapidev.neosme.co:2053/search/${symbol}`);
       const data = await response.json();
 
       // Find the matching company based on both symbol and exchange

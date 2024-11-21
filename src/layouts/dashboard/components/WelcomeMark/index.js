@@ -51,7 +51,7 @@ const WelcomeMark = ({ stocksData }) => {
         // Reset company data if no data is found
 
         console.log('symbol',symbol);
-        const response = await axios.get(`https://172.235.16.92:8000/company-profile/${symbol}/${stocksData?.exchange}`);
+        const response = await axios.get(`https://rcapidev.neosme.co:2053/company-profile/${symbol}/${stocksData?.exchange}`);
         const companyData = response.data;
 
         console.log('companyData',companyData);

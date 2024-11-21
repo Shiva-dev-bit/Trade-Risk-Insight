@@ -180,7 +180,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
     if(query.length >= 3){
       try {
         const response = await axios.get(
-          `https://172.235.16.92:8000/search/${query}`
+          `https://rcapidev.neosme.co:2053/search/${query}`
         );
         let results = response.data || [];
   

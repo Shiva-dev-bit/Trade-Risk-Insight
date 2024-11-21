@@ -266,7 +266,7 @@ function Dashboard() {
 
   const fetchStatistics = async () => {
     try {
-      const response = await axios(`https://172.235.16.92:8000/statistics/${stockData?.stockData?.symbol}`);
+      const response = await axios(`https://rcapidev.neosme.co:2053/statistics/${stockData?.stockData?.symbol}`);
       const data = response.data;
 
       if (data) {
@@ -282,7 +282,7 @@ function Dashboard() {
 
   const fetchIndicators = async () => {
     try {
-      const response = await axios(`https://172.235.16.92:8000/technical-analysis/${stocksData?.symbol}/${stocksData?.exchange}`);
+      const response = await axios(`https://rcapidev.neosme.co:2053/technical-analysis/${stocksData?.symbol}/${stocksData?.exchange}`);
       const data = response.data;
       if (data) {
         console.log('indicators', data);
@@ -448,7 +448,7 @@ function Dashboard() {
         return;
       }
 
-      const ws = new WebSocket(`wss://172.235.16.92:8000/ws/${stockData?.stockData?.symbol}/${stockData?.stockData?.exchange}`);
+      const ws = new WebSocket(`wss://rcapidev.neosme.co:2053/ws/${stockData?.stockData?.symbol}/${stockData?.stockData?.exchange}`);
       wsRef.current = ws;
 
       ws.onopen = () => {
