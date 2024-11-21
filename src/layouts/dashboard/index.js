@@ -108,6 +108,8 @@ function Dashboard() {
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState(null);
 
+  console.log('stocksData',stocksData);
+
   const [StatisticsData, setStatisticsData] = useState({
     statistics: {
       valuations_metrics: {
@@ -517,7 +519,7 @@ function Dashboard() {
         .on("postgres_changes", { event: "*", schema: "public", table: "price" }, (payload) => {
           const { eventType, new: newStock } = payload;
 
-          if (newStock.symbol === stocksData?.symbol) {
+          if (newStock.symbol === stockData?.stockData?.symbol) {
             setSupabaseStocks(() => {
               switch (eventType) {
                 case "INSERT":

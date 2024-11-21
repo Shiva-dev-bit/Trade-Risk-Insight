@@ -33,13 +33,13 @@ export default function data() {
 
   
   const fetchNews = async () => {
-    const api = "http://172.235.16.92:8080/stock_news_and_sentiment";
+    const api = "https://rcapidev.neosme.co:2053/news/stock_and_general";
   
     try {
       const response = await axios.post(
         api,
         {
-          stock_name: stockData?.company_name || "stock latest news",
+          stock_name: stockData?.company_name || "stock news",
         },
         {
           headers: { "Content-Type": "application/json" }, // Explicit header

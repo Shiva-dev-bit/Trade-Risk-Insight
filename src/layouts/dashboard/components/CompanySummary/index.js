@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, Box, Button } from "@mui/material";
-import SettingsSuggestIcon from "@mui/icons-material/SettingsSuggest"; 
-import Typewriter from "typewriter-effect";
+import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
+import { ReactTyped } from "react-typed";
 
 const CompanyDescription = () => {
-  const [currentIndex, setCurrentIndex] = useState(0); 
-  const [displayedText, setDisplayedText] = useState([]); 
-  const [isExpanded, setIsExpanded] = useState(false); 
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [displayedLines, setDisplayedLines] = useState([]);
+  const [currentLineIndex, setCurrentLineIndex] = useState(0);
+  const [isReadyToExpand, setIsReadyToExpand] = useState(false);
+  
 
   const staticData = {
     summary: [
@@ -18,64 +20,76 @@ const CompanyDescription = () => {
     ],
   };
 
-  
   const toggleExpand = () => {
-    setIsExpanded(!isExpanded);
+    if (isExpanded) {
+      // When collapsing, reset to first two lines without regenerating
+      setDisplayedLines(staticData.summary.slice(0, 2));
+      setCurrentLineIndex(2);
+      setIsExpanded(false);
+    } else {
+      // When expanding, start typing additional lines
+      setIsExpanded(true);
+      setCurrentLineIndex(2); // Start from third line when expanding
+    }
   };
 
   useEffect(() => {
-    if (currentIndex < staticData.summary.length && (isExpanded || currentIndex < 2)) {
-      const timeout = setTimeout(() => {
-        // Add the next sentence to the displayed list
-        setDisplayedText((prevText) => [...prevText, staticData.summary[currentIndex]]);
-        setCurrentIndex((prevIndex) => prevIndex + 1);
-      }, 2000); // Delay for typing effect
-      return () => clearTimeout(timeout);
-    }
-  }, [currentIndex, isExpanded]);
+    // Stop at 2 lines if not expanded, continue if expanded
+    const maxLines = isExpanded ? staticData.summary.length : 2;
 
-  const visibleText = isExpanded
-    ? displayedText
-    : displayedText.slice(0, 2); 
+    if (currentLineIndex < maxLines) {
+      const timer = setTimeout(() => {
+        setDisplayedLines(prev => [...prev, staticData.summary[currentLineIndex]]);
+        setCurrentLineIndex(prev => prev + 1);
+
+        // Check if we've completed the first two lines
+        if (currentLineIndex === 1) {
+          setIsReadyToExpand(true);
+        }
+      }, 2000); // 2 second delay between lines
+
+      return () => clearTimeout(timer);
+    }
+  }, [currentLineIndex, isExpanded]);
 
   return (
     <Card
       sx={{
-        py: "20px",
-        px: "24px",
-        background: "linear-gradient(120deg, #191C57, #2B2E9B)", 
+        py: "10px",
+        px: "14px",
+        background: "radial-gradient(circle, rgba(2,0,36,1) 0%, rgba(7,27,133,1) 96%, rgba(0,212,255,1) 100%)",
         color: "white",
         borderRadius: "12px",
-        boxShadow: "0px 4px 10px rgba(0,0,0,0.3)",
-        width: "100%", 
+        border: "2px solid rgba(255, 255, 255, 0.3)",
+        width: "100%",
         overflow: "hidden",
+        fontFamily: "'Roboto Mono', monospace",
       }}
     >
       <CardContent>
         {/* AI Icon */}
         <Box display="flex" justifyContent="flex-start" alignItems="center" mb={2}>
-          <SettingsSuggestIcon sx={{ fontSize: "32px", color: "white", mr: 1 }} />
+          <SmartToyOutlinedIcon style={{ fontSize: "42px", color: "white", marginRight: "10px" }} />
         </Box>
-        {/* Dotted List with Typewriter Effect */}
-        <ul style={{ paddingLeft: "20px", color: "white", listStyleType: "disc" }}>
-          {visibleText.map((line, index) => (
-            <li key={index} style={{ marginBottom: "10px" }}>
-              <Typewriter
-                options={{
-                  strings: [line],
-                  autoStart: true,
-                  delay: 30,
-                  cursor: "_", // AI typing cursor effect
-                  loop: false, // Ensure no repeated typing
-                  deleteSpeed: 0, // Prevent deletion
-                }}
+        
+        {/* Dotted List with Sequential Typing */}
+        <ul style={{ paddingLeft: "20px", color: "white", listStyleType: "disc", fontSize: "16px" }}>
+          {displayedLines.map((line, index) => (
+            <li key={index} style={{ marginBottom: "5px" }}>
+              <ReactTyped
+                strings={[line]}
+                typeSpeed={50}
+                backSpeed={0}
+                loop={false}
+                showCursor={false}
               />
             </li>
           ))}
         </ul>
+        
         {/* Read More / Read Less Button */}
-        {staticData.summary.length > 2 && (
-          <Box mt={2}>
+        {staticData.summary.length > 2 && isReadyToExpand && (
+          <Box mt={1}>
             <Button
               variant="text"
               onClick={toggleExpand}
