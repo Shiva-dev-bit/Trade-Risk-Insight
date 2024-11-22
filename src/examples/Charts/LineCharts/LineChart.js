@@ -109,14 +109,28 @@ const LineChart = ({ newprice }) => {
       let processedValues = data.values;
 
       if (timePeriod === "1d") {
-        const today = moment().tz(timeZoneRef.current).format("YYYY-MM-DD");
+        const today = moment().tz(timeZoneRef.current).format("YYYY-MM-DD");       
+        // Filter data for today or the most recent available day
         processedValues = data.values.filter((item) => {
           const itemDate = moment.tz(item.datetime, timeZoneRef.current).format("YYYY-MM-DD");
           return itemDate === today;
-        });
-
+        });  
+        // If no data for today, get the most recent day's data
+        if (processedValues.length === 0) {
+          // Sort values by date in descending order and take the most recent day
+          const sortedValues = data.values.sort((a, b) => 
+            moment.tz(b.datetime, timeZoneRef.current).valueOf() - 
+            moment.tz(a.datetime, timeZoneRef.current).valueOf()
+          );
+          // Take values from the most recent day
+          const mostRecentDate = moment.tz(sortedValues[0].datetime, timeZoneRef.current).format("YYYY-MM-DD");
+          processedValues = sortedValues.filter((item) => 
+            moment.tz(item.datetime, timeZoneRef.current).format("YYYY-MM-DD") === mostRecentDate
+          );
+        } 
         if (processedValues.length > 0) {
-          lastPriceRef.current = parseFloat(processedValues[processedValues.length - 1].close);
+          // Set last price to the last entry of the most recent available day
+          lastPriceRef.current = parseFloat(processedValues[processedValues.length - 1].close);         
         }
       }
 
@@ -313,7 +327,7 @@ const LineChart = ({ newprice }) => {
         {chartData[0]?.data?.length > 0 && (
           <Suspense fallback={<div>Loading chart...</div>}>
             <ReactApexChart
-              key={`${selectedSymbol}-${timePeriod}-${selectedExchange}`}
+              key={`${selectedSymbol}-${timePeriod}-${selectedExchange}-${chartData[0]?.data?.length}`}
               options={chartOptions}
               series={chartData}
               type="line"
