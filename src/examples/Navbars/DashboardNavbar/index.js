@@ -145,15 +145,107 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
     </Menu>
   );
 
+  // const [searchTerm, setSearchTerm] = useState("");
+  // const [filteredData, setFilteredData] = useState([]);
+  // const [isDefaultActive, setIsDefaultActive] = useState(true);
+  // const [activeDropdown, setActiveDropdown] = useState(null);
+  // const [loading, setLoading] = useState(false);
+
+  // const [selectedFilters, setSelectedFilters] = useState({
+  //   countries: ["India"],
+  //   exchanges: ["NSE"],
+  //   currencies: [],
+  //   types: [],
+  // });
+
+  // const filterCategories = {
+  //   countries: { label: "Countries", key: "country" },
+  //   exchanges: { label: "Exchanges", key: "exchange" },
+  //   currencies: { label: "Currencies", key: "currency" },
+  //   types: { label: "Financial Assets Types", key: "type" },
+  // };
+
+  // const handleSearch = (event) => {
+  //   const value = event.target.value;
+  //   setSearchTerm(value);
+
+  //   if (!value.trim()) {
+  //     setActiveDropdown(null);
+  //     setFilteredData([]);
+  //   }
+  // };
+
+  // const fetchSearchData = async (query) => {
+  //   setLoading(true); // Set loading to true before fetching
+  //   if(query.length >= 3){
+  //     try {
+  //       const response = await axios.get(
+  //         `https://rcapidev.neosme.co:2053/search/${query}`
+  //       );
+  //       let results = response.data || [];
+  
+  //       Object.entries(selectedFilters).forEach(([category, selectedValues]) => {
+  //         if (selectedValues.length > 0) {
+  //           const key = filterCategories[category].key;
+  //           results =
+  //             results.length > 0 && results.filter((item) => selectedValues.includes(item[key]));
+  //         }
+  //       });
+
+  //       console.log('resultsresults',results);
+  
+  //       setFilteredData(results);
+  //     } catch (error) {
+  //       console.error("Error fetching data:", error);
+  //       setFilteredData([]);
+  //     } finally {
+  //       setLoading(false); // Set loading to false after fetching
+  //     }
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   const debounceTimer = setTimeout(() => {
+  //     if (searchTerm.trim()) {
+  //       fetchSearchData(searchTerm);
+  //     } else {
+  //       setFilteredData([]);
+  //     }
+  //   }, 300); // Debounce to reduce API calls
+
+  //   return () => clearTimeout(debounceTimer);
+  // }, [searchTerm, selectedFilters]);
+
+  // const handleFilterChange = (category, value) => {
+  //   setSelectedFilters((prev) => {
+  //     const isChecked = prev[category].includes(value);
+  //     const updatedFilters = isChecked
+  //       ? prev[category].filter((v) => v !== value)
+  //       : [...prev[category], value];
+
+  //     return { ...prev, [category]: updatedFilters };
+  //   });
+  // };
+
+  // const handleDefaultChange = () => {
+  //   const newDefaultState = !isDefaultActive;
+  //   setIsDefaultActive(newDefaultState);
+
+  //   const defaultFilters = newDefaultState
+  //     ? { countries: ["India"], exchanges: ["NSE"], currencies: [], types: [] }
+  //     : { countries: [], exchanges: [], currencies: [], types: [] };
+
+  //   setSelectedFilters(defaultFilters);
+  // };
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredData, setFilteredData] = useState([]);
   const [isDefaultActive, setIsDefaultActive] = useState(true);
-  const [activeDropdown, setActiveDropdown] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState(null);
 
   const [selectedFilters, setSelectedFilters] = useState({
-    countries: ["India"],
-    exchanges: ["NSE"],
+    countries: [],
+    exchanges: [],
     currencies: [],
     types: [],
   });
@@ -165,25 +257,15 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
     types: { label: "Financial Assets Types", key: "type" },
   };
 
-  const handleSearch = (event) => {
-    const value = event.target.value;
-    setSearchTerm(value);
-
-    if (!value.trim()) {
-      setActiveDropdown(null);
-      setFilteredData([]);
-    }
-  };
-
   const fetchSearchData = async (query) => {
-    setLoading(true); // Set loading to true before fetching
-    if(query.length >= 3){
+    setLoading(true); // Show loading spinner
+    if (query.length >= 3) {
       try {
         const response = await axios.get(
           `https://rcapidev.neosme.co:2053/search/${query}`
         );
         let results = response.data || [];
-  
+
         Object.entries(selectedFilters).forEach(([category, selectedValues]) => {
           if (selectedValues.length > 0) {
             const key = filterCategories[category].key;
@@ -191,17 +273,49 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
               results.length > 0 && results.filter((item) => selectedValues.includes(item[key]));
           }
         });
-  
+
         setFilteredData(results);
       } catch (error) {
         console.error("Error fetching data:", error);
         setFilteredData([]);
       } finally {
-        setLoading(false); // Set loading to false after fetching
+        setLoading(false); // Hide loading spinner
       }
     }
   };
 
+  const fetchUserLocation = async () => {
+    try {
+      // Simulate a country for local testing
+      const userCountry = "United States"; // Replace with any desired country
+      const exchange = userCountry === "United States" ? "NASDAQ" : "International Exchange"; // Mocked exchange
+  
+      setSelectedFilters({
+        countries: [userCountry],
+        exchanges: [exchange],
+        currencies: [],
+        types: [],
+      });
+    } catch (error) {
+      console.error("Error fetching user location:", error);
+      setSelectedFilters({
+        countries: ["India"],
+        exchanges: ["NSE"],
+        currencies: [],
+        types: [],
+      });
+    }
+  };
+  
+
+  // On component mount, fetch user location and set default filters
+  useEffect(() => {
+    if (isDefaultActive) {
+      fetchUserLocation();
+    }
+  }, [isDefaultActive]);
+
+  // Debounce search term and fetch data
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
       if (searchTerm.trim()) {
@@ -213,6 +327,16 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
 
     return () => clearTimeout(debounceTimer);
   }, [searchTerm, selectedFilters]);
+
+  const handleSearch = (event) => {
+    const value = event.target.value;
+    setSearchTerm(value);
+
+    if (!value.trim()) {
+      setActiveDropdown(null);
+      setFilteredData([]);
+    }
+  };
 
   const handleFilterChange = (category, value) => {
     setSelectedFilters((prev) => {
@@ -229,11 +353,18 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
     const newDefaultState = !isDefaultActive;
     setIsDefaultActive(newDefaultState);
 
-    const defaultFilters = newDefaultState
-      ? { countries: ["India"], exchanges: ["NSE"], currencies: [], types: [] }
-      : { countries: [], exchanges: [], currencies: [], types: [] };
-
-    setSelectedFilters(defaultFilters);
+    if (!newDefaultState) {
+      // Reset filters when default is inactive
+      setSelectedFilters({
+        countries: [],
+        exchanges: [],
+        currencies: [],
+        types: [],
+      });
+    } else {
+      // Fetch user location when re-enabling default
+      fetchUserLocation();
+    }
   };
 
   const [anchorEl, setAnchorEl] = useState(null);

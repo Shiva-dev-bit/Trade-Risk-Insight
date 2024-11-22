@@ -300,7 +300,8 @@ const LineChart = ({ newprice }) => {
           <div style={{ textAlign: "center" }}>
             <div>Close</div>
             <div style={{ fontWeight: 600, fontSize: "15px" }}>
-              {newprice ? `${currencySymbol}${newprice}` : ""}
+              {/* {newprice ? `${currencySymbol}${newprice}` : ""} */}
+              {newprice ? `${currencySymbol}${newprice.close.toFixed(2)}` : ''}
             </div>
           </div>
         </Box>
