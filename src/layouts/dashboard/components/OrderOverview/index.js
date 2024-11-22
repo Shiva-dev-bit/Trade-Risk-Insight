@@ -18,7 +18,7 @@
 
 import React, { useContext, useEffect, useState } from "react";
 import { Card, Box, Divider } from "@mui/material";
-import { FaArrowDown, FaArrowUp, FaCoins, FaShoppingCart } from "react-icons/fa";
+import { FaArrowAltCircleUp, FaArrowCircleUp, FaArrowDown, FaArrowsAltH, FaArrowUp, FaCoins, FaShoppingCart } from "react-icons/fa";
 import { FaPiggyBank } from "react-icons/fa";
 import VuiTypography from "components/VuiTypography";
 import TimelineItem from "examples/Timeline/TimelineItem";
@@ -233,29 +233,31 @@ const OrdersOverview = () => {
   };
 
   const getComparisonIcon = (current, previous) => {
-    if (current > previous) {
-      return <FaArrowUp color="green" />;
-    } else if (current < previous) {
-      return <FaArrowDown color="red" />;
-    } else {
-      return null;
+    if (current && previous) {  // Check if both values exist
+      if (current > previous) {
+        return <FaArrowUp color="green" />;
+      } else if (current < previous) {
+        return <FaArrowDown color="red" />;
+      }
     }
+    return null;
   };
 
   // Filter out null entries and compare values with the previous quarter
   const processedData = financialData?.income_statement
     ?.filter((item) => item.sales !== null && item.cost_of_goods !== null && item.net_income !== null)
+    ?.sort((a, b) => new Date(b.fiscal_date) - new Date(a.fiscal_date)) // Sort by date descending
     ?.map((item, index, array) => {
-      const previous = array[index - 1] || {};
+      const next = array[index + 1]; // Compare with next item (previous quarter) since array is reversed
       return {
         ...item,
         comparison: {
-          sales: getComparisonIcon(item?.sales, previous?.sales),
-          cost_of_goods: getComparisonIcon(item?.cost_of_goods, previous?.cost_of_goods),
-          gross_profit: getComparisonIcon(item?.gross_profit, previous?.gross_profit),
-          operating_income: getComparisonIcon(item?.operating_income, previous?.operating_income),
-          net_income: getComparisonIcon(item?.net_income, previous?.net_income),
-          ebitda: getComparisonIcon(item?.ebitda, previous?.ebitda),
+          sales: getComparisonIcon(item.sales, next?.sales),
+          cost_of_goods: getComparisonIcon(item.cost_of_goods, next?.cost_of_goods),
+          gross_profit: getComparisonIcon(item.gross_profit, next?.gross_profit),
+          operating_income: getComparisonIcon(item.operating_income, next?.operating_income),
+          net_income: getComparisonIcon(item.net_income, next?.net_income),
+          ebitda: getComparisonIcon(item.ebitda, next?.ebitda),
         },
       };
     });
