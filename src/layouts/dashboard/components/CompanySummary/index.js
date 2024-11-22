@@ -2,13 +2,12 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Card, CardContent, Box, Button } from "@mui/material";
 import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
 import { ReactTyped } from "react-typed";
-import  axios  from "axios";
+import axios from "axios";
 import { AuthContext } from "context/Authcontext";
 
 const CompanyDescription = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isInitialTypingComplete, setIsInitialTypingComplete] = useState(false);
-  const [typedText, setTypedText] = useState("");
   const [summary, setSummary] = useState(
     "TCS operates in the Technology and IT services sector. Its recent stock price was INR 1823.7, close to its 52-week high of INR 11.46. The RSI of 55.70398 indicates the stock is neither overbought nor oversold. No recent news headlines about the stock were identified. MACD of -19.67755 suggests bearish sentiment in the short term."
   );
@@ -17,7 +16,6 @@ const CompanyDescription = () => {
   const fetchSummary = async () => {
     try {
       setSummary(""); // Empty summary while waiting for new data
-      setTypedText(""); // Reset typed text while waiting for new data
       setIsInitialTypingComplete(false); // Reset the typing effect
 
       const response = await axios.post(
@@ -30,7 +28,6 @@ const CompanyDescription = () => {
       );
       if (response.data?.summary) {
         setSummary(response.data.summary);
-        setTypedText(""); // Reset typed text
         setIsInitialTypingComplete(false); // Restart typing effect
       } else {
         console.error("Summary not found in response");
@@ -46,13 +43,10 @@ const CompanyDescription = () => {
     }
   }, [stockData?.symbol, stockData?.exchange, stockData?.company_name]);
 
-  const initialText = summary.slice(0, 200);
-  const remainingText = summary.slice(200);
+  const initialText = summary.split(" ").slice(0, 40).join(" "); // First two lines (approx)
+  const remainingText = summary.slice(initialText.length);
 
   const toggleExpand = () => {
-    if (!isExpanded) {
-      setTypedText(initialText); // Reset to initial text
-    }
     setIsExpanded(!isExpanded);
   };
 
@@ -77,45 +71,32 @@ const CompanyDescription = () => {
             <SmartToyOutlinedIcon style={{ fontSize: "42px", color: "white" }} />
 
             {/* Text Content */}
-            <Box style={{color: "white"}} fontSize="16px" sx={{ flex: 1 }}>
-              <span style={{ display: 'inline' }}>{typedText}</span>
-
-              {/* Initial typing effect */}
+            <Box style={{ color: "white" }} fontSize="16px" sx={{ flex: 1 }}>
+              {/* Initial Typing Effect */}
               {!isInitialTypingComplete && (
                 <ReactTyped
                   strings={[initialText]}
-                  typeSpeed={5}
+                  typeSpeed={0}
                   backSpeed={0}
                   loop={false}
                   showCursor={false}
-                  onComplete={() => {
-                    setIsInitialTypingComplete(true);
-                    setTypedText(initialText);
-                  }}
+                  onComplete={() => setIsInitialTypingComplete(true)}
                 />
               )}
 
-              {/* Remaining text typing effect */}
-              {isExpanded && isInitialTypingComplete && (
-                <ReactTyped
-                  strings={[remainingText]}
-                  typeSpeed={5}
-                  backSpeed={0}
-                  loop={false}
-                  showCursor={false}
-                  onComplete={() => {
-                    setTypedText(summary);
-                  }}
-                />
+              {/* Display Initial Text and Remaining Text */}
+              {isInitialTypingComplete && (
+                <>
+                  {initialText}
+                  {isExpanded && remainingText}
+                  {!isExpanded && " ..."}
+                </>
               )}
-
-              {/* Show ellipsis when not expanded */}
-              {!isExpanded && isInitialTypingComplete && '...'}
             </Box>
           </Box>
 
           {/* Read More / Read Less Button */}
-          {isInitialTypingComplete && summary.length > 200 && (
+          {isInitialTypingComplete && remainingText && (
             <Box sx={{ display: 'flex', justifyContent: 'flex-start', pl: '35px' }}>
               <Button
                 variant="text"
@@ -134,7 +115,6 @@ const CompanyDescription = () => {
           )}
         </Box>
       </CardContent>
-
     </Card>
   );
 };
