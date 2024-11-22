@@ -5,52 +5,40 @@ import { ReactTyped } from "react-typed";
 
 const CompanyDescription = () => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [displayedLines, setDisplayedLines] = useState([]);
-  const [currentLineIndex, setCurrentLineIndex] = useState(0);
+  const [displayedText, setDisplayedText] = useState('');
   const [isReadyToExpand, setIsReadyToExpand] = useState(false);
-  
 
+  // Simulated API response as a string
   const staticData = {
-    summary: [
-      `TCS operates in the Technology and IT services sector.`,
-      `Its recent stock price was INR 1823.7, close to its 52-week high of INR 11.46.`,
-      `The RSI of 55.70398 indicates the stock is neither overbought nor oversold.`,
-      `No recent news headlines about the stock were identified.`,
-      `MACD of -19.67755 suggests bearish sentiment in the short term.`,
-    ],
+    summary: "TCS operates in the Technology and IT services sector. Its recent stock price was INR 1823.7, close to its 52-week high of INR 11.46. The RSI of 55.70398 indicates the stock is neither overbought nor oversold. No recent news headlines about the stock were identified. MACD of -19.67755 suggests bearish sentiment in the short term."
   };
 
   const toggleExpand = () => {
-    if (isExpanded) {
-      // When collapsing, reset to first two lines without regenerating
-      setDisplayedLines(staticData.summary.slice(0, 2));
-      setCurrentLineIndex(2);
-      setIsExpanded(false);
-    } else {
-      // When expanding, start typing additional lines
-      setIsExpanded(true);
-      setCurrentLineIndex(2); // Start from third line when expanding
-    }
+    setIsExpanded(!isExpanded);
   };
 
   useEffect(() => {
-    // Stop at 2 lines if not expanded, continue if expanded
-    const maxLines = isExpanded ? staticData.summary.length : 2;
+    // Logic to show first 500 characters or full text based on expansion
+    const textToDisplay = isExpanded 
+      ? staticData.summary 
+      : staticData.summary.slice(0, 200) + '...';
+    
+    setDisplayedText(textToDisplay);
+  }, [isExpanded]);
 
-    if (currentLineIndex < maxLines) {
-      const timer = setTimeout(() => {
-        setDisplayedLines(prev => [...prev, staticData.summary[currentLineIndex]]);
-        setCurrentLineIndex(prev => prev + 1);
+  useEffect(() => {
+    // Check if first two lines are fully typed
+    const checkReadyToExpand = () => {
+      // Simulate two-line generation by checking a reasonable character length
+      if (displayedText.length >= 200) {
+        setIsReadyToExpand(true);
+      }
+    };
 
-        // Check if we've completed the first two lines
-        if (currentLineIndex === 1) {
-          setIsReadyToExpand(true);
-        }
-      }, 2000); // 2 second delay between lines
+    const timer = setTimeout(checkReadyToExpand, 4000); // Adjust timing to match typing speed
 
-      return () => clearTimeout(timer);
-    }
-  }, [currentLineIndex, isExpanded]);
+    return () => clearTimeout(timer);
+  }, [displayedText]);
 
   return (
     <Card
@@ -72,23 +60,19 @@ const CompanyDescription = () => {
           <SmartToyOutlinedIcon style={{ fontSize: "42px", color: "white", marginRight: "10px" }} />
         </Box>
         
-        {/* Dotted List with Sequential Typing */}
-        <ul style={{ paddingLeft: "20px", color: "white", listStyleType: "disc", fontSize: "16px" }}>
-          {displayedLines.map((line, index) => (
-            <li key={index} style={{ marginBottom: "5px" }}>
-              <ReactTyped
-                strings={[line]}
-                typeSpeed={50}
-                backSpeed={0}
-                loop={false}
-                showCursor={false}
-              />
-            </li>
-          ))}
-        </ul>
+        {/* Direct String Display with Typing Effect */}
+        <Box color="white" fontSize="16px" style={{color : "white"}}>
+          <ReactTyped
+            strings={[displayedText]}
+            typeSpeed={50}
+            backSpeed={0}
+            loop={false}
+            showCursor={false}
+          />
+        </Box>
         
         {/* Read More / Read Less Button */}
-        {staticData.summary.length > 2 && isReadyToExpand && (
+        {isReadyToExpand && staticData.summary.length > 300 && (
           <Box mt={1}>
             <Button
               variant="text"

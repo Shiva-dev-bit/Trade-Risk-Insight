@@ -361,8 +361,15 @@ function Dashboard() {
     percent_change: 0.0000,
     isPositiveChange: null,
     icon: null,
-    percentageColor: ""
+    percentageColor: "",
+    open : 0.00,
+      low : 0.00,
+      high : 0.00,
+      close : 0.00,
+      datetime : null
   });
+
+  console.log('priceDatapriceData',priceData);
 
   useEffect(() => {
     // Reset price data when stock changes
@@ -372,7 +379,12 @@ function Dashboard() {
       percent_change: 0.0000,
       isPositiveChange: null,
       icon: null,
-      percentageColor: ""
+      percentageColor: "",
+      open : 0.00,
+      low : 0.00,
+      high : 0.00,
+      close : 0.00,
+      datetime : null
     });
   }, [stockData?.stockData?.symbol, stockData?.stockData?.exchange]);
 
@@ -386,21 +398,26 @@ function Dashboard() {
 
       const isPositiveChange = websocketStocks?.percent_change > 0;
       setPriceData({
-        New_price: websocketStocks?.price || 0,
-        price_change: websocketStocks?.change || 0,
-        percent_change: websocketStocks?.percent_change || 0,
+        New_price: websocketStocks?.price,
+        price_change: websocketStocks?.change,
+        percent_change: websocketStocks?.percent_change,
         isPositiveChange,
         icon: isPositiveChange ? (
           <FaCaretUp style={{ color: "green" }} />
         ) : (
           <FaCaretDown style={{ color: "red" }} />
         ),
-        percentageColor: isPositiveChange ? "success" : "error"
+        percentageColor: isPositiveChange ? "success" : "error",
+        open : websocketStocks?.open,
+        low : websocketStocks?.low,
+        high : websocketStocks?.high,
+        close : websocketStocks?.price,
+        datetime : websocketStocks?.datetime
       });
     } else if (supabaseStocks.length > 0 && stocksPercent.length > 0) {
-      console.log('supabaseStockssupabaseStocks', supabaseStocks);
       const New_price = supabaseStocks[0]?.price;
       const previous_close = stocksPercent[0]?.previous_close;
+      console.log('stocksPercent', stocksPercent);
 
       if (New_price && previous_close) {
         const price_change = New_price - previous_close;
@@ -417,7 +434,12 @@ function Dashboard() {
           ) : (
             <FaCaretDown style={{ color: "red" }} />
           ),
-          percentageColor: isPositiveChange ? "success" : "error"
+          percentageColor: isPositiveChange ? "success" : "error",
+          open : stocksPercent[0]?.open_price,
+          low : stocksPercent[0]?.low_price,
+          high : stocksPercent[0]?.high_price,
+          close : New_price,
+          datetime : stocksPercent[0]?.updated_at
         });
       }
     }
@@ -708,7 +730,7 @@ function Dashboard() {
                   <VuiBox>
                     <LineChart
                       lineChartOptions={lineChartOptionsDashboard}
-                      newprice={(parseFloat(priceData?.New_price) || 0).toFixed(2)}
+                      newprice={priceData}
                     />
                   </VuiBox>
                 </VuiBox>
