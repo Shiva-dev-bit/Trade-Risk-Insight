@@ -83,7 +83,7 @@ function SignUp() {
         setAlert('Please check Email to confirm account');
         const { data: newUser, error: insertError } = await supabase
         .from('users')
-        .insert([{ email: email, username: full_name, hashed_password: password }]);
+        .insert([{ email: email, username: full_name}]);
 
       if (insertError) {
         console.log("Error adding user to database. Please try again.");
