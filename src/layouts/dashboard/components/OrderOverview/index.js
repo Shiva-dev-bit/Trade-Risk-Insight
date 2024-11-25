@@ -245,7 +245,7 @@ const OrdersOverview = () => {
 
   // Filter out null entries and compare values with the previous quarter
   const processedData = financialData?.income_statement
-    ?.filter((item) => item.sales !== null && item.cost_of_goods !== null && item.net_income !== null)
+    // ?.filter((item) => item.sales !== null && item.cost_of_goods !== null && item.net_income !== null)
     ?.sort((a, b) => new Date(b.fiscal_date) - new Date(a.fiscal_date)) // Sort by date descending
     ?.map((item, index, array) => {
       const next = array[index + 1]; // Compare with next item (previous quarter) since array is reversed

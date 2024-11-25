@@ -71,7 +71,7 @@ function SignUp() {
         email,
         password,
         options: {
-          emailRedirectTo: 'https://trade-risk-insight.vercel.app/authentication/sign-in',
+          emailRedirectTo: 'https://trade-risk-insight.vercel.app/dashboard',
           data: { display_name: full_name }, 
         },
       });

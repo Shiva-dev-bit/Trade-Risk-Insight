@@ -67,17 +67,17 @@ function SignIn() {
     }
   
     try {
-      const { error } = await supabase.auth.signInWithOtp({
-        email: email,
-        options: {
-          emailRedirectTo: 'https://trade-risk-insight.vercel.app/dashboard', 
-        },
-      });
-    
+      
       if(user.length <= 0){
         setErr('User not exist Please SignUp');
       }
       else {
+        const { error } = await supabase.auth.signInWithOtp({
+          email: email,
+          options: {
+            RedirectTo: 'https://trade-risk-insight.vercel.app/dashboard', 
+          },
+        });
         console.log('Magic link sent! Check your email.');
         // history.push('/dashboard');
         setErr('Check your email for the login link.');
