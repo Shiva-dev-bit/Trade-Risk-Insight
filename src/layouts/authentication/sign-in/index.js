@@ -75,7 +75,7 @@ function SignIn() {
         const { error } = await supabase.auth.signInWithOtp({
           email: email,
           options: {
-            RedirectTo: 'https://trade-risk-insight.vercel.app/dashboard', 
+            emailRedirectTo: 'https://trade-risk-insight.vercel.app/dashboard', 
           },
         });
         console.log('Magic link sent! Check your email.');
