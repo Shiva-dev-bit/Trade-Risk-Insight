@@ -4,7 +4,7 @@ import moment from "moment-timezone";
 import { AuthContext } from "context/Authcontext";
 import { Box } from "@mui/material";
 import { FaCaretDown, FaCaretUp } from "react-icons/fa";
-import  axios  from "axios";
+import axios from "axios";
 
 const LineChart = ({ newprice }) => {
   const [chartData, setChartData] = useState([]);
@@ -17,6 +17,8 @@ const LineChart = ({ newprice }) => {
   const timeZoneRef = useRef(null);
   const lastPriceRef = useRef(null);
   const chartContainerRef = useRef(null);
+  const currentMinutePricesRef = useRef([]);
+  const lastMinuteRef = useRef(null);
 
   let selectedSymbol = stockData?.stockData?.symbol;
   let selectedExchange = stockData?.stockData?.exchange;
@@ -26,7 +28,6 @@ const LineChart = ({ newprice }) => {
 
   const isPositive = selectedStocksChange >= 0;
 
-  // Currency symbol mapping
   const getCurrencySymbol = (exchange) => {
     const exchangeCurrency = {
       NSE: '₹',
@@ -59,29 +60,70 @@ const LineChart = ({ newprice }) => {
   const getTooltipFormatter = (period, timezone) => {
     switch (period) {
       case "1d":
-        return (value) => moment.tz(value, timezone).format("HH:mm:ss");
+        return (value) => moment.tz(value, timezone).format("HH:mm");
       default:
         return (value) => moment.tz(value, timezone).format("DD MMM YYYY");
     }
   };
 
+  const calculateMinuteAverage = (prices) => {
+    if (!prices || prices.length === 0) return null;
+    const sum = prices.reduce((acc, price) => acc + parseFloat(price), 0);
+    return sum / prices.length;
+  };
+
   const updateChartWithNewPrice = (currentData, newPrice, timezone) => {
-    if (!currentData?.[0]?.data || typeof newPrice !== "number") return currentData;
+    if (!currentData?.[0]?.data || !newPrice?.close) return currentData;
 
     const currentTime = moment().tz(timezone);
-    const updatedData = [...currentData];
-    
-    const newDataPoint = {
-      x: currentTime.valueOf(),
-      y: newPrice,
-    };
+    const currentMinute = currentTime.startOf('minute');
+    const currentMinuteStr = currentMinute.format('YYYY-MM-DD HH:mm');
 
-    updatedData[0] = {
-      ...updatedData[0],
-      data: [...updatedData[0].data, newDataPoint]
-    };
+    // If we're in a new minute, process the accumulated data from the previous minute
+    if (currentMinuteStr !== lastMinuteRef.current) {
+      // Calculate average price for the previous minute if we have accumulated prices
+      if (currentMinutePricesRef.current.length > 0) {
+        const averagePrice = calculateMinuteAverage(currentMinutePricesRef.current);
+        
+        // Create a new data array with the previous minute's average
+        const updatedData = [...currentData];
+        const newDataPoint = {
+          x: moment(lastMinuteRef.current, 'YYYY-MM-DD HH:mm').valueOf(),
+          y: averagePrice
+        };
 
-    return updatedData;
+        // Only add if we don't already have data for this minute
+        if (!updatedData[0].data.some(point => 
+          moment(point.x).format('YYYY-MM-DD HH:mm') === lastMinuteRef.current
+        )) {
+          updatedData[0] = {
+            ...updatedData[0],
+            data: [...updatedData[0].data, newDataPoint].sort((a, b) => a.x - b.x)
+          };
+        }
+
+        // Reset for the new minute
+        currentMinutePricesRef.current = [parseFloat(newPrice.close)];
+        lastMinuteRef.current = currentMinuteStr;
+
+        // Remove data points older than 24 hours if in 1d view
+        if (timePeriod === "1d") {
+          const oneDayAgo = moment().tz(timezone).subtract(1, 'day').valueOf();
+          updatedData[0].data = updatedData[0].data.filter(point => point.x >= oneDayAgo);
+        }
+
+        return updatedData;
+      }
+
+      // If this is the first data point for a new minute
+      lastMinuteRef.current = currentMinuteStr;
+      currentMinutePricesRef.current = [parseFloat(newPrice.close)];
+    } else {
+      // Accumulate prices for the current minute
+      currentMinutePricesRef.current.push(parseFloat(newPrice.close));
+    }
+
+    return currentData;
   };
 
   const fetchData = async (timePeriod) => {
@@ -109,29 +151,24 @@ const LineChart = ({ newprice }) => {
       let processedValues = data.values;
 
       if (timePeriod === "1d") {
-        const today = moment().tz(timeZoneRef.current).format("YYYY-MM-DD");       
-        // Filter data for today or the most recent available day
+        const today = moment().tz(timeZoneRef.current).format("YYYY-MM-DD");
         processedValues = data.values.filter((item) => {
           const itemDate = moment.tz(item.datetime, timeZoneRef.current).format("YYYY-MM-DD");
           return itemDate === today;
-        });  
-        // If no data for today, get the most recent day's data
+        });
         if (processedValues.length === 0) {
-          // Sort values by date in descending order and take the most recent day
           const sortedValues = data.values.sort((a, b) => 
             moment.tz(b.datetime, timeZoneRef.current).valueOf() - 
             moment.tz(a.datetime, timeZoneRef.current).valueOf()
           );
-          // Take values from the most recent day
           const mostRecentDate = moment.tz(sortedValues[0].datetime, timeZoneRef.current).format("YYYY-MM-DD");
           processedValues = sortedValues.filter((item) => 
             moment.tz(item.datetime, timeZoneRef.current).format("YYYY-MM-DD") === mostRecentDate
           );
-        } 
-        if (processedValues.length > 0) {
-          // Set last price to the last entry of the most recent available day
-          lastPriceRef.current = parseFloat(processedValues[processedValues.length - 1].close);         
         }
+        // Reset minute tracking when fetching new data
+        lastMinuteRef.current = null;
+        currentMinutePricesRef.current = [];
       }
 
       const formattedData = [{
@@ -149,7 +186,10 @@ const LineChart = ({ newprice }) => {
           toolbar: { show: false },
           animations: {
             enabled: true,
-            dynamicAnimation: { speed: 350 },
+            easing: 'linear',
+            dynamicAnimation: {
+              speed: 1000
+            }
           },
           background: 'transparent',
         },
@@ -205,20 +245,17 @@ const LineChart = ({ newprice }) => {
     }
   };
 
-  // Handle client-side mounting
   useEffect(() => {
     setIsClient(true);
     return () => setIsClient(false);
   }, []);
 
-  // Handle data fetching
   useEffect(() => {
     if (isClient && selectedSymbol && selectedExchange) {
       fetchData(timePeriod);
     }
   }, [timePeriod, stockData, isClient]);
 
-  // Handle real-time price updates
   useEffect(() => {
     if (isClient && newprice && timeZoneRef.current && timePeriod === "1d") {
       setChartData((prevData) => {
@@ -230,12 +267,12 @@ const LineChart = ({ newprice }) => {
 
   const handleTimePeriodChange = (newPeriod) => {
     setTimePeriod(newPeriod);
+    // Reset minute tracking when changing time period
+    lastMinuteRef.current = null;
+    currentMinutePricesRef.current = [];
   };
 
-  if (!isClient) {
-    return null;
-  }
-
+  if (!isClient) return null;
   if (loading) {
     return (
       <div className="lds-roller">
@@ -250,7 +287,6 @@ const LineChart = ({ newprice }) => {
       </div>
     );
   }
-
   if (error) {
     return <div style={{ color: 'red', padding: '20px' }}>Error: {error}</div>;
   }
@@ -300,7 +336,7 @@ const LineChart = ({ newprice }) => {
           <div style={{ textAlign: "center" }}>
             <div>Close</div>
             <div style={{ fontWeight: 600, fontSize: "15px" }}>
-              {newprice ? `${currencySymbol}${newprice}` : ""}
+              {newprice ? `${currencySymbol}${newprice.close}` : ""}
             </div>
           </div>
         </Box>
@@ -327,7 +363,7 @@ const LineChart = ({ newprice }) => {
         {chartData[0]?.data?.length > 0 && (
           <Suspense fallback={<div>Loading chart...</div>}>
             <ReactApexChart
-              key={`${selectedSymbol}-${timePeriod}-${selectedExchange}-${chartData[0]?.data?.length}`}
+              key={`${selectedSymbol}-${timePeriod}-${selectedExchange}`}
               options={chartOptions}
               series={chartData}
               type="line"
