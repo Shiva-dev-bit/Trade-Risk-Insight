@@ -52,16 +52,27 @@ function Projects() {
     >
       <VuiBox display="flex" justifyContent="space-between" alignItems="center" mb="32px">
         <VuiBox mb="auto">
+          {/* Top Stock Market News */}
           <VuiTypography color="white" variant="lg" mb="6px" gutterBottom>
             Top Stock Market News
           </VuiTypography>
+
+          {/* Microsoft Privacy Statement Link */}
+          <VuiTypography color="white" variant="sm" style={{ fontSize: '12px' , marginLeft: '16px'}}>
+            <a href="https://privacy.microsoft.com/en-us/privacystatement" target="_blank" rel="noopener noreferrer" style={{ color: 'white', textDecoration: 'underline' }}>
+              By Microsoft Privacy Statement
+            </a>
+          </VuiTypography>
         </VuiBox>
+
         <VuiBox>
-        <VuiTypography color="white" variant="lg" mb="6px" gutterBottom style={{ fontSize : '15px' }}>
-          {stockData?.company_name}
-        </VuiTypography>
+          <VuiTypography color="white" variant="lg" mb="6px" gutterBottom style={{ fontSize: '15px' }}>
+            {stockData?.company_name}
+          </VuiTypography>
         </VuiBox>
       </VuiBox>
+
+
 
       <VuiBox
         sx={{

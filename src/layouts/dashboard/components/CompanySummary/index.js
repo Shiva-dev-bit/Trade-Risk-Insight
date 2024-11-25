@@ -1,44 +1,54 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Card, CardContent, Box, Button } from "@mui/material";
 import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
 import { ReactTyped } from "react-typed";
+import axios from "axios";
+import { AuthContext } from "context/Authcontext";
 
 const CompanyDescription = () => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [displayedText, setDisplayedText] = useState('');
-  const [isReadyToExpand, setIsReadyToExpand] = useState(false);
+  const [isInitialTypingComplete, setIsInitialTypingComplete] = useState(false);
+  const [summary, setSummary] = useState(
+    "TCS operates in the Technology and IT services sector. Its recent stock price was INR 1823.7, close to its 52-week high of INR 11.46. The RSI of 55.70398 indicates the stock is neither overbought nor oversold. No recent news headlines about the stock were identified. MACD of -19.67755 suggests bearish sentiment in the short term."
+  );
+  const { stockData } = useContext(AuthContext);
 
-  // Simulated API response as a string
-  const staticData = {
-    summary: "TCS operates in the Technology and IT services sector. Its recent stock price was INR 1823.7, close to its 52-week high of INR 11.46. The RSI of 55.70398 indicates the stock is neither overbought nor oversold. No recent news headlines about the stock were identified. MACD of -19.67755 suggests bearish sentiment in the short term."
+  const fetchSummary = async () => {
+    try {
+      setSummary(""); // Empty summary while waiting for new data
+      setIsInitialTypingComplete(false); // Reset the typing effect
+
+      const response = await axios.post(
+        "https://rcapidev.neosme.co:2053/generate-stock-summary",
+        {
+          stock_symbol: stockData?.symbol,
+          exchange: stockData?.exchange,
+          stock_name: stockData?.company_name,
+        }
+      );
+      if (response.data?.summary) {
+        setSummary(response.data.summary);
+        setIsInitialTypingComplete(false); // Restart typing effect
+      } else {
+        console.error("Summary not found in response");
+      }
+    } catch (error) {
+      console.error("Error fetching stock summary:", error);
+    }
   };
+
+  useEffect(() => {
+    if (stockData?.symbol && stockData?.exchange && stockData?.company_name) {
+      fetchSummary();
+    }
+  }, [stockData?.symbol, stockData?.exchange, stockData?.company_name]);
+
+  const initialText = summary.split(" ").slice(0, 40).join(" "); // First two lines (approx)
+  const remainingText = summary.slice(initialText.length);
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
   };
-
-  useEffect(() => {
-    // Logic to show first 500 characters or full text based on expansion
-    const textToDisplay = isExpanded 
-      ? staticData.summary 
-      : staticData.summary.slice(0, 200) + '...';
-    
-    setDisplayedText(textToDisplay);
-  }, [isExpanded]);
-
-  useEffect(() => {
-    // Check if first two lines are fully typed
-    const checkReadyToExpand = () => {
-      // Simulate two-line generation by checking a reasonable character length
-      if (displayedText.length >= 200) {
-        setIsReadyToExpand(true);
-      }
-    };
-
-    const timer = setTimeout(checkReadyToExpand, 4000); // Adjust timing to match typing speed
-
-    return () => clearTimeout(timer);
-  }, [displayedText]);
 
   return (
     <Card
@@ -55,38 +65,55 @@ const CompanyDescription = () => {
       }}
     >
       <CardContent>
-        {/* AI Icon */}
-        <Box display="flex" justifyContent="flex-start" alignItems="center" mb={2}>
-          <SmartToyOutlinedIcon style={{ fontSize: "42px", color: "white", marginRight: "10px" }} />
-        </Box>
-        
-        {/* Direct String Display with Typing Effect */}
-        <Box color="white" fontSize="16px" style={{color : "white"}}>
-          <ReactTyped
-            strings={[displayedText]}
-            typeSpeed={50}
-            backSpeed={0}
-            loop={false}
-            showCursor={false}
-          />
-        </Box>
-        
-        {/* Read More / Read Less Button */}
-        {isReadyToExpand && staticData.summary.length > 300 && (
-          <Box mt={1}>
-            <Button
-              variant="text"
-              onClick={toggleExpand}
-              sx={{
-                color: "white",
-                textTransform: "none",
-                fontSize: "14px",
-              }}
-            >
-              {isExpanded ? "Read Less" : "Read More"}
-            </Button>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          {/* AI Icon and Text Content Container */}
+          <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+            <SmartToyOutlinedIcon style={{ fontSize: "42px", color: "white" }} />
+
+            {/* Text Content */}
+            <Box style={{ color: "white" }} fontSize="16px" sx={{ flex: 1 }}>
+              {/* Initial Typing Effect */}
+              {!isInitialTypingComplete && (
+                <ReactTyped
+                  strings={[initialText]}
+                  typeSpeed={0}
+                  backSpeed={0}
+                  loop={false}
+                  showCursor={false}
+                  onComplete={() => setIsInitialTypingComplete(true)}
+                />
+              )}
+
+              {/* Display Initial Text and Remaining Text */}
+              {isInitialTypingComplete && (
+                <>
+                  {initialText}
+                  {isExpanded && remainingText}
+                  {!isExpanded && " ..."}
+                </>
+              )}
+            </Box>
           </Box>
-        )}
+
+          {/* Read More / Read Less Button */}
+          {isInitialTypingComplete && remainingText && (
+            <Box sx={{ display: 'flex', justifyContent: 'flex-start', pl: '35px' }}>
+              <Button
+                variant="text"
+                onClick={toggleExpand}
+                sx={{
+                  color: "white",
+                  textTransform: "none",
+                  fontSize: "14px",
+                  padding: "0",
+                  minWidth: "auto",
+                }}
+              >
+                {isExpanded ? "Read Less" : "Read More"}
+              </Button>
+            </Box>
+          )}
+        </Box>
       </CardContent>
     </Card>
   );
