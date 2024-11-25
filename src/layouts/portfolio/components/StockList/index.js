@@ -14,7 +14,6 @@ const StockList = ({ stocks, fetchUserStocks }) => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [companyNames, setCompanyNames] = useState({});
 
-  console.log('companyNames',companyNames);
 
   const fetchCompanyName = async (symbol, exchange) => {
 

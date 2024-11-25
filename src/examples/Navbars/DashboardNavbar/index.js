@@ -63,28 +63,105 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
   const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator } = controller;
   const [openMenu, setOpenMenu] = useState(false);
   const route = useLocation().pathname.split("/").slice(1);
-  const [user, setUser] = useState([]);
+  const [user, setUser] = useState([]); // To store fetched user data
+  const [notifications, setNotifications] = useState([]); // To store notifications
+  const { session } = useContext(AuthContext); // Session context
+  const userEmail = session?.user?.email; // Get user email from session
 
-  const { session } = useContext(AuthContext);
-
-  const userEmail = session?.user?.email;
-
-  // console.log("user", user);
-
+  // Fetch user data from Supabase based on email
   const fetchUser = async (userMail) => {
     try {
-      const { data, error } = await supabase.from("users").select("*").eq("email", userMail);
+      const { data, error } = await supabase
+        .from("users")
+        .select("*")
+        .eq("email", userMail);
 
       if (error) throw error;
-      if (data) setUser(data);
+      console.log("Fetched user data:", data); // Debugging user data
+      if (data.length > 0) setUser(data); // Set user data only if available
+      else console.log("No user found for the given email.");
     } catch (error) {
-      console.log("Error fetching stocks in dashboard Navbar:", error);
+      console.error("Error fetching user data:", error);
     }
   };
 
+  // Fetch notifications based on the user's ID
+  const fetchNotifications = async () => {
+    try {
+      if (!user[0] || !user[0].user_id) {
+        console.log("User data is not yet loaded:", user); // Debugging missing user data
+        return; // Exit early if user data is not ready
+      }
+
+      const userId = user[0]?.user_id;
+      const { data, error } = await supabase
+        .from("notifications")
+        .select("*")
+        .eq("user_id", userId);
+
+      if (error) throw error;
+
+      setNotifications(data);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  };
+
+  console.log('notifications', notifications);
+
   useEffect(() => {
-    fetchUser(userEmail);
+    const channel = supabase
+      .channel('notification-channel')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'notifications' },
+        (payload) => {
+          const { eventType, new: newNotification, old: oldNotification } = payload;
+
+          if (newNotification === user[0]?.user_id) {
+            setNotifications((prevNotifications) => {
+
+
+              switch (eventType) {
+                case 'INSERT':
+                  return [newNotification, ...prevNotifications]; // Add new notification at the beginning
+                case 'UPDATE':
+                  return prevNotifications.map((notification) =>
+                    notification.id === newNotification.id ? newNotification : notification
+                  );
+                case 'DELETE':
+                  return prevNotifications.filter(
+                    (notification) => notification.id !== oldNotification.id
+                  );
+                default:
+                  return prevNotifications;
+              }
+            });
+          }
+        }
+      )
+      .subscribe();
+
+    if (user.length > 0) {
+      fetchNotifications();
+    }
+
+    // Cleanup function
+    return () => {
+      if (channel) {
+        supabase.removeChannel(channel);
+      }
+    };
+  }, [user]);
+
+  useEffect(() => {
+    if (userEmail) {
+      console.log("Fetching user for email:", userEmail); // Debugging user email
+      fetchUser(userEmail);
+    }
   }, [userEmail]);
+
+
 
   useEffect(() => {
     if (fixedNavbar) {
@@ -106,6 +183,29 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
   const handleOpenMenu = (event) => setOpenMenu(event.currentTarget);
   const handleCloseMenu = () => setOpenMenu(false);
 
+  const getNotificationIcon = (type) => {
+    switch (type) {
+      case "Technical Indicator Signal Change":
+        return "bar_chart"; // Example icon
+      case "Price Alert":
+        return "attach_money"; // Example icon
+      default:
+        return "notifications"; // Default icon
+    }
+  };
+
+  const formatNotificationDate = (dateString) => {
+    const date = new Date(dateString);
+    return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+  };
+
+  const handleNotificationClick = (id) => {
+    console.log(`Notification with ID ${id} clicked.`);
+    // Optionally, update read status in the database here
+    handleCloseMenu();
+  };
+
+
   // Render the notifications menu
   const renderMenu = () => (
     <Menu
@@ -119,31 +219,47 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
       onClose={handleCloseMenu}
       sx={{ mt: 2 }}
     >
-      <NotificationItem
-        image={<img src={team2} alt="person" />}
-        title={["New message", "from Laur"]}
-        date="13 minutes ago"
-        onClick={handleCloseMenu}
-      />
-      <NotificationItem
-        image={<img src={logoSpotify} alt="person" />}
-        title={["New album", "by Travis Scott"]}
-        date="1 day"
-        onClick={handleCloseMenu}
-      />
-      <NotificationItem
-        color="text"
-        image={
-          <Icon fontSize="small" sx={{ color: ({ palette: { white } }) => white.main }}>
-            payment
-          </Icon>
-        }
-        title={["", "Payment successfully completed"]}
-        date="2 days"
-        onClick={handleCloseMenu}
-      />
+      {notifications.length > 0 ? (
+        notifications.map((notification) => (
+          <NotificationItem
+            key={notification.id}
+            image={
+              <Icon fontSize="small" sx={{ color: ({ palette: { white } }) => white.main }}>
+                {getNotificationIcon(notification.notification_type)}
+              </Icon>
+            }
+            title={[
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column'
+              }}>
+                <span style={{
+                  fontWeight: 700
+                }}>
+                  {notification.notification_type}
+                </span>
+                <span style={{
+                  fontSize: '12px',
+                  color: 'white'
+                }}>
+                  {notification.notification_message}
+                </span>
+              </div>
+            ]}
+            date={formatNotificationDate(notification.created_at)}
+            onClick={() => handleNotificationClick(notification.id)}
+          />
+        ))
+      ) : (
+        <NotificationItem
+          color="text"
+          title={["No notifications available"]}
+          onClick={handleCloseMenu}
+        />
+      )}
     </Menu>
   );
+
 
   // const [searchTerm, setSearchTerm] = useState("");
   // const [filteredData, setFilteredData] = useState([]);
@@ -183,7 +299,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
   //         `https://rcapidev.neosme.co:2053/search/${query}`
   //       );
   //       let results = response.data || [];
-  
+
   //       Object.entries(selectedFilters).forEach(([category, selectedValues]) => {
   //         if (selectedValues.length > 0) {
   //           const key = filterCategories[category].key;
@@ -193,7 +309,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
   //       });
 
   //       console.log('resultsresults',results);
-  
+
   //       setFilteredData(results);
   //     } catch (error) {
   //       console.error("Error fetching data:", error);
@@ -289,7 +405,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
       // Simulate a country for local testing
       const userCountry = "United States"; // Replace with any desired country
       const exchange = userCountry === "United States" ? "NASDAQ" : "International Exchange"; // Mocked exchange
-  
+
       setSelectedFilters({
         countries: [userCountry],
         exchanges: [exchange],
@@ -306,7 +422,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
       });
     }
   };
-  
+
 
   // On component mount, fetch user location and set default filters
   useEffect(() => {
