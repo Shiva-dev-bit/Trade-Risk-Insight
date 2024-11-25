@@ -19,7 +19,6 @@ function SignIn() {
   const [rememberMe, setRememberMe] = useState(true);
   const [signIn, setSignIn] = useState({ email: ''});
   const [err, setErr] = useState('');
-  const [loading, setLoading] = useState(false);
   const [user,setUser] = useState([]);
 
   const history = useHistory();
@@ -58,14 +57,12 @@ function SignIn() {
 
   const signInWithEmail = async (e) => {
     setErr('');
-    setLoading(true);
     e.preventDefault();
 
     const { email } = signIn;
   
     if (!email) {
       setErr('Please provide your email address');
-      setLoading(false);
       return;
     }
   
@@ -76,12 +73,11 @@ function SignIn() {
           emailRedirectTo: 'https://trade-risk-insight.vercel.app/dashboard', 
         },
       });
-            setLoading(false);
-  
-      if (error) {
-        console.error('Error sending magic link:', error.message);
-        setErr(error.message);
-      } else {
+    
+      if(user.length <= 0){
+        setErr('User not exist Please SignUp');
+      }
+      else {
         console.log('Magic link sent! Check your email.');
         // history.push('/dashboard');
         setErr('Check your email for the login link.');
@@ -89,7 +85,6 @@ function SignIn() {
     } catch (err) {
       console.error('Unexpected error:', err);
       setErr('Something went wrong. Please try again.');
-      setLoading(false);
     }
   };
   
@@ -105,7 +100,8 @@ function SignIn() {
     >
       <VuiBox component="form" role="form">
         {err && (
-          <VuiTypography variant="body2" color="error" textAlign="center" mb={2}>
+          <VuiTypography variant="body2" color="error" textAlign="center" mb={2} sx={{color : '#1ae9f0',fontWeight : 'bold'
+          }}>
             {err}
           </VuiTypography>
         )}
@@ -151,8 +147,8 @@ function SignIn() {
           Forgot Password?
         </VuiTypography>
         <VuiBox mt={4} mb={1}>
-          <VuiButton color="info" fullWidth onClick={signInWithEmail} disabled={loading}>
-            {loading ? 'Sending magic link...' : 'SIGN IN'}
+          <VuiButton color="info" fullWidth onClick={signInWithEmail}>
+            {'SIGN IN'}
           </VuiButton>
         </VuiBox>
         <VuiBox mt={3} textAlign="center">
