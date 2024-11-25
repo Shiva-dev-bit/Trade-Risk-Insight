@@ -73,7 +73,7 @@ function SignIn() {
       const { error } = await supabase.auth.signInWithOtp({
         email: email,
         options: {
-          emailRedirectTo: 'http://localhost:3000/dashboard', // Redirect to your local dashboard
+          emailRedirectTo: 'https://trade-risk-insight.vercel.app/dashboard', 
         },
       });
             setLoading(false);
