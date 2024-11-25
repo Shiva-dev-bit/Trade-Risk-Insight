@@ -165,6 +165,7 @@ function Dashboard() {
   }
   )
 
+  console.log('indicators',indicators);
 
   const [chartConfig, setChartConfig] = useState({
     barChartData: [],
@@ -187,10 +188,10 @@ function Dashboard() {
     }];
 
     let barColors = [
-      indicators?.signals?.signals?.macd?.signal === "SELL" ? '#ef4444' : '#22c55e',
-      indicators?.signals?.signals?.vwap?.signal === "SELL" ? '#ef4444' : '#22c55e',
-      indicators?.signals?.signals?.rsi?.signal === "SELL" ? '#ef4444' : '#22c55e',
-      indicators?.signals?.signals?.sma?.signal === "SELL" ? '#ef4444' : '#22c55e',
+      indicators?.signals?.macd?.signal === "SELL" ? '#ef4444' : '#22c55e',
+      indicators?.signals?.vwap?.signal === "SELL" ? '#ef4444' : '#22c55e',
+      indicators?.signals?.rsi?.signal === "SELL" ? '#ef4444' : '#22c55e',
+      indicators?.signals?.sma?.signal === "SELL" ? '#ef4444' : '#22c55e',
     ];
 
     let barChartOptions = {

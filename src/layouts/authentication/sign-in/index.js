@@ -17,12 +17,11 @@ import { AuthContext } from "context/Authcontext";
 
 function SignIn() {
   const [rememberMe, setRememberMe] = useState(true);
-  const [signIn, setSignIn] = useState({ email: '', password: '' });
+  const [signIn, setSignIn] = useState({ email: ''});
   const [err, setErr] = useState('');
   const [loading, setLoading] = useState(false);
   const [user,setUser] = useState([]);
 
-  console.log('signIn',signIn.email)
   const history = useHistory();
 
    const fetchUser = async () => {
@@ -58,31 +57,42 @@ function SignIn() {
   };
 
   const signInWithEmail = async (e) => {
+    setErr('');
+    setLoading(true);
     e.preventDefault();
-    setErr(''); 
- 
-    setLoading(true); 
 
-    const { email, password } = signIn;
-    
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    setLoading(false); 
-
-    if(user.length <= 0){
-      setErr('User not exist Please SignUp');
+    const { email } = signIn;
+  
+    if (!email) {
+      setErr('Please provide your email address');
+      setLoading(false);
+      return;
     }
-    else if (error) {
-      console.error('Error signing in:', error.message);
-      setErr(error.message); 
-    } else {
-      console.log('Sign in successful! User data:', data);
-      history.push('/dashboard');
+  
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email: email,
+        options: {
+          emailRedirectTo: 'http://localhost:3000/dashboard', // Redirect to your local dashboard
+        },
+      });
+            setLoading(false);
+  
+      if (error) {
+        console.error('Error sending magic link:', error.message);
+        setErr(error.message);
+      } else {
+        console.log('Magic link sent! Check your email.');
+        // history.push('/dashboard');
+        setErr('Check your email for the login link.');
+      }
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      setErr('Something went wrong. Please try again.');
+      setLoading(false);
     }
   };
+  
 
   return (
     <CoverLayout
@@ -118,34 +128,6 @@ function SignIn() {
             <VuiInput type="email" placeholder="Your email..." fontWeight="500" name="email" onChange={handleSignIn} value={signIn.email}/>
           </GradientBorder>
         </VuiBox>
-        <VuiBox mb={2}>
-          <VuiBox mb={1} ml={0.5}>
-            <VuiTypography component="label" variant="button" color="white" fontWeight="medium" name="password">
-              Password
-            </VuiTypography>
-          </VuiBox>
-          <GradientBorder
-            minWidth="100%"
-            borderRadius={borders.borderRadius.lg}
-            padding="1px"
-            backgroundImage={radialGradient(
-              palette.gradients.borderLight.main,
-              palette.gradients.borderLight.state,
-              palette.gradients.borderLight.angle
-            )}
-          >
-            <VuiInput
-              type="password"
-              placeholder="Your password..."
-              sx={({ typography: { size } }) => ({
-                fontSize: size.sm,
-              })}
-              name="password"
-              onChange={handleSignIn}
-              value={signIn.password}
-            />
-          </GradientBorder>
-        </VuiBox>
         <VuiBox display="flex" alignItems="center">
           <VuiSwitch color="info" checked={rememberMe} onChange={handleSetRememberMe} />
           <VuiTypography
@@ -170,7 +152,7 @@ function SignIn() {
         </VuiTypography>
         <VuiBox mt={4} mb={1}>
           <VuiButton color="info" fullWidth onClick={signInWithEmail} disabled={loading}>
-            {loading ? 'Signing in...' : 'SIGN IN'}
+            {loading ? 'Sending magic link...' : 'SIGN IN'}
           </VuiButton>
         </VuiBox>
         <VuiBox mt={3} textAlign="center">
