@@ -388,6 +388,10 @@ function Dashboard() {
     });
   }, [stockData?.stockData?.symbol, stockData?.stockData?.exchange]);
 
+  function formatToDateTime(isoString) {
+    return isoString.replace("T", " ").split("+")[0].split(".")[0];
+  }
+
   useEffect(() => {
     if (!stockData?.stockData?.symbol || !stockData?.stockData?.exchange) return;
 
@@ -439,7 +443,7 @@ function Dashboard() {
           low : stocksPercent[0]?.low_price,
           high : stocksPercent[0]?.high_price,
           close : New_price,
-          datetime : stocksPercent[0]?.updated_at
+          datetime : formatToDateTime(stocksPercent[0]?.updated_at)
         });
       }
     }
