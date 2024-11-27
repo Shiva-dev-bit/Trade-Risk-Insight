@@ -1,9 +1,12 @@
 import colors from "assets/theme/base/colors";
 import linearGradient from "assets/theme/functions/linearGradient";
 import { MdDelete } from "react-icons/md";
-import { Box, Button, Snackbar, SnackbarContent, Typography } from "@mui/material";
+import { Box, Button, Card, Snackbar, SnackbarContent, Typography } from "@mui/material";
 import { supabase } from "lib/supabase";
 import { useEffect, useState } from "react";
+import Table from "examples/Tables/Table";
+import VuiTypography from "components/VuiTypography";
+import VuiBox from "components/VuiBox";
 
 const StockList = ({ stocks, fetchUserStocks }) => {
   const {
@@ -132,185 +135,308 @@ const StockList = ({ stocks, fetchUserStocks }) => {
     return diffDays;
   };
 
+  const columns = [
+    { name: "companyName", align: "left" },
+    { name: "quantity", align: "center" },
+    { name: "boughtPrice", align: "center" },
+    { name: "currentPrice", align: "center" },
+    { name: "investment", align: "center" },
+    { name: "profitLoss", align: "center" },
+    { name: "currentValue", align: "center" },
+    { name: "action", align: "center" },
+  ];
+  
+  console.log('Stocks:', stocks);
+  
+  const rows = stocks.length > 0
+    ? stocks.map((stock) => {
+        const profit = calculateProfit(stock?.quantity, stock?.live_price, stock?.average_price);
+        const percentGain = calculatePercentGain(stock?.live_price, stock?.average_price);
+        const totalValue = calculateTotalValue(stock?.quantity, stock?.live_price);
+        const totalInvestment = calculateTotalInvestment(stock?.quantity, stock?.average_price);
+  
+        return {
+          companyName: (
+            <Typography sx={{ color: "#fff", textAlign: "center", fontSize: "13px", fontWeight: 400 }}>
+              {getDisplayName(stock)}
+            </Typography>
+          ),
+          quantity: (
+            <Typography sx={{ color: "#fff", textAlign: "center", fontSize: "12px" }}>
+              {stock?.quantity}
+            </Typography>
+          ),
+          boughtPrice: (
+            <Typography sx={{ color: "#fff", textAlign: "center", fontSize: "12px" }}>
+              {formatPrice(stock?.average_price)}
+            </Typography>
+          ),
+          currentPrice: (
+            <Typography sx={{ color: "#fff", textAlign: "center", fontSize: "12px" }}>
+              {formatPrice(stock?.live_price)}
+            </Typography>
+          ),
+          investment: (
+            <Typography sx={{ color: "#fff", textAlign: "center", fontSize: "12px" }}>
+              {formatPrice(totalInvestment)}
+            </Typography>
+          ),
+          profitLoss: (
+            <Typography sx={{ color: profit >= 0 ? "#4CAF50" : "#FF4040", fontSize: "12px", textAlign: "center" }}>
+              {formatPrice(profit)} {formatPercent(percentGain) ? `${formatPercent(percentGain)}` : ""}
+            </Typography>
+          ),
+          currentValue: (
+            <Typography sx={{ color: "#fff", textAlign: "center", fontSize: "12px" }}>
+              {formatPrice(totalValue)}
+            </Typography>
+          ),
+          action: (
+            <Box sx={{ width: 48, display: "flex", justifyContent: "center" }}>
+              <Button
+                onClick={() => deleteStock(stock)}
+                sx={{
+                  minWidth: "auto",
+                  p: 1,
+                  color: "#FF4040",
+                  // "&:hover": {
+                  //   backgroundColor: "rgba(255, 255, 255, 0.1)",
+                  // },
+                }}
+              >
+                <MdDelete size={20} />
+              </Button>
+            </Box>
+          ),
+        };
+      })
+    : []; // Default to an empty array if no stocks are available.
+  
   return (
-    <Box
-      sx={{
-        background: linearGradient(card.main, card.state, card.deg),
-        borderRadius: "15px",
-        p: 3,
-        width: "100%",
-      }}
-    >
-      <Typography
-        variant="h6"
-        sx={{
-          color: "#fff",
-          fontSize: "1.25rem",
-          mb: 4,
-          fontWeight: 400,
-        }}
-      >
-        Stock Lists
-      </Typography>
-
-      {/* Headers */}
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          backgroundColor: "rgba(255, 255, 255, 0.1)",
-          borderRadius: "10px",
-          p: 2,
-          mb: 2,
-        }}
-      >
-        <Typography
-          sx={{ color: "#fff", flex: 2, fontSize: "17px", fontWeight: 600, textAlign: "center" }}
-        >
-          Company Name
-        </Typography>
-        <Typography
-          sx={{ color: "#fff", flex: 1, fontSize: "16px", fontWeight: 600, textAlign: "center" }}
-        >
-          Quantity
-        </Typography>
-        <Typography
-          sx={{ color: "#fff", flex: 1, fontSize: "16px", fontWeight: 600, textAlign: "center" }}
-        >
-          Bought Price
-        </Typography>
-        <Typography
-          sx={{ color: "#fff", flex: 1, fontSize: "16px", fontWeight: 600, textAlign: "center" }}
-        >
-          Current Price
-        </Typography>
-        <Typography
-          sx={{ color: "#fff", flex: 1, fontSize: "16px", fontWeight: 600, textAlign: "center" }}
-        >
-          Investment
-        </Typography>
-        <Typography
-          sx={{ color: "#fff", flex: 1, fontSize: "16px", fontWeight: 600, textAlign: "center" }}
-        >
-          P/L
-        </Typography>
-        <Typography
-          sx={{ color: "#fff", flex: 1, fontSize: "16px", fontWeight: 600, textAlign: "center" }}
-        >
-          Current Value
-        </Typography>
-        <Box sx={{ width: 48 }} />
-      </Box>
-
-      {stocks.length > 0 ? (
-        stocks.map((stock) => {
-          const profit = calculateProfit(stock?.quantity, stock?.live_price, stock?.average_price);
-          const percentGain = calculatePercentGain(stock?.live_price, stock?.average_price);
-          const totalValue = calculateTotalValue(stock?.quantity, stock?.live_price);
-          const totalInvestment = calculateTotalInvestment(stock?.quantity, stock?.average_price);
-
-          return (
-            <Box
-              key={stock.portfolio_id}
+    <>
+      <VuiBox py={3}>
+        <VuiBox mb={3}>
+          <Card>
+            <VuiBox display="flex" justifyContent="space-between" alignItems="center" mb="22px">
+              <VuiTypography variant="lg" color="white">
+                Stock List
+              </VuiTypography>
+            </VuiBox>
+            <VuiBox
               sx={{
-                display: "flex",
-                alignItems: "center",
-                backgroundColor: "rgba(255, 255, 255, 0.05)",
-                borderRadius: "10px",
-                p: 2,
-                mb: 2,
-                fontSize: "13px",
-                "&:hover": {
-                  backgroundColor: "rgba(255, 255, 255, 0.1)",
+                "& th": {
+                  borderBottom: ({ borders: { borderWidth }, palette: { grey } }) =>
+                    `${borderWidth[1]} solid ${grey[700]}`,
+                },
+                "& .MuiTableRow-root:not(:last-child)": {
+                  "& td": {
+                    borderBottom: ({ borders: { borderWidth }, palette: { grey } }) =>
+                      `${borderWidth[1]} solid ${grey[700]}`,
+                  },
                 },
               }}
-            >
-              <Typography
-                sx={{
-                  color: "#fff",
-                  textAlign: "center",
-                  flex: 2,
-                  fontSize: "17px",
-                  fontWeight: 400,
-                }}
               >
-                {getDisplayName(stock)}
-              </Typography>
-              <Typography sx={{ color: "#fff", textAlign: "center", flex: 1, fontSize: "13px" }}>
-                {stock?.quantity}
-              </Typography>
-              <Typography sx={{ color: "#fff", textAlign: "center", flex: 1, fontSize: "13px" }}>
-                {formatPrice(stock?.average_price)}
-              </Typography>
-              <Typography sx={{ color: "#fff", textAlign: "center", flex: 1, fontSize: "13px" }}>
-                {/* {formatPrice(stock?.live_price) ? formatPrice(stock?.live_price) : "-"} */}
-                {formatPrice(stock?.live_price)}
-              </Typography>
-              <Typography sx={{ color: "#fff", textAlign: "center", flex: 1, fontSize: "13px" }}>
-                {formatPrice(totalInvestment)}
-              </Typography>
-              <Typography
-                sx={{
-                  color: profit >= 0 ? "#4CAF50" : "#FF4040",
-                  flex: 1,
-                  fontSize: "13px",
-                  textAlign: "center",
-                }}
-              >
-                {/* {formatPrice(profit)} ({percentGain >= 0 ? "+" : ""}
-                {isNaN(percentGain) ? "-%)" : `${percentGain.toFixed(2)}%`} */}
-                {formatPrice(profit)}{" "}
-                {formatPercent(percentGain) ? `${formatPercent(percentGain)}` : ""}
-              </Typography>
-              <Typography sx={{ color: "#fff", textAlign: "center", flex: 1, fontSize: "13px" }}>
-                {formatPrice(totalValue)}
-              </Typography>
-              <Box sx={{ width: 48, display: "flex", justifyContent: "center" }}>
-                <Button
-                  onClick={() => deleteStock(stock)}
-                  sx={{
-                    minWidth: "auto",
-                    p: 1,
-                    color: "#FF4040",
-                    "&:hover": {
-                      backgroundColor: "rgba(255, 255, 255, 0.1)",
-                    },
-                  }}
-                >
-                  <MdDelete size={20} />
-                </Button>
-              </Box>
-            </Box>
-          );
-        })
-      ) : (
-        <Box
-          sx={{
-            backgroundColor: "rgba(255, 255, 255, 0.05)",
-            borderRadius: "10px",
-            p: 3,
-            textAlign: "center",
-            color: "#fff",
-          }}
-        >
-          No Stocks is added
-        </Box>
-      )}
+              <Table columns={columns} rows={rows} />
+            </VuiBox>
+          </Card>
+        </VuiBox>
+      </VuiBox>
 
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={3000}
         onClose={handleSnackbarClose}
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
+        >
         <SnackbarContent
           message={snackbarMessage}
           onClose={handleSnackbarClose}
           sx={{ backgroundColor: "red" }}
-        />
+          />
       </Snackbar>
-    </Box>
+    </>
   );
+  
+  // Export the columns and rows
+  // return (
+  //   <Box
+  //     sx={{
+  //       background: linearGradient(card.main, card.state, card.deg),
+  //       borderRadius: "15px",
+  //       p: 3,
+  //       width: "100%",
+  //     }}
+  //   >
+  //     <Typography
+  //       variant="h6"
+  //       sx={{
+  //         color: "#fff",
+  //         fontSize: "1.25rem",
+  //         mb: 4,
+  //         fontWeight: 400,
+  //       }}
+  //     >
+  //       Stock Lists
+  //     </Typography>
+
+  //     {/* Headers */}
+  //     <Box
+  //       sx={{
+  //         display: "flex",
+  //         alignItems: "center",
+  //         backgroundColor: "rgba(255, 255, 255, 0.1)",
+  //         borderRadius: "10px",
+  //         p: 2,
+  //         mb: 2,
+  //       }}
+  //     >
+  //       <Typography
+  //         sx={{ color: "#fff", flex: 2, fontSize: "17px", fontWeight: 600, textAlign: "center" }}
+  //       >
+  //         Company Name
+  //       </Typography>
+  //       <Typography
+  //         sx={{ color: "#fff", flex: 1, fontSize: "16px", fontWeight: 600, textAlign: "center" }}
+  //       >
+  //         Quantity
+  //       </Typography>
+  //       <Typography
+  //         sx={{ color: "#fff", flex: 1, fontSize: "16px", fontWeight: 600, textAlign: "center" }}
+  //       >
+  //         Bought Price
+  //       </Typography>
+  //       <Typography
+  //         sx={{ color: "#fff", flex: 1, fontSize: "16px", fontWeight: 600, textAlign: "center" }}
+  //       >
+  //         Current Price
+  //       </Typography>
+  //       <Typography
+  //         sx={{ color: "#fff", flex: 1, fontSize: "16px", fontWeight: 600, textAlign: "center" }}
+  //       >
+  //         Investment
+  //       </Typography>
+  //       <Typography
+  //         sx={{ color: "#fff", flex: 1, fontSize: "16px", fontWeight: 600, textAlign: "center" }}
+  //       >
+  //         P/L
+  //       </Typography>
+  //       <Typography
+  //         sx={{ color: "#fff", flex: 1, fontSize: "16px", fontWeight: 600, textAlign: "center" }}
+  //       >
+  //         Current Value
+  //       </Typography>
+  //       <Box sx={{ width: 48 }} />
+  //     </Box>
+
+  //     {stocks.length > 0 ? (
+  //       stocks.map((stock) => {
+  //         const profit = calculateProfit(stock?.quantity, stock?.live_price, stock?.average_price);
+  //         const percentGain = calculatePercentGain(stock?.live_price, stock?.average_price);
+  //         const totalValue = calculateTotalValue(stock?.quantity, stock?.live_price);
+  //         const totalInvestment = calculateTotalInvestment(stock?.quantity, stock?.average_price);
+
+  //         return (
+  //           <Box
+  //             key={stock.portfolio_id}
+  //             sx={{
+  //               display: "flex",
+  //               alignItems: "center",
+  //               backgroundColor: "rgba(255, 255, 255, 0.05)",
+  //               borderRadius: "10px",
+  //               p: 2,
+  //               mb: 2,
+  //               fontSize: "13px",
+  //               "&:hover": {
+  //                 backgroundColor: "rgba(255, 255, 255, 0.1)",
+  //               },
+  //             }}
+  //           >
+  //             <Typography
+  //               sx={{
+  //                 color: "#fff",
+  //                 textAlign: "center",
+  //                 flex: 2,
+  //                 fontSize: "17px",
+  //                 fontWeight: 400,
+  //               }}
+  //             >
+  //               {getDisplayName(stock)}
+  //             </Typography>
+  //             <Typography sx={{ color: "#fff", textAlign: "center", flex: 1, fontSize: "13px" }}>
+  //               {stock?.quantity}
+  //             </Typography>
+  //             <Typography sx={{ color: "#fff", textAlign: "center", flex: 1, fontSize: "13px" }}>
+  //               {formatPrice(stock?.average_price)}
+  //             </Typography>
+  //             <Typography sx={{ color: "#fff", textAlign: "center", flex: 1, fontSize: "13px" }}>
+  //               {/* {formatPrice(stock?.live_price) ? formatPrice(stock?.live_price) : "-"} */}
+  //               {formatPrice(stock?.live_price)}
+  //             </Typography>
+  //             <Typography sx={{ color: "#fff", textAlign: "center", flex: 1, fontSize: "13px" }}>
+  //               {formatPrice(totalInvestment)}
+  //             </Typography>
+  //             <Typography
+  //               sx={{
+  //                 color: profit >= 0 ? "#4CAF50" : "#FF4040",
+  //                 flex: 1,
+  //                 fontSize: "13px",
+  //                 textAlign: "center",
+  //               }}
+  //             >
+  //               {/* {formatPrice(profit)} ({percentGain >= 0 ? "+" : ""}
+  //               {isNaN(percentGain) ? "-%)" : `${percentGain.toFixed(2)}%`} */}
+  //               {formatPrice(profit)}{" "}
+  //               {formatPercent(percentGain) ? `${formatPercent(percentGain)}` : ""}
+  //             </Typography>
+  //             <Typography sx={{ color: "#fff", textAlign: "center", flex: 1, fontSize: "13px" }}>
+  //               {formatPrice(totalValue)}
+  //             </Typography>
+  //             <Box sx={{ width: 48, display: "flex", justifyContent: "center" }}>
+  //               <Button
+  //                 onClick={() => deleteStock(stock)}
+  //                 sx={{
+  //                   minWidth: "auto",
+  //                   p: 1,
+  //                   color: "#FF4040",
+  //                   "&:hover": {
+  //                     backgroundColor: "rgba(255, 255, 255, 0.1)",
+  //                   },
+  //                 }}
+  //               >
+  //                 <MdDelete size={20} />
+  //               </Button>
+  //             </Box>
+  //           </Box>
+  //         );
+  //       })
+  //     ) : (
+  //       <Box
+  //         sx={{
+  //           backgroundColor: "rgba(255, 255, 255, 0.05)",
+  //           borderRadius: "10px",
+  //           p: 3,
+  //           textAlign: "center",
+  //           color: "#fff",
+  //         }}
+  //       >
+  //         No Stocks is added
+  //       </Box>
+  //     )}
+
+  //     <Snackbar
+  //       open={snackbarOpen}
+  //       autoHideDuration={3000}
+  //       onClose={handleSnackbarClose}
+  //       anchorOrigin={{ vertical: "top", horizontal: "right" }}
+  //     >
+  //       <SnackbarContent
+  //         message={snackbarMessage}
+  //         onClose={handleSnackbarClose}
+  //         sx={{ backgroundColor: "red" }}
+  //       />
+  //     </Snackbar>
+  //   </Box>
+  // );
 };
 
 export default StockList;

@@ -14,35 +14,39 @@ import bgSignIn from "assets/images/signInImage.png";
 import { supabase } from "lib/supabase";
 import { useHistory } from 'react-router-dom';
 import { AuthContext } from "context/Authcontext";
+import { Password } from "@mui/icons-material";
+import { CircularProgress } from "@mui/material";
 
 function SignIn() {
   const [rememberMe, setRememberMe] = useState(true);
-  const [signIn, setSignIn] = useState({ email: ''});
+  const [signIn, setSignIn] = useState({ email: '', Password: '' });
   const [err, setErr] = useState('');
-  const [user,setUser] = useState([]);
+  const [user, setUser] = useState([]);
+  const [loading, setLoading] = useState(false); // Loading state
+
 
   const history = useHistory();
 
-   const fetchUser = async () => {
+  const fetchUser = async () => {
     try {
-      const { data,error } = await supabase.from('users').select('*').ilike('email',signIn?.email)
+      const { data, error } = await supabase.from('users').select('*').ilike('email', signIn?.email)
 
-      if(data){
-         setUser(data)
+      if (data) {
+        setUser(data)
       }
-      else{
-        console.log('error',error.message);
+      else {
+        console.log('error', error.message);
       }
-    }catch(error){
+    } catch (error) {
       console.log(error);
     }
-   }
+  }
 
   useEffect(() => {
-     fetchUser()
-  },[signIn?.email])
+    fetchUser()
+  }, [signIn?.email])
 
-  console.log('user',user);
+  console.log('user', user);
 
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
 
@@ -59,35 +63,38 @@ function SignIn() {
     setErr('');
     e.preventDefault();
 
-    const { email } = signIn;
-  
+    const { email, Password } = signIn;
+
     if (!email) {
       setErr('Please provide your email address');
       return;
     }
-  
+
     try {
-      
-      if(user.length <= 0){
-        setErr('User not exist Please SignUp');
-      }
-      else {
-        const { error } = await supabase.auth.signInWithOtp({
+      setLoading(true); // Start loading
+      if (user.length <= 0) {
+        setErr('User not exist. Please SignUp.');
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({
           email: email,
-          options: {
-            emailRedirectTo: 'https://trade-risk-insight.vercel.app/dashboard', 
-          },
+          password: Password,
         });
-        console.log('Magic link sent! Check your email.');
-        // history.push('/dashboard');
-        setErr('Check your email for the login link.');
+
+        if (error) {
+          setErr(error.message);
+        } else {
+          console.log('Signed in successfully!');
+          history.push('/dashboard'); // Navigate to the dashboard
+        }
       }
     } catch (err) {
       console.error('Unexpected error:', err);
       setErr('Something went wrong. Please try again.');
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
-  
+
 
   return (
     <CoverLayout
@@ -100,7 +107,8 @@ function SignIn() {
     >
       <VuiBox component="form" role="form">
         {err && (
-          <VuiTypography variant="body2" color="error" textAlign="center" mb={2} sx={{color : '#1ae9f0',fontWeight : 'bold'
+          <VuiTypography variant="body2" color="error" textAlign="center" mb={2} sx={{
+            color: '#1ae9f0', fontWeight: 'bold'
           }}>
             {err}
           </VuiTypography>
@@ -121,7 +129,26 @@ function SignIn() {
               palette.gradients.borderLight.angle
             )}
           >
-            <VuiInput type="email" placeholder="Your email..." fontWeight="500" name="email" onChange={handleSignIn} value={signIn.email}/>
+            <VuiInput type="email" placeholder="Your email..." fontWeight="500" name="email" onChange={handleSignIn} value={signIn.email} />
+          </GradientBorder>
+        </VuiBox>
+        <VuiBox mb={2}>
+          <VuiBox mb={1} ml={0.5}>
+            <VuiTypography component="label" variant="button" color="white" fontWeight="medium" name="Password">
+              Password
+            </VuiTypography>
+          </VuiBox>
+          <GradientBorder
+            minWidth="100%"
+            padding="1px"
+            borderRadius={borders.borderRadius.lg}
+            backgroundImage={radialGradient(
+              palette.gradients.borderLight.main,
+              palette.gradients.borderLight.state,
+              palette.gradients.borderLight.angle
+            )}
+          >
+            <VuiInput type="password" placeholder="Your password..." fontWeight="500" name="Password" onChange={handleSignIn} value={signIn.Password} />
           </GradientBorder>
         </VuiBox>
         <VuiBox display="flex" alignItems="center">
@@ -147,8 +174,8 @@ function SignIn() {
           Forgot Password?
         </VuiTypography>
         <VuiBox mt={4} mb={1}>
-          <VuiButton color="info" fullWidth onClick={signInWithEmail}>
-            {'SIGN IN'}
+          <VuiButton color="info" fullWidth onClick={signInWithEmail} disabled={loading}>
+            {loading ? <CircularProgress size={20} color="inherit" /> : 'SIGN IN'}
           </VuiButton>
         </VuiBox>
         <VuiBox mt={3} textAlign="center">

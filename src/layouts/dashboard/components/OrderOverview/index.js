@@ -294,82 +294,101 @@ const OrdersOverview = () => {
         }}
       >
         {processedData?.map((holder, index) => (
-          <React.Fragment key={index}>
-            <TimelineItem
-              icon={<FaCoins size="20px" color="white" />}
-              title={
-                <VuiTypography
-                  variant="subtitle1"
-                  sx={{ fontSize: "15px", lineHeight: "1.2" }}
-                  color="white"
-                >
-                  {new Date(holder.fiscal_date).toLocaleDateString("en-US", {
-                    day: "2-digit",
-                    month: "short",
-                    year: "numeric",
-                  })}                
-                </VuiTypography>
-              }
- 
-              description={
-                <VuiBox sx={{ width: "100%" }}>
+          (holder.sales || holder.cost_of_goods || holder.gross_profit || holder.operating_income || holder.net_income || holder.ebitda) &&
+          ( // Ensure fiscal_date exists
+            <React.Fragment key={index}>
+              <TimelineItem
+                icon={<FaCoins size="20px" color="white" />}
+                title={
                   <VuiTypography
-                    variant="body2"
-                    sx={{ fontSize: "13px", lineHeight: "1.5", textAlign: "justify" }}
+                    variant="subtitle1"
+                    sx={{ fontSize: "15px", lineHeight: "1.2" }}
                     color="white"
                   >
-                    Total Revenue: {formatNumber(holder.sales)}{" "}
-                    {holder.comparison.sales}
+                    {new Date(holder.fiscal_date).toLocaleDateString("en-US", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
                   </VuiTypography>
-                  <VuiTypography
-                    variant="body2"
-                    sx={{ fontSize: "13px", lineHeight: "1.5", textAlign: "justify" }}
-                    color="white"
-                  >
-                    Cost of Goods Sold: {formatNumber(holder.cost_of_goods)}{" "}
-                    {holder.comparison.cost_of_goods}
-                  </VuiTypography>
-                  <VuiTypography
-                    variant="body2"
-                    sx={{ fontSize: "13px", lineHeight: "1.5", textAlign: "justify" }}
-                    color="white"
-                  >
-                    Gross Profit: {formatNumber(holder.gross_profit)}{" "}
-                    {holder.comparison.cost_of_goods}
-                  </VuiTypography>
-                  <VuiTypography
-                    variant="body2"
-                    sx={{ fontSize: "13px", lineHeight: "1.5", textAlign: "justify" }}
-                    color="white"
-                  >
-                    Operating Income: {formatNumber(holder.operating_income)}{" "}
-                    {holder.comparison.cost_of_goods}
-                  </VuiTypography>
-                  <VuiTypography
-                    variant="body2"
-                    sx={{ fontSize: "13px", lineHeight: "1.5", textAlign: "justify" }}
-                    color="white"
-                  >
-                    Net Income: {formatNumber(holder.net_income)}{" "}
-                    {holder.comparison.net_income}
-                  </VuiTypography>
-                  <VuiTypography
-                    variant="body2"
-                    sx={{ fontSize: "13px", lineHeight: "1.5", textAlign: "justify" }}
-                    color="white"
-                  >
-                    EBITDA: {formatNumber(holder.ebitda)}{" "}
-                    {holder.comparison.ebitda}
-                  </VuiTypography>
-                </VuiBox>
-              }
-            />
-            {index < processedData.length - 1 && (
-              <Divider
-                sx={{ backgroundColor: "rgba(255, 255, 255, 0.3)", marginY: "8px" }}
+                }
+                description={
+                  <VuiBox sx={{ width: "100%" }}>
+                    {holder.sales  && (
+                      <VuiTypography
+                        variant="body2"
+                        sx={{ fontSize: "13px", lineHeight: "1.5", textAlign: "justify" }}
+                        color="white"
+                      >
+                        {`Total Revenue: ${formatNumber(holder.sales)} `}
+                        {holder.comparison.sales}
+                      </VuiTypography>
+                    )}
+
+                    {holder.cost_of_goods &&  (
+                      <VuiTypography
+                        variant="body2"
+                        sx={{ fontSize: "13px", lineHeight: "1.5", textAlign: "justify" }}
+                        color="white"
+                      >
+                        {`Cost of Goods Sold: ${formatNumber(holder.cost_of_goods)} `}
+                        {holder.comparison.cost_of_goods}
+                      </VuiTypography>
+                    )}
+
+                    {holder.gross_profit && (
+                      <VuiTypography
+                        variant="body2"
+                        sx={{ fontSize: "13px", lineHeight: "1.5", textAlign: "justify" }}
+                        color="white"
+                      >
+                        {`Gross Profit: ${formatNumber(holder.gross_profit)} `}
+                        {holder.comparison.gross_profit}
+                      </VuiTypography>
+                    )}
+
+                    {holder.operating_income && (
+                      <VuiTypography
+                        variant="body2"
+                        sx={{ fontSize: "13px", lineHeight: "1.5", textAlign: "justify" }}
+                        color="white"
+                      >
+                        {`Operating Income: ${formatNumber(holder.operating_income)} `}
+                        {holder.comparison.operating_income}
+                      </VuiTypography>
+                    )}
+
+                    {holder.net_income &&  (
+                      <VuiTypography
+                        variant="body2"
+                        sx={{ fontSize: "13px", lineHeight: "1.5", textAlign: "justify" }}
+                        color="white"
+                      >
+                        {`Net Income: ${formatNumber(holder.net_income)} `}
+                        {holder.comparison.net_income}
+                      </VuiTypography>
+                    )}
+
+                    {holder.ebitda && (
+                      <VuiTypography
+                        variant="body2"
+                        sx={{ fontSize: "13px", lineHeight: "1.5", textAlign: "justify" }}
+                        color="white"
+                      >
+                        {`EBITDA: ${formatNumber(holder.ebitda)} `}
+                        {holder.comparison.ebitda}
+                      </VuiTypography>
+                    )}
+                  </VuiBox>
+                }
               />
-            )}
-          </React.Fragment>
+              {index < processedData.length - 1 && (
+                <Divider
+                  sx={{ backgroundColor: "rgba(255, 255, 255, 0.3)", marginY: "8px" }}
+                />
+              )}
+            </React.Fragment>
+          )
         ))}
       </VuiBox>
     </Card>

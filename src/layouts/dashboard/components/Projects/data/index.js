@@ -33,6 +33,8 @@ export default function data() {
 
   
   const fetchNews = async () => {
+    setNewsData([]);
+    
     const api = "https://rcapidev.neosme.co:2053/news/stock_and_general";
   
     try {
