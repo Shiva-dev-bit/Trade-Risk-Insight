@@ -80,6 +80,7 @@ const Portfolio = () => {
           stock_id,
           quantity,
           average_price,
+          purchase_date,
           symbol,
           exchange,
           is_deleted_yn,

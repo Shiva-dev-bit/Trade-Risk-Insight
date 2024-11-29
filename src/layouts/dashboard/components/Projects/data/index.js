@@ -79,7 +79,7 @@ export default function data() {
             </a>
           </VuiTypography>
           <VuiTypography variant="body2" color="white">
-            <a href={item.link} style={{ color: "inherit" }}>{item.summary.substring(0, 50)}... </a>
+            <a href={item.link} target="_blank" style={{ color: "inherit" }}>{item.summary.substring(0, 50)}... </a>
           </VuiTypography>
         </>
       ),

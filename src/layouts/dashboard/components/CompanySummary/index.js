@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Card, CardContent, Box, Button } from "@mui/material";
+import { Card, CardContent, Box, Button, Typography,Link } from "@mui/material";
 import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
 import { ReactTyped } from "react-typed";
 import axios from "axios";
@@ -54,7 +54,7 @@ const CompanyDescription = () => {
     <Card
       sx={{
         py: "10px",
-        px: "14px",
+        px: "0px",
         background: "radial-gradient(circle, rgba(2,0,36,1) 0%, rgba(7,27,133,1) 96%, rgba(0,212,255,1) 100%)",
         color: "white",
         borderRadius: "12px",
@@ -62,13 +62,15 @@ const CompanyDescription = () => {
         width: "100%",
         overflow: "hidden",
         fontFamily: "'Roboto Mono', monospace",
+        paddingBottom: '7px'
       }}
     >
-      <CardContent>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <CardContent sx={{paddingBottom: '7px'}}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
           {/* AI Icon and Text Content Container */}
           <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
             <SmartToyOutlinedIcon style={{ fontSize: "42px", color: "white" }} />
+          </Box>
 
             {/* Text Content */}
             <Box style={{ color: "white" }} fontSize="16px" sx={{ flex: 1 }}>
@@ -93,11 +95,10 @@ const CompanyDescription = () => {
                 </>
               )}
             </Box>
-          </Box>
 
           {/* Read More / Read Less Button */}
           {isInitialTypingComplete && remainingText && (
-            <Box sx={{ display: 'flex', justifyContent: 'flex-start', pl: '35px' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
               <Button
                 variant="text"
                 onClick={toggleExpand}
@@ -114,7 +115,25 @@ const CompanyDescription = () => {
             </Box>
           )}
         </Box>
+        {/* terms and conditions */}
       </CardContent>
+      <Box
+    sx={{
+      position: "absolute",
+      bottom: "0",
+      right: "0",
+      padding: "10px",
+      marginRight: "30px",
+      borderRadius: "4px",
+      boxShadow: "0px 0px 8px rgba(0, 0, 0, 0.1)",
+    }}
+  >
+    <Typography  fontWeight="regular" sx={{ fontSize: '11px' }}>
+    <span style={{ color: '#b4b4b4' }}> *For investor education purposes only.</span> 
+    <span style={{ fontWeight: 'bold' }}><Link href="https://privacy.microsoft.com/en-us/privacystatement"  target='_blank' sx={{ color: '#b4b4b4'}}>Terms and Conditions</Link></span>
+      
+    </Typography>
+  </Box>
     </Card>
   );
 };

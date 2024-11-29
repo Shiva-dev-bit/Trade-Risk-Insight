@@ -235,6 +235,7 @@ export default function App() {
         quantity: stock.quantity || 0,
         average_price: stock.averagePrice || 0,
         is_deleted_yn: false,
+        purchase_date: stock.purchase_date || null,
         ...stockIdentifier,
       },
     ]);

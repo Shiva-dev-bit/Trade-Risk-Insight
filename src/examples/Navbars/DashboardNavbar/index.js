@@ -549,6 +549,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
   const [openModal, setOpenModal] = useState(false);
   const [quantity, setQuantity] = useState("");
   const [averagePrice, setAveragePrice] = useState("");
+  const [purchaseDate, setPurchaseDate] = useState("");
 
   // Open modal when the button is clicked
   const handleAddButtonClick = (e, stock) => {
@@ -576,6 +577,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
       stock: selectedStock,
       quantity: parseFloat(quantity),
       averagePrice: parseFloat(averagePrice),
+      purchase_date: purchaseDate
     });
 
     // setSnackbarMessage(`${selectedStock?.company_name} has been added to your portfolio!`);
@@ -760,9 +762,9 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
                                       open={openModal}
                                       onClose={handleModalClose}
                                       disableEnforceFocus
-                                    // BackdropProps={{
-                                    //   style: { backgroundColor: "rgba(0, 0, 0, 0.5)" },
-                                    // }}
+                                      Backdrop={{
+                                        style: { backgroundColor: "rgba(0, 0, 0, 0.5)" }
+                                      }}
                                     >
                                       <Box
                                         onClick={(e) => e.stopPropagation()}
@@ -780,37 +782,52 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
                                         }}
                                       >
                                         <h2>Add Stock Details</h2>
-                                        <TextField
-                                          id="outlined-basic"
-                                          variant="outlined"
-                                          label="Quantity"
-                                          type="number"
-                                          fullWidth
-                                          margin="normal"
-                                          value={quantity}
-                                          onChange={(e) => setQuantity(e.target.value)}
-                                        />
-                                        <TextField
-                                          id="outlined-basic"
-                                          variant="outlined"
-                                          label="Average Price"
-                                          type="number"
-                                          fullWidth
-                                          margin="normal"
-                                          value={averagePrice}
-                                          onChange={(e) => setAveragePrice(e.target.value)}
-                                        />
-                                        <Button
-                                          variant="contained"
-                                          color="primary"
-                                          key={`${item.symbol}-${index}`}
-                                          // onClick={(e) => handleStockInPortfolio(e, item)}
-                                          onClick={handleStockInPortfolio}
-                                          fullWidth
-                                          sx={{ mt: 2, color: "#fff" }}
-                                        >
-                                          Add to Portfolio
-                                        </Button>
+                                        <div style={{ display: "flex", flexDirection: "column", alignItems: "start" }}>
+                                          <label htmlFor="symbol" style={{ fontSize: "14px", marginBottom: "4px" }}>Quantity:</label>
+                                          <TextField
+                                            id="outlined-basic"
+                                            variant="outlined"
+                                            color="success"
+                                            type="number"
+                                            fullWidth
+                                            margin="dense"
+                                            value={quantity}
+                                            onChange={(e) => setQuantity(e.target.value)}
+                                            style={{ border: "2px solid #ccc", marginBottom: "8px" }}
+                                          />
+                                          <label htmlFor="symbol" style={{ fontSize: "14px", marginBottom: "4px" }}>Average Price:</label>
+                                          <TextField
+                                            id="outlined-basic"
+                                            variant="outlined"
+                                            type="number"
+                                            fullWidth
+                                            margin="dense"
+                                            value={averagePrice}
+                                            onChange={(e) => setAveragePrice(e.target.value)}
+                                            style={{ border: "2px solid #ccc", marginBottom: "8px" }}
+                                          />
+                                          <label htmlFor="symbol" style={{ fontSize: "14px", marginBottom: "4px" }}>Purchase Date:</label>
+                                          <TextField
+                                            id="outlined-basic"
+                                            variant="outlined"
+                                            type="date"
+                                            fullWidth
+                                            margin="dense"
+                                            value={purchaseDate}
+                                            onChange={(e) => setPurchaseDate(e.target.value)}
+                                            style={{ border: "2px solid #ccc", marginBottom: "16px" }}
+                                          />
+                                          <Button
+                                            variant="contained"
+                                            color="primary"
+                                            key={`${item.symbol}-${index}`}
+                                            onClick={handleStockInPortfolio}
+                                            fullWidth
+                                            sx={{ mt: 1, color: "#fff" }}
+                                          >
+                                            Add to Portfolio
+                                          </Button>
+                                        </div>
                                       </Box>
                                     </Modal>
                                   </Box>

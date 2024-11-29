@@ -136,9 +136,10 @@ const StockList = ({ stocks, fetchUserStocks }) => {
   };
 
   const columns = [
-    { name: "companyName", align: "left" },
+    { name: "companyName", align: "left"},
     { name: "quantity", align: "center" },
-    { name: "boughtPrice", align: "center" },
+    { name: "purchasePrice", align: "center" },
+    { name: "purchaseDate", align: "center" },
     { name: "currentPrice", align: "center" },
     { name: "investment", align: "center" },
     { name: "profitLoss", align: "center" },
@@ -166,9 +167,14 @@ const StockList = ({ stocks, fetchUserStocks }) => {
               {stock?.quantity}
             </Typography>
           ),
-          boughtPrice: (
+          purchasePrice: (
             <Typography sx={{ color: "#fff", textAlign: "center", fontSize: "12px" }}>
               {formatPrice(stock?.average_price)}
+            </Typography>
+          ),
+          purchaseDate: (
+            <Typography sx={{ color: "#fff", textAlign: "center", fontSize: "12px" }}>
+              {formatDate(stock?.purchase_date)}
             </Typography>
           ),
           currentPrice: (

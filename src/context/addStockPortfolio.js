@@ -13,6 +13,7 @@ export const PortfolioProvider = ({ children }) => {
         quantity: stock.quantity || 0,
         average_price: stock.price || 0,
         is_deleted_yn: false,
+        purchase_date: stock.purchase_date || null,
       },
     ]);
 

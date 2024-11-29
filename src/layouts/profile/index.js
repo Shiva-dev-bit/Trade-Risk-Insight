@@ -61,7 +61,7 @@ function Overview() {
 
     const { data, error } = await supabase
       .from("userPortfolio")
-      .select("portfolio_id, stock_id, quantity, average_price, is_deleted_yn, stocks(*), users(*)")
+      .select("portfolio_id, stock_id, quantity, average_price, purchase_date, is_deleted_yn, stocks(*), users(*)")
       .eq("user_id", userId)
       .eq("is_deleted_yn", false);
 

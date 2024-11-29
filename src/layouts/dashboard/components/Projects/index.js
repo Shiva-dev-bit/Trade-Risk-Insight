@@ -58,9 +58,9 @@ function Projects() {
           </VuiTypography>
 
           {/* Microsoft Privacy Statement Link */}
-          <VuiTypography color="white" variant="sm" style={{ fontSize: '12px' , marginLeft: '16px'}}>
-            <a href="https://privacy.microsoft.com/en-us/privacystatement" target="_blank" rel="noopener noreferrer" style={{ color: 'white', textDecoration: 'underline' }}>
-              By Microsoft Privacy Statement
+          <VuiTypography color="#b4b4b4" variant="sm" style={{ fontSize: '11px' , marginLeft: '16px'}}>
+            <a href="https://privacy.microsoft.com/en-us/privacystatement" target="_blank" rel="noopener noreferrer" style={{ color: '#b4b4b4', textDecoration: 'underline' }}>
+              *By Microsoft Privacy Statement
             </a>
           </VuiTypography>
         </VuiBox>

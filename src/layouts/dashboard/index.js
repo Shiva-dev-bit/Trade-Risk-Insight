@@ -80,6 +80,7 @@ function Dashboard() {
   const [websocketStocks, setWebsocketStocks] = useState([]);
   const [stocksPercent, setStocksPercent] = useState([]);
   const [websocketConnected, setWebsocketConnected] = useState(false);
+  const [symbols_data, setSymbols_data] = useState([])
 
   console.log('websocketStocks', websocketStocks);
 
@@ -108,7 +109,7 @@ function Dashboard() {
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState(null);
 
-  console.log('stocksData',stocksData);
+  console.log('stocksData', stocksData);
 
   const [StatisticsData, setStatisticsData] = useState({
     statistics: {
@@ -165,7 +166,7 @@ function Dashboard() {
   }
   )
 
-  console.log('indicators',indicators);
+  console.log('indicators', indicators);
 
   const [chartConfig, setChartConfig] = useState({
     barChartData: [],
@@ -355,6 +356,40 @@ function Dashboard() {
       console.log("Error fetching stocks:", error);
     }
   };
+  
+
+  const fetchStockSymbols = useCallback(async () => {
+    // Ensure we have a symbol and exchange before fetching
+    if (!stockData?.stockData?.symbol || !stockData?.stockData?.exchange) {
+      setSymbols_data([]);
+      return;
+    }
+    try {
+      const { data, error } = await supabase.from("stocks")
+        .select("symbol, exchange")
+        .eq("symbol", stockData.stockData.symbol)
+        .eq("exchange", stockData.stockData.exchange)
+        .single(); // Use .single() if you expect only one result
+
+      if (error) {
+        setSymbols_data([]);
+        return;
+      }
+      if (data) {
+        setSymbols_data([data]); // Wrap in an array to maintain consistency
+      } else {
+        setSymbols_data([]); // Ensure empty array if no data
+      }
+    } catch (error) {
+      console.error("Error fetching stocks:", error);
+      setSymbols_data([]);
+    }
+  }, [stockData?.stockData?.symbol, stockData?.stockData?.exchange]);
+  
+  useEffect(() => {
+    // Call fetchStockSymbols directly in the useEffect
+    fetchStockSymbols();
+  }, [fetchStockSymbols]); // Add fetchStockSymbols to dependency array
 
   const [priceData, setPriceData] = useState({
     New_price: 0.0000,
@@ -363,17 +398,18 @@ function Dashboard() {
     isPositiveChange: null,
     icon: null,
     percentageColor: "",
-    open : 0.00,
-      low : 0.00,
-      high : 0.00,
-      close : 0.00,
-      datetime : null
+    open: 0.00,
+    low: 0.00,
+    high: 0.00,
+    close: 0.00,
+    datetime: null
   });
 
-  console.log('priceDatapriceData',priceData);
+  console.log('priceDatapriceData', priceData);
 
   useEffect(() => {
     // Reset price data when stock changes
+    console.log("Gitting data", stockData?.stockData?.symbol, stockData?.stockData?.exchange);
     setPriceData({
       New_price: 0.0000,
       price_change: 0.0000,
@@ -381,11 +417,11 @@ function Dashboard() {
       isPositiveChange: null,
       icon: null,
       percentageColor: "",
-      open : 0.00,
-      low : 0.00,
-      high : 0.00,
-      close : 0.00,
-      datetime : null
+      open: 0.00,
+      low: 0.00,
+      high: 0.00,
+      close: 0.00,
+      datetime: null
     });
   }, [stockData?.stockData?.symbol, stockData?.stockData?.exchange]);
 
@@ -395,7 +431,6 @@ function Dashboard() {
 
   useEffect(() => {
     if (!stockData?.stockData?.symbol || !stockData?.stockData?.exchange) return;
-
     // Determine data source and update price
     if (websocketStocks?.symbol === stockData?.stockData?.symbol &&
       websocketStocks?.exchange === stockData?.stockData?.exchange
@@ -413,11 +448,11 @@ function Dashboard() {
           <FaCaretDown style={{ color: "red" }} />
         ),
         percentageColor: isPositiveChange ? "success" : "error",
-        open : websocketStocks?.open,
-        low : websocketStocks?.low,
-        high : websocketStocks?.high,
-        close : websocketStocks?.price,
-        datetime : websocketStocks?.datetime
+        open: websocketStocks?.open,
+        low: websocketStocks?.low,
+        high: websocketStocks?.high,
+        close: websocketStocks?.price,
+        datetime: websocketStocks?.datetime
       });
     } else if (supabaseStocks.length > 0 && stocksPercent.length > 0) {
       const New_price = supabaseStocks[0]?.price;
@@ -440,11 +475,11 @@ function Dashboard() {
             <FaCaretDown style={{ color: "red" }} />
           ),
           percentageColor: isPositiveChange ? "success" : "error",
-          open : stocksPercent[0]?.open_price,
-          low : stocksPercent[0]?.low_price,
-          high : stocksPercent[0]?.high_price,
-          close : New_price,
-          datetime : formatToDateTime(stocksPercent[0]?.updated_at)
+          open: stocksPercent[0]?.open_price,
+          low: stocksPercent[0]?.low_price,
+          high: stocksPercent[0]?.high_price,
+          close: New_price,
+          datetime: formatToDateTime(stocksPercent[0]?.updated_at)
         });
       }
     }
@@ -536,7 +571,8 @@ function Dashboard() {
     setWebsocketStocks(null);
     setSupabaseStocks([]);
 
-    if (stockData?.stockData?.exchange === "NSE" || stockData?.stockData?.exchange === "BSE") {
+    console.log("symbols data", symbols_data)
+    if (symbols_data.length) {
       // For Indian stocks
       fetchStockData();
       fetchDailyStock();
@@ -606,7 +642,7 @@ function Dashboard() {
         wsRef.current.close();
       }
     };
-  }, [stockData?.stockData?.symbol, stockData?.stockData?.exchange]);
+  }, [stockData?.stockData?.symbol, stockData?.stockData?.exchange,symbols_data]);
 
 
   const getIcon = (title) => {
