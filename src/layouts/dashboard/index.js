@@ -359,11 +359,6 @@ function Dashboard() {
   
 
   const fetchStockSymbols = useCallback(async () => {
-    // Ensure we have a symbol and exchange before fetching
-    if (!stockData?.stockData?.symbol || !stockData?.stockData?.exchange) {
-      setSymbols_data([]);
-      return;
-    }
     try {
       const { data, error } = await supabase.from("stocks")
         .select("symbol, exchange")
@@ -409,7 +404,6 @@ function Dashboard() {
 
   useEffect(() => {
     // Reset price data when stock changes
-    console.log("Gitting data", stockData?.stockData?.symbol, stockData?.stockData?.exchange);
     setPriceData({
       New_price: 0.0000,
       price_change: 0.0000,
@@ -432,6 +426,7 @@ function Dashboard() {
   useEffect(() => {
     if (!stockData?.stockData?.symbol || !stockData?.stockData?.exchange) return;
     // Determine data source and update price
+
     if (websocketStocks?.symbol === stockData?.stockData?.symbol &&
       websocketStocks?.exchange === stockData?.stockData?.exchange
     ) {
@@ -454,10 +449,9 @@ function Dashboard() {
         close: websocketStocks?.price,
         datetime: websocketStocks?.datetime
       });
-    } else if (supabaseStocks.length > 0 && stocksPercent.length > 0) {
+    } else if (supabaseStocks.length > 0) {
       const New_price = supabaseStocks[0]?.price;
-      const previous_close = stocksPercent[0]?.previous_close;
-      console.log('stocksPercent', stocksPercent);
+      const previous_close = stocksData?.previous_close;
 
       if (New_price && previous_close) {
         const price_change = New_price - previous_close;
@@ -475,15 +469,15 @@ function Dashboard() {
             <FaCaretDown style={{ color: "red" }} />
           ),
           percentageColor: isPositiveChange ? "success" : "error",
-          open: stocksPercent[0]?.open_price,
-          low: stocksPercent[0]?.low_price,
-          high: stocksPercent[0]?.high_price,
+          open: stocksData?.open_price,
+          low: stocksData?.low_price,
+          high: stocksData?.high_price,
           close: New_price,
-          datetime: formatToDateTime(stocksPercent[0]?.updated_at)
+          datetime: formatToDateTime(stocksData?.last_updated)
         });
       }
     }
-  }, [supabaseStocks, websocketStocks, stocksPercent, stockData?.stockData?.symbol]);
+  }, [supabaseStocks, websocketStocks, stocksData, stockData?.stockData?.symbol]);
 
 
   const connectWebSocket = async () => {
@@ -563,7 +557,6 @@ function Dashboard() {
 
 
   useEffect(() => {
-    console.log('supabase Stocks', stocksData?.exchange);
 
     if (!stockData?.stockData?.symbol || !stockData?.stockData?.exchange) return;
 
@@ -571,7 +564,7 @@ function Dashboard() {
     setWebsocketStocks(null);
     setSupabaseStocks([]);
 
-    console.log("symbols data", symbols_data)
+    console.log('symbols_data.length',symbols_data.length);
     if (symbols_data.length) {
       // For Indian stocks
       fetchStockData();
