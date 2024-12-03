@@ -60,7 +60,7 @@ function Projects() {
           {/* Microsoft Privacy Statement Link */}
           <VuiTypography color="#b4b4b4" variant="sm" style={{ fontSize: '11px' , marginLeft: '16px'}}>
             <a href="https://privacy.microsoft.com/en-us/privacystatement" target="_blank" rel="noopener noreferrer" style={{ color: '#b4b4b4', textDecoration: 'underline' }}>
-              *By Microsoft Privacy Statement
+              By Microsoft
             </a>
           </VuiTypography>
         </VuiBox>
@@ -111,6 +111,11 @@ function Projects() {
           <Table columns={columns} rows={rows} />
         </Box>
       </VuiBox>
+      <VuiTypography color="#b4b4b4" variant="sm" style={{ fontSize: '11px' }}>
+            <a href="https://privacy.microsoft.com/en-us/privacystatement" target="_blank" rel="noopener noreferrer" style={{ color: '#b4b4b4', textDecoration: 'underline' }}>
+              *Privacy Statement
+            </a>
+          </VuiTypography>
     </Card>
   );
 

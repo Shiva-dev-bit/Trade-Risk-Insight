@@ -242,7 +242,7 @@ const StockList = ({ stocks, fetchUserStocks }) => {
                 },
               }}
               >
-              <Table columns={columns} rows={rows} />
+              <Table columns={columns} rows={rows} pagination={true} />
             </VuiBox>
           </Card>
         </VuiBox>

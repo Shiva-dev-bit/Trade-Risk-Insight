@@ -201,7 +201,7 @@ const Portfolio = () => {
     <DashboardLayout>
       {userId ? (
         <Box display="flex" flexDirection="column" gap={2}>
-          <Header username={userData?.username} email={userData?.email} />
+          <Header username={userData?.username} email={userData?.email} stocks={stocks}/>
           <StockList
             stocks={stocks}
             fetchUserStocks={fetchUserStocks}

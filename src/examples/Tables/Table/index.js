@@ -16,7 +16,7 @@
 
 */
 
-import { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 
 // prop-types is a library for typechecking of props
 import PropTypes from "prop-types";
@@ -25,10 +25,12 @@ import PropTypes from "prop-types";
 import { v4 as uuidv4 } from "uuid";
 
 // @mui material components
-import { Table as MuiTable } from "@mui/material";
+import { Table as MuiTable, Button } from "@mui/material";
 import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 // UI Risk LENS AI Dashboard React components
 import VuiBox from "components/VuiBox";
@@ -40,10 +42,40 @@ import colors from "assets/theme/base/colors";
 import typography from "assets/theme/base/typography";
 import borders from "assets/theme/base/borders";
 
-function Table({ columns, rows }) {
-  const { grey } = colors;
-  const { size, fontWeightBold } = typography;
+function Table({ 
+  columns, 
+  rows, 
+  pagination = false,
+  rowsPerPageOptions = [5, 10, 25], 
+  initialRowsPerPage = 10 
+}) {
+  const { grey, primary } = colors;
+  const { size = {}, fontWeightBold } = typography || {};
   const { borderWidth } = borders;
+
+  // Fallback to a default size if undefined
+  const fontSize = size.xxs || '0.75rem';
+
+  // Pagination state
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(initialRowsPerPage);
+
+  // Calculate total pages
+  const totalPages = Math.ceil(rows.length / rowsPerPage);
+
+  // Handle page change
+  const handleChangePage = (newPage) => {
+    if (newPage >= 0 && newPage < totalPages) {
+      setPage(newPage);
+    }
+  };
+
+  // Handle rows per page change
+  const handleChangeRowsPerPage = (event) => {
+    const newRowsPerPage = parseInt(event.target.value, 10);
+    setRowsPerPage(newRowsPerPage);
+    setPage(0);
+  };
 
   const renderColumns = columns.map(({ name, align, width }, key) => {
     let pl;
@@ -70,7 +102,7 @@ function Table({ columns, rows }) {
         pl={align === "left" ? pl : 3}
         pr={align === "right" ? pr : 3}
         textAlign={align}
-        fontSize={size.xxs}
+        fontSize={fontSize}
         fontWeight={fontWeightBold}
         color="text"
         opacity={0.7}
@@ -81,64 +113,202 @@ function Table({ columns, rows }) {
     );
   });
 
-  const renderRows = rows.map((row, key) => {
-    const rowKey = `row-${key}`;
+  // Determine rows to render
+  const renderRows = pagination 
+    ? useMemo(() => 
+        rows
+          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+          .map((row, key) => {
+            const rowKey = `row-${key}`;
 
-    const tableRow = columns.map(({ name, align }) => {
-      let template;
+            const tableRow = columns.map(({ name, align }) => {
+              let template;
 
-      if (Array.isArray(row[name])) {
-        template = (
-          <VuiBox
-            key={uuidv4()}
-            component="td"
-            p={1}
-            borderBottom={row.hasBorder ? `${borderWidth[1]} solid ${light.main}` : null}
-          >
-            <VuiBox display="flex" alignItems="center" py={0.5} px={1}>
-              <VuiBox mr={2}>
-                <VuiAvatar src={row[name][0]} name={row[name][1]} variant="rounded" size="sm" />
-              </VuiBox>
-              <VuiTypography
-                color="white"
-                variant="button"
-                fontWeight="medium"
-                sx={{ width: "max-content" }}
+              if (Array.isArray(row[name])) {
+                template = (
+                  <VuiBox
+                    key={uuidv4()}
+                    component="td"
+                    p={1}
+                    borderBottom={row.hasBorder ? `${borderWidth[1]} solid ${grey[700]}` : null}
+                  >
+                    <VuiBox display="flex" alignItems="center" py={0.5} px={1}>
+                      <VuiBox mr={2}>
+                        <VuiAvatar src={row[name][0]} name={row[name][1]} variant="rounded" size="sm" />
+                      </VuiBox>
+                      <VuiTypography
+                        color="white"
+                        variant="button"
+                        fontWeight="medium"
+                        sx={{ width: "max-content" }}
+                      >
+                        {row[name][1]}
+                      </VuiTypography>
+                    </VuiBox>
+                  </VuiBox>
+                );
+              } else {
+                template = (
+                  <VuiBox
+                    key={uuidv4()}
+                    component="td"
+                    p={1}
+                    textAlign={align}
+                    borderBottom={row.hasBorder ? `${borderWidth[1]} solid ${grey[700]}` : null}
+                  >
+                    <VuiTypography
+                      variant="button"
+                      fontWeight="regular"
+                      color="text"
+                      sx={{ display: "inline-block", width: "max-content" }}
+                    >
+                      {row[name]}
+                    </VuiTypography>
+                  </VuiBox>
+                );
+              }
+
+              return template;
+            });
+
+            return <TableRow key={rowKey}>{tableRow}</TableRow>;
+          })
+      , [page, rowsPerPage, rows, columns])
+    : rows.map((row, key) => {
+        const rowKey = `row-${key}`;
+
+        const tableRow = columns.map(({ name, align }) => {
+          let template;
+
+          if (Array.isArray(row[name])) {
+            template = (
+              <VuiBox
+                key={uuidv4()}
+                component="td"
+                p={1}
+                borderBottom={row.hasBorder ? `${borderWidth[1]} solid ${grey[700]}` : null}
               >
-                {row[name][1]}
-              </VuiTypography>
-            </VuiBox>
-          </VuiBox>
-        );
-      } else {
-        template = (
-          <VuiBox
-            key={uuidv4()}
-            component="td"
-            p={1}
-            textAlign={align}
-            borderBottom={row.hasBorder ? `${borderWidth[1]} solid ${grey[700]}` : null}
-          >
-            <VuiTypography
-              variant="button"
-              fontWeight="regular"
-              color="text"
-              sx={{ display: "inline-block", width: "max-content" }}
-            >
-              {row[name]}
-            </VuiTypography>
-          </VuiBox>
-        );
-      }
+                <VuiBox display="flex" alignItems="center" py={0.5} px={1}>
+                  <VuiBox mr={2}>
+                    <VuiAvatar src={row[name][0]} name={row[name][1]} variant="rounded" size="sm" />
+                  </VuiBox>
+                  <VuiTypography
+                    color="white"
+                    variant="button"
+                    fontWeight="medium"
+                    sx={{ width: "max-content" }}
+                  >
+                    {row[name][1]}
+                  </VuiTypography>
+                </VuiBox>
+              </VuiBox>
+            );
+          } else {
+            template = (
+              <VuiBox
+                key={uuidv4()}
+                component="td"
+                p={1}
+                textAlign={align}
+                borderBottom={row.hasBorder ? `${borderWidth[1]} solid ${grey[700]}` : null}
+              >
+                <VuiTypography
+                  variant="button"
+                  fontWeight="regular"
+                  color="text"
+                  sx={{ display: "inline-block", width: "max-content" }}
+                >
+                  {row[name]}
+                </VuiTypography>
+              </VuiBox>
+            );
+          }
 
-      return template;
-    });
+          return template;
+        });
 
-    return <TableRow key={rowKey}>{tableRow}</TableRow>;
-  });
+        return <TableRow key={rowKey}>{tableRow}</TableRow>;
+      });
 
-  return useMemo(
-    () => (
+  // Custom pagination controls
+  const renderPaginationControls = () => (
+    <VuiBox 
+      display="flex" 
+      justifyContent="space-between" 
+      alignItems="center" 
+      mt={2} 
+      px={2}
+    >
+      {/* Rows per page selector */}
+      <VuiBox display="flex" alignItems="center">
+        <VuiTypography variant="caption" color="text" mr={1}>
+          Rows per page:
+        </VuiTypography>
+        <select 
+          value={rowsPerPage} 
+          onChange={(e) => handleChangeRowsPerPage(e)}
+          style={{
+            backgroundColor: grey[800],
+            color: 'white',
+            border: `1px solid ${grey[700]}`,
+            borderRadius: '4px',
+            padding: '4px'
+          }}
+        >
+          {rowsPerPageOptions.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+      </VuiBox>
+
+      {/* Page navigation */}
+      <VuiBox display="flex" alignItems="center">
+        <VuiTypography variant="caption" color="text" mr={2}>
+          {`Page ${page + 1} of ${totalPages}`}
+        </VuiTypography>
+        
+        <Button
+          variant="contained"
+          color="primary"
+          disabled={page === 0}
+          onClick={() => handleChangePage(page - 1)}
+          sx={{
+            minWidth: '40px',
+            height: '40px',
+            mr: 1,
+            backgroundColor: page === 0 ? grey[700] : primary.main,
+            '&:hover': {
+              backgroundColor: page === 0 ? grey[700] : primary.focus
+            }
+          }}
+        >
+          <ChevronLeftIcon />
+        </Button>
+        
+        <Button
+          variant="contained"
+          color="primary"
+          disabled={page === totalPages - 1}
+          onClick={() => handleChangePage(page + 1)}
+          sx={{
+            minWidth: '40px',
+            height: '40px',
+            backgroundColor: page === totalPages - 1 ? grey[700] : primary.main,
+            '&:hover': {
+              backgroundColor: page === totalPages - 1 ? grey[700] : primary.focus
+            }
+          }}
+        >
+          <ChevronRightIcon />
+        </Button>
+      </VuiBox>
+    </VuiBox>
+  );
+
+  return (
+    <VuiBox>
       <TableContainer>
         <MuiTable>
           <VuiBox component="thead">
@@ -147,8 +317,8 @@ function Table({ columns, rows }) {
           <TableBody>{renderRows}</TableBody>
         </MuiTable>
       </TableContainer>
-    ),
-    [columns, rows]
+      {pagination && renderPaginationControls()}
+    </VuiBox>
   );
 }
 
@@ -156,12 +326,18 @@ function Table({ columns, rows }) {
 Table.defaultProps = {
   columns: [],
   rows: [{}],
+  pagination: false,
+  rowsPerPageOptions: [5, 10, 25],
+  initialRowsPerPage: 10
 };
 
 // Typechecking props for the Table
 Table.propTypes = {
   columns: PropTypes.arrayOf(PropTypes.object),
   rows: PropTypes.arrayOf(PropTypes.object),
+  pagination: PropTypes.bool,
+  rowsPerPageOptions: PropTypes.arrayOf(PropTypes.number),
+  initialRowsPerPage: PropTypes.number
 };
 
 export default Table;
