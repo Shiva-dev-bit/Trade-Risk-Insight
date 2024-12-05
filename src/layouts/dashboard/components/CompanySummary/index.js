@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Card, CardContent, Box, Button, Typography,Link } from "@mui/material";
+import { Card, CardContent, Box, Button, Typography, Link } from "@mui/material";
 import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
 import { ReactTyped } from "react-typed";
 import axios from "axios";
 import { AuthContext } from "context/Authcontext";
+import './style.css'
 
 const CompanyDescription = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -50,6 +51,7 @@ const CompanyDescription = () => {
     setIsExpanded(!isExpanded);
   };
 
+
   return (
     <Card
       sx={{
@@ -65,75 +67,75 @@ const CompanyDescription = () => {
         paddingBottom: '7px'
       }}
     >
-      <CardContent sx={{paddingBottom: '7px'}}>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+      <CardContent sx={{ paddingBottom: '7px' }}>
+        <Box sx={{ display: 'flex', gap: 1 }}>
           {/* AI Icon and Text Content Container */}
-          <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+          <Box>
             <SmartToyOutlinedIcon style={{ fontSize: "42px", color: "white" }} />
           </Box>
 
-            {/* Text Content */}
-            <Box style={{ color: "white" }} fontSize="16px" sx={{ flex: 1 }}>
-              {/* Initial Typing Effect */}
-              {!isInitialTypingComplete && (
-                <ReactTyped
-                  strings={[initialText]}
-                  typeSpeed={0}
-                  backSpeed={0}
-                  loop={false}
-                  showCursor={false}
-                  onComplete={() => setIsInitialTypingComplete(true)}
-                />
-              )}
+          {/* Text Content */}
+          <Box style={{ color: "white" }} fontSize="16px" sx={{ flex: 1 }}>
+            {/* Initial Typing Effect */}
+            {!isInitialTypingComplete && (
+              <ReactTyped
+                strings={[initialText]}
+                typeSpeed={0}
+                backSpeed={0}
+                loop={false}
+                showCursor={false}
+                onComplete={() => setIsInitialTypingComplete(true)}
+              />
+            )}
 
-              {/* Display Initial Text and Remaining Text */}
-              {isInitialTypingComplete && (
-                <>
-                  {initialText}
-                  {isExpanded && remainingText}
-                  {!isExpanded && " ..."}
-                </>
-              )}
-            </Box>
-
-          {/* Read More / Read Less Button */}
-          {isInitialTypingComplete && remainingText && (
-            <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
-              <Button
-                variant="text"
-                onClick={toggleExpand}
-                sx={{
-                  color: "white",
-                  textTransform: "none",
-                  fontSize: "14px",
-                  padding: "0",
-                  minWidth: "auto",
-                }}
-              >
-                {isExpanded ? "Read Less" : "Read More"}
-              </Button>
-            </Box>
-          )}
+            {/* Display Initial Text and Remaining Text */}
+            {isInitialTypingComplete && (
+              <>
+                {initialText}
+                {isExpanded && remainingText}
+                {!isExpanded && <span className="animated-ellipsis"></span>}
+              </>
+            )}
+          </Box>
         </Box>
+        {/* Read More / Read Less Button */}
+        {isInitialTypingComplete && remainingText && (
+          <Box style={{ marginLeft : '10px'}}>
+            <Button
+              variant="text"
+              onClick={toggleExpand}
+              sx={{
+                color: "white",
+                textTransform: "none",
+                fontSize: "14px",
+                padding: "0",
+                minWidth: "auto",
+                marginLeft : '15px'
+              }}
+            >
+              {isExpanded ? "Read Less" : "Read More"}
+            </Button>
+          </Box>
+        )}
         {/* terms and conditions */}
       </CardContent>
       <Box
-    sx={{
-      position: "absolute",
-      bottom: "0",
-      right: "0",
-      padding: "10px",
-      marginRight: "30px",
-      borderRadius: "4px",
-      boxShadow: "0px 0px 8px rgba(0, 0, 0, 0.1)",
-    }}
-  >
-    <Typography  fontWeight="regular" sx={{ fontSize: '11px' }}>
-    <span style={{ color: '#b4b4b4' }}> *For investor education purposes only.</span> 
-    <span style={{ fontWeight: 'bold' }}><Link href="https://privacy.microsoft.com/en-us/privacystatement"  target='_blank' sx={{ color: '#b4b4b4'}}>Terms and Conditions</Link></span>
-      
-    </Typography>
-  </Box>
+        sx={{
+          position: "absolute",
+          bottom: "0",
+          right: "0",
+          padding: "10px",
+          marginRight: "30px",
+          borderRadius: "4px",
+          boxShadow: "0px 0px 8px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        <Typography fontWeight="regular" sx={{ fontSize: '11px' }}>
+          <span style={{ color: '#b4b4b4' }}> *For investor education purposes only.</span>
+          <span style={{ fontWeight: 'bold' }}><Link href="https://privacy.microsoft.com/en-us/privacystatement" target='_blank' sx={{ color: '#b4b4b4' }}>Terms and Conditions</Link></span>
+
+        </Typography>
+      </Box>
     </Card>
   );
 };

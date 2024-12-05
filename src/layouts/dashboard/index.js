@@ -79,7 +79,6 @@ function Dashboard() {
   const [supabaseStocks, setSupabaseStocks] = useState([]);
   const [websocketStocks, setWebsocketStocks] = useState([]);
   const [stocksPercent, setStocksPercent] = useState([]);
-  const [websocketConnected, setWebsocketConnected] = useState(false);
   const [symbols_data, setSymbols_data] = useState([])
 
   console.log('websocketStocks', websocketStocks);
@@ -400,7 +399,7 @@ function Dashboard() {
     datetime: null
   });
 
-  console.log('priceDatapriceData', priceData);
+  console.log('pricedata',priceData);
 
   useEffect(() => {
     // Reset price data when stock changes
@@ -450,6 +449,7 @@ function Dashboard() {
         datetime: websocketStocks?.datetime
       });
     } else if (supabaseStocks.length > 0) {
+      console.log('supabaseStocks',supabaseStocks);
       const New_price = supabaseStocks[0]?.price;
       const previous_close = stocksData?.previous_close;
 
@@ -564,7 +564,6 @@ function Dashboard() {
     setWebsocketStocks(null);
     setSupabaseStocks([]);
 
-    console.log('symbols_data.length',symbols_data.length);
     if (symbols_data.length) {
       // For Indian stocks
       fetchStockData();

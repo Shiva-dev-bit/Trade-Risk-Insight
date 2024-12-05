@@ -6,7 +6,7 @@ import { Box } from "@mui/material";
 import { FaCaretDown, FaCaretUp } from "react-icons/fa";
 import axios from "axios";
 
-const LineChart = ({ newprice }) => {
+const LineChart = ({ newprice, selectedStock }) => {
   const [chartData, setChartData] = useState([]);
   const [chartOptions, setChartOptions] = useState({});
   const [loading, setLoading] = useState(true);
@@ -20,13 +20,23 @@ const LineChart = ({ newprice }) => {
   const currentMinutePricesRef = useRef([]);
   const lastMinuteRef = useRef(null);
 
-  let selectedSymbol = stockData?.stockData?.symbol;
-  let selectedExchange = stockData?.stockData?.exchange;
-  const selectedStocksHigh = parseFloat(stockData?.stockData?.high || 0)?.toFixed(2);
-  const selectedStocksLow = parseFloat(stockData?.stockData?.low || 0)?.toFixed(2);
-  let selectedStocksChange = stockData?.stockData?.percent_change;
+  const [stockDetails, setStockDetails] = useState({
+    selectedSymbol: selectedStock?.symbol || stockData?.stockData?.symbol,
+    selectedExchange: selectedStock?.exchange || stockData?.stockData?.exchange,
+    selectedStocksHigh: parseFloat(stockData?.stockData?.high),
+    selectedStocksLow: parseFloat(stockData?.stockData?.low),
+    selectedStocksChange: stockData?.stockData?.percent_change,
+  });
 
-  const isPositive = selectedStocksChange >= 0;
+  useEffect(() => {
+      setStockDetails({ 
+        selectedSymbol: selectedStock?.symbol || stockData?.stockData?.symbol,
+        selectedExchange: selectedStock?.exchange ||stockData?.stockData?.exchange,
+      });
+  }, [selectedStock, stockData?.stockData?.symbol, stockData?.stockData?.exchange]);
+
+  
+  const isPositive = stockDetails?.selectedStocksChange >= 0;
 
   const getCurrencySymbol = (exchange) => {
     const exchangeCurrency = {
@@ -40,7 +50,7 @@ const LineChart = ({ newprice }) => {
     return exchangeCurrency[exchange] || exchangeCurrency.default;
   };
 
-  const currencySymbol = getCurrencySymbol(selectedExchange);
+  const currencySymbol = getCurrencySymbol(stockDetails?.selectedExchange);
 
   const getDateTimeFormatter = (period, timezone) => {
     switch (period) {
@@ -84,7 +94,7 @@ const LineChart = ({ newprice }) => {
       // Calculate average price for the previous minute if we have accumulated prices
       if (currentMinutePricesRef.current.length > 0) {
         const averagePrice = calculateMinuteAverage(currentMinutePricesRef.current);
-        
+
         // Create a new data array with the previous minute's average
         const updatedData = [...currentData];
         const newDataPoint = {
@@ -93,7 +103,7 @@ const LineChart = ({ newprice }) => {
         };
 
         // Only add if we don't already have data for this minute
-        if (!updatedData[0].data.some(point => 
+        if (!updatedData[0].data.some(point =>
           moment(point.x).format('YYYY-MM-DD HH:mm') === lastMinuteRef.current
         )) {
           updatedData[0] = {
@@ -127,7 +137,7 @@ const LineChart = ({ newprice }) => {
   };
 
   const fetchData = async (timePeriod) => {
-    if (!selectedSymbol || !selectedExchange) {
+    if (!stockDetails.selectedSymbol || !stockDetails.selectedExchange) {
       setError("Missing symbol or exchange information");
       setLoading(false);
       return;
@@ -138,7 +148,7 @@ const LineChart = ({ newprice }) => {
       setError(null);
 
       const response = await axios.get(
-        `https://rcapidev.neosme.co:2053/stock_graph/${selectedSymbol}/${timePeriod}/${selectedExchange}`
+        `https://rcapidev.neosme.co:2053/stock_price_graph/${stockDetails.selectedSymbol}/${timePeriod}/${stockDetails.selectedExchange}`
       );
 
       if (!response?.data) {
@@ -146,6 +156,60 @@ const LineChart = ({ newprice }) => {
       }
 
       const data = response.data;
+      console.log('stockgraph',data);
+
+      if (timePeriod === '1d' && data.meta.interval === '1min') {
+        const values = data.values;
+        console.log('values',values);
+      
+        const maxHigh = Math.max(...values.map(entry => parseFloat(entry.high)));
+        const minLow = Math.min(...values.map(entry => parseFloat(entry.low)));
+      
+        setStockDetails(prev => ({
+          ...prev,
+          selectedStocksHigh: maxHigh,
+          selectedStocksLow: minLow,
+        }));
+      }
+
+      if (timePeriod === "1m" && data.meta.interval === "1day") {
+        const values = data.values;
+      
+        const maxHigh = Math.max(...values.map(entry => parseFloat(entry.high)));
+        const minLow = Math.min(...values.map(entry => parseFloat(entry.low)));
+      
+        setStockDetails(prev => ({
+          ...prev,
+          selectedStocksHigh: maxHigh,
+          selectedStocksLow: minLow,
+        }));
+      }
+      
+      if (timePeriod === "1y" && data.meta.interval === "1day") {
+        const values = data.values;
+      
+        const maxHigh = Math.max(...values.map(entry => parseFloat(entry.high)));
+        const minLow = Math.min(...values.map(entry => parseFloat(entry.low)));
+      
+        setStockDetails(prev => ({
+          ...prev,
+          selectedStocksHigh: maxHigh,
+          selectedStocksLow: minLow,
+        }));
+      }
+      
+      if (timePeriod === "5y" && data.meta.interval === "1day") {
+        const values = data.values;
+      
+        const maxHigh = Math.max(...values.map(entry => parseFloat(entry.high)));
+        const minLow = Math.min(...values.map(entry => parseFloat(entry.low)));
+      
+        setStockDetails(prev => ({
+          ...prev,
+          selectedStocksHigh: maxHigh,
+          selectedStocksLow: minLow,
+        }));
+      }
       timeZoneRef.current = data.meta.exchange_timezone;
 
       let processedValues = data.values;
@@ -156,13 +220,14 @@ const LineChart = ({ newprice }) => {
           const itemDate = moment.tz(item.datetime, timeZoneRef.current).format("YYYY-MM-DD");
           return itemDate === today;
         });
+
         if (processedValues.length === 0) {
-          const sortedValues = data.values.sort((a, b) => 
-            moment.tz(b.datetime, timeZoneRef.current).valueOf() - 
+          const sortedValues = data.values.sort((a, b) =>
+            moment.tz(b.datetime, timeZoneRef.current).valueOf() -
             moment.tz(a.datetime, timeZoneRef.current).valueOf()
           );
           const mostRecentDate = moment.tz(sortedValues[0].datetime, timeZoneRef.current).format("YYYY-MM-DD");
-          processedValues = sortedValues.filter((item) => 
+          processedValues = sortedValues.filter((item) =>
             moment.tz(item.datetime, timeZoneRef.current).format("YYYY-MM-DD") === mostRecentDate
           );
         }
@@ -181,7 +246,7 @@ const LineChart = ({ newprice }) => {
 
       const options = {
         chart: {
-          id: `stock-chart-${selectedSymbol}`,
+          id: `stock-chart-${stockDetails?.selectedSymbol}`,
           type: "line",
           toolbar: { show: false },
           animations: {
@@ -193,7 +258,7 @@ const LineChart = ({ newprice }) => {
           },
           background: 'transparent',
         },
-        stroke: { 
+        stroke: {
           width: 2,
         },
         colors: ['#0075FF'],
@@ -251,10 +316,11 @@ const LineChart = ({ newprice }) => {
   }, []);
 
   useEffect(() => {
-    if (isClient && selectedSymbol && selectedExchange) {
+    if (isClient && stockDetails?.selectedSymbol && stockDetails?.selectedExchange) {
       fetchData(timePeriod);
     }
-  }, [timePeriod, stockData, isClient]);
+  }, [timePeriod, stockDetails?.selectedSymbol, stockDetails?.selectedExchange, isClient]);
+  
 
   useEffect(() => {
     if (isClient && newprice && timeZoneRef.current && timePeriod === "1d") {
@@ -310,29 +376,46 @@ const LineChart = ({ newprice }) => {
             gap: "18px",
           }}
         >
-          <div style={{ textAlign: "center" }}>
-            <div>High</div>
-            <div style={{ fontWeight: 600, fontSize: "14px" }}>{currencySymbol}{selectedStocksHigh}</div>
-          </div>
-          <div style={{ textAlign: "center" }}>
-            <div>Low</div>
-            <div style={{ fontWeight: 600, fontSize: "15px" }}>{currencySymbol}{selectedStocksLow}</div>
-          </div>
-          <div style={{ textAlign: "center" }}>
-            <div>Returns</div>
-            <div
-              style={{
-                color: isPositive ? "#26C281" : "#ed3419",
-                display: "flex",
-                alignItems: "center",
-                fontWeight: 600,
-                fontSize: "15px",
-              }}
-            >
-              {isPositive ? <FaCaretUp /> : <FaCaretDown />}
-              {Math.abs(selectedStocksChange)?.toFixed(2)}%
+          {/* High */}
+          {stockDetails.selectedStocksHigh !== null && (
+            <div style={{ textAlign: "center" }}>
+              <div>High</div>
+              <div style={{ fontWeight: 600, fontSize: "14px" }}>
+                {currencySymbol}
+                {stockDetails?.selectedStocksHigh?.toFixed(2)}
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* Low */}
+          {stockDetails.selectedStocksLow !== null && (
+            <div style={{ textAlign: "center" }}>
+              <div>Low</div>
+              <div style={{ fontWeight: 600, fontSize: "15px" }}>
+                {currencySymbol}
+                {stockDetails?.selectedStocksLow?.toFixed(2)}
+              </div>
+            </div>
+          )}
+
+          {/* Returns */}
+          {stockDetails.selectedStocksChange !== null && (
+            <div style={{ textAlign: "center" }}>
+              <div>Returns</div>
+              <div
+                style={{
+                  color: isPositive ? "#26C281" : "#ed3419",
+                  display: "flex",
+                  alignItems: "center",
+                  fontWeight: 600,
+                  fontSize: "15px",
+                }}
+              >
+                {isPositive ? <FaCaretUp /> : <FaCaretDown />}
+                {newprice?.percent_change?.toFixed(2)}%
+              </div>
+            </div>
+          )}
         </Box>
         <Box display={"flex"} gap={"15px"}>
           {["5y", "1y", "1m", "1d"].map((period) => (
@@ -357,7 +440,7 @@ const LineChart = ({ newprice }) => {
         {chartData[0]?.data?.length > 0 && (
           <Suspense fallback={<div>Loading chart...</div>}>
             <ReactApexChart
-              key={`${selectedSymbol}-${timePeriod}-${selectedExchange}`}
+              key={`${stockDetails.selectedSymbol}-${timePeriod}-${stockDetails.selectedExchange}`}
               options={chartOptions}
               series={chartData}
               type="line"

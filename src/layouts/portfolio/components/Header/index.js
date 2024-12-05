@@ -67,8 +67,8 @@ function Header({ username, email, stocks }) {
       : 0;
 
     // Daily Change (simplified calculation)
-    
     const dailyChange = stocks.reduce((sum, stock) => {
+      console.log('stock.previous_close',stock?.previous_close);
       const dailyChangePercent = ((stock.live_price - stock.previous_close) / stock.previous_close) * 100;
       return sum + (dailyChangePercent * (stock.quantity * stock.live_price) / totalCurrentValue);
     }, 0);

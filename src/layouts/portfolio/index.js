@@ -162,37 +162,38 @@ const Portfolio = () => {
     }
 
     // Set up real-time subscription for price updates
-    const priceSubscription = supabase
-      .channel("price-updates")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "price",
-        },
-        (payload) => {
-          setStocks((currentStocks) =>
-            currentStocks.map((stock) => {
-              if (
-                stock?.stocks?.symbol === payload?.new?.symbol &&
-                stock?.stocks?.exchange === payload?.new?.exchange
-              ) {
-                return {
-                  ...stock,
-                  live_price: payload?.new?.price,
-                };
-              }
-              return stock;
-            })
-          );
-        }
-      )
-      .subscribe();
+    // const priceSubscription = supabase
+    //   .channel("price-updates")
+    //   .on(
+    //     "postgres_changes",
+    //     {
+    //       event: "*",
+    //       schema: "public",
+    //       table: "price",
+    //     },
+    //     (payload) => {
+    //       setStocks((currentStocks) =>
+    //         currentStocks.map((stock) => {
+    //           if (
+    //             stock?.stocks?.symbol === payload?.new?.symbol &&
+    //             stock?.stocks?.exchange === payload?.new?.exchange
+    //           ) {
+    //             return {
+    //               ...stock,
+    //               live_price: payload?.new?.price,
+    //             };
+    //           }
+    //           return stock;
+    //         })
+    //       );
+    //     }
+    //   )
+    //   .subscribe();
 
-    return () => {
-      priceSubscription.unsubscribe();
-    };
+    // return () => {
+    //   supabase.removeChannel(priceSubscription);
+    // };
+
   }, [userId]);
 
   console.log('Portfolio',stocks);
@@ -205,7 +206,7 @@ const Portfolio = () => {
           <StockList
             stocks={stocks}
             fetchUserStocks={fetchUserStocks}
-            fetchStockFromAPI={fetchStockFromAPI}
+            // fetchStockFromAPI={fetchStockFromAPI}
           />
         </Box>
       ) : (
