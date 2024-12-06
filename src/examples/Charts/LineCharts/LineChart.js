@@ -177,11 +177,16 @@ const LineChart = ({ newprice, selectedStock }) => {
       
         const maxHigh = Math.max(...values.map(entry => parseFloat(entry.high)));
         const minLow = Math.min(...values.map(entry => parseFloat(entry.low)));
+
+        const endPrice = parseFloat(values[0].close);
+        const startPrice = parseFloat(values[values.length - 1].open);
+        const result = ((endPrice - startPrice) / startPrice) * 100;
       
         setStockDetails(prev => ({
           ...prev,
           selectedStocksHigh: maxHigh,
           selectedStocksLow: minLow,
+          selectedStocksChange : result
         }));
       }
       
@@ -190,11 +195,16 @@ const LineChart = ({ newprice, selectedStock }) => {
       
         const maxHigh = Math.max(...values.map(entry => parseFloat(entry.high)));
         const minLow = Math.min(...values.map(entry => parseFloat(entry.low)));
+
+        const endPrice = parseFloat(values[0].close);
+        const startPrice = parseFloat(values[values.length - 1].open);
+        const result = ((endPrice - startPrice) / startPrice) * 100;
       
         setStockDetails(prev => ({
           ...prev,
           selectedStocksHigh: maxHigh,
           selectedStocksLow: minLow,
+          selectedStocksChange : result
         }));
       }
       
@@ -203,11 +213,16 @@ const LineChart = ({ newprice, selectedStock }) => {
       
         const maxHigh = Math.max(...values.map(entry => parseFloat(entry.high)));
         const minLow = Math.min(...values.map(entry => parseFloat(entry.low)));
+
+        const endPrice = parseFloat(values[0].close);
+        const startPrice = parseFloat(values[values.length - 1].open);
+        const result = ((endPrice - startPrice) / startPrice) * 100;
       
         setStockDetails(prev => ({
           ...prev,
           selectedStocksHigh: maxHigh,
           selectedStocksLow: minLow,
+          selectedStocksChange : result
         }));
       }
       timeZoneRef.current = data.meta.exchange_timezone;
@@ -412,7 +427,7 @@ const LineChart = ({ newprice, selectedStock }) => {
                 }}
               >
                 {isPositive ? <FaCaretUp /> : <FaCaretDown />}
-                {newprice?.percent_change?.toFixed(2)}%
+                {timePeriod === '1d' ? newprice?.percent_change?.toFixed(2) : stockDetails.selectedStocksChange?.toFixed(2)}%
               </div>
             </div>
           )}
