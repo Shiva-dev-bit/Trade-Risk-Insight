@@ -27,15 +27,16 @@ import CarInformations from "./components/CarInformations";
 import { supabase } from "lib/supabase";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "context/Authcontext";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Divider } from "@mui/material";
 import { Link } from "react-router-dom";
 
 function Overview() {
   const [stocks, setStocks] = useState([]);
-  const [userId, setUserId] = useState(null); // Dynamic userId
+  const [notifications, setNotifications] = useState([]);
+  const [userId, setUserId] = useState([]); // Dynamic userId
   const { session } = useContext(AuthContext);
 
-  // const userId = 1;
+  console.log('userId', userId);
 
   const getUserData = async () => {
     if (!session?.user?.email) return;
@@ -43,7 +44,7 @@ function Overview() {
     const { data: userdata, error } = await supabase
       .from("users")
       .select("*")
-      .eq("email", session.user.email)
+      .eq("email", session?.user?.email)
       .single();
 
     if (error) {
@@ -56,31 +57,39 @@ function Overview() {
     }
   };
 
-  const fetchUserStocks = async () => {
-    if (!userId) return;
 
-    const { data, error } = await supabase
-      .from("userPortfolio")
-      .select("portfolio_id, stock_id, quantity, average_price, purchase_date, is_deleted_yn, stocks(*), users(*)")
-      .eq("user_id", userId)
-      .eq("is_deleted_yn", false);
+  const userid = userId?.user_id;
 
-    if (error) {
-      console.error("Error fetching stocks:", error);
-    } else {
-      setStocks(data);
+  const fetchNotifications = async () => {
+    console.log('profilenotifications', userid);
+    try {
+      const { data, error } = await supabase
+        .from("notifications")
+        .select("*")
+        .eq("user_id", userid)
+      // .gte("created_at", twoDaysAgoISO); // Filter by date
+
+      if (error) throw error;
+
+      if (data) {
+        console.log('profilenotifications', data);
+      }
+      setNotifications(data);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
     }
   };
+
 
   useEffect(() => {
     getUserData();
   }, [session]);
 
   useEffect(() => {
-    if (userId) {
-      fetchUserStocks();
+    if (userid) {
+      fetchNotifications();
     }
-  }, [userId]);
+  }, [userid]);
 
   return (
     <DashboardLayout>
@@ -137,9 +146,8 @@ function Overview() {
               >
                 <ProfileInfoCard
                   title="profile information"
-                  description={`Hi, I’m ${
-                    userId?.username && userId?.username
-                  }, Decisions: If you can’t decide, the answer is no. If two equally difficult paths, choose the one more painful in the short term (pain avoidance is creating an illusion of equality).`}
+                  description={`Hi, I’m ${userId?.username && userId?.username
+                    }, Decisions: If you can’t decide, the answer is no. If two equally difficult paths, choose the one more painful in the short term (pain avoidance is creating an illusion of equality).`}
                   info={{
                     fullName: `${userId?.username && userId?.username}`,
                     mobile: "(44) 123 1234 123",
@@ -172,80 +180,57 @@ function Overview() {
               <PlatformSettings />
             </Grid>
             <Grid item xs={12} xl={9}>
-              <Card>
-                <VuiBox display="flex" flexDirection="column" height="100%">
-                  <VuiBox display="flex" flexDirection="column" mb="24px">
-                    <VuiTypography color="white" variant="lg" fontWeight="bold" mb="6px">
-                      Projects
-                    </VuiTypography>
-                    <VuiTypography color="text" variant="button" fontWeight="regular">
-                      Architects design houses
-                    </VuiTypography>
-                  </VuiBox>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6} xl={4}>
-                      <DefaultProjectCard
-                        image={profile1}
-                        label="project #2"
-                        title="modern"
-                        description="As Uber works through a huge amount of internal management turmoil."
-                        action={{
-                          type: "internal",
-                          route: "/pages/profile/profile-overview",
-                          color: "white",
-                          label: "VIEW ALL",
-                        }}
-                        authors={[
-                          { image: team1, name: "Elena Morison" },
-                          { image: team2, name: "Ryan Milly" },
-                          { image: team3, name: "Nick Daniel" },
-                          { image: team4, name: "Peterson" },
-                        ]}
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={6} xl={4}>
-                      <DefaultProjectCard
-                        image={profile2}
-                        label="project #1"
-                        title="scandinavian"
-                        description="Music is something that every person has his or her own specific opinion about."
-                        action={{
-                          type: "internal",
-                          route: "/pages/profile/profile-overview",
-                          color: "white",
-                          label: "VIEW ALL",
-                        }}
-                        authors={[
-                          { image: team3, name: "Nick Daniel" },
-                          { image: team4, name: "Peterson" },
-                          { image: team1, name: "Elena Morison" },
-                          { image: team2, name: "Ryan Milly" },
-                        ]}
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={6} xl={4}>
-                      <DefaultProjectCard
-                        image={profile3}
-                        label="project #3"
-                        title="minimalist"
-                        description="Different people have different taste, and various types of music."
-                        action={{
-                          type: "internal",
-                          route: "/pages/profile/profile-overview",
-                          color: "white",
-                          label: "VIEW ALL",
-                        }}
-                        authors={[
-                          { image: team4, name: "Peterson" },
-                          { image: team3, name: "Nick Daniel" },
-                          { image: team2, name: "Ryan Milly" },
-                          { image: team1, name: "Elena Morison" },
-                        ]}
-                      />
-                    </Grid>
-                  </Grid>
+              <Card sx={{ backgroundColor: '#1a202c', borderRadius: '12px', maxHeight: '520px', overflowY: 'auto' }}>
+                <VuiBox p={3}>
+                  <VuiTypography variant="lg" color="white" fontWeight="bold" mb={3}>
+                    Notifications History
+                  </VuiTypography>
+
+                  {notifications.map((notification, index) => (
+                    <VuiBox
+                      key={notification.id}
+                      mb={2}
+                      sx={{
+                        padding: '12px',
+                        borderRadius: '8px',
+                        transition: 'background-color 0.3s',
+                        '&:hover': {
+                          backgroundColor: '#3e5060',
+                        },
+                      }}
+                    >
+                      {/* Notification Type and Stock Exchange */}
+                      <VuiBox display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+                        <VuiBox display="flex" alignItems="center">
+                          <VuiTypography variant="button" color="error" mr={1}>
+                            {notification.notification_type}
+                          </VuiTypography>
+                          <VuiTypography variant="button" color="text">
+                            • {notification.exchange}
+                          </VuiTypography>
+                        </VuiBox>
+                        <VuiTypography variant="caption" color="text">
+                          {new Date(notification.created_at).toLocaleDateString()}
+                        </VuiTypography>
+                      </VuiBox>
+
+                      {/* Stock Symbol */}
+                      <VuiBox mb={1}>
+                        <VuiTypography variant="h6" color="white" fontWeight="bold">
+                          {notification.stock_symbol}
+                        </VuiTypography>
+                      </VuiBox>
+
+                      {/* Notification Message */}
+                      <VuiTypography variant="button" color="text">
+                        {notification.notification_message}
+                      </VuiTypography>
+                    </VuiBox>
+                  ))}
+                  
                 </VuiBox>
               </Card>
+
             </Grid>
           </Grid>
         </>

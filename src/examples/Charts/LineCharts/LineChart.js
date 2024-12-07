@@ -11,7 +11,7 @@ const LineChart = ({ newprice, selectedStock }) => {
   const [chartOptions, setChartOptions] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [timePeriod, setTimePeriod] = useState("1d");
+  const [timePeriod, setTimePeriod] = useState("1m");
   const [isClient, setIsClient] = useState(false);
   const stockData = useContext(AuthContext);
   const timeZoneRef = useRef(null);
@@ -156,7 +156,7 @@ const LineChart = ({ newprice, selectedStock }) => {
       }
 
       const data = response.data;
-      console.log('stockgraph',data);
+      console.log('livedata',data);
 
       if (timePeriod === '1d' && data.meta.interval === '1min') {
         const values = data.values;
@@ -321,7 +321,7 @@ const LineChart = ({ newprice, selectedStock }) => {
     } catch (error) {
       console.error("Error fetching the stock data: ", error);
       setLoading(false);
-      setError(error.message || "Failed to load data");
+      setError("Please check again during market hours");
     }
   };
 
@@ -369,8 +369,22 @@ const LineChart = ({ newprice, selectedStock }) => {
     );
   }
   if (error) {
-    return <div style={{ color: 'red', padding: '20px' }}>Error: {error}</div>;
+    return (
+      <div
+        style={{
+          color: 'red',
+          padding: '20px',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          textAlign: 'center', // Ensures the text is aligned in the center
+        }}
+      >
+        {error}
+      </div>
+    );
   }
+  
 
   return (
     <div>

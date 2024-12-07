@@ -93,7 +93,7 @@ const CompanyDescription = () => {
               <>
                 {initialText}
                 {isExpanded && remainingText}
-                {!isExpanded && <span className="animated-ellipsis"></span>}
+                {!isExpanded && !initialText && <span className="animated-ellipsis"></span>}
               </>
             )}
           </Box>

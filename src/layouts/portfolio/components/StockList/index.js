@@ -152,8 +152,7 @@ const StockList = ({ stocks, fetchUserStocks }) => {
     { name: "currentValue", align: "center" },
     { name: "action", align: "center" },
   ];
-  
-  
+    
   const rows = stocks.length > 0
     ? stocks.map((stock) => {
         const profit = calculateProfit(stock?.quantity, stock?.live_price, stock?.average_price);

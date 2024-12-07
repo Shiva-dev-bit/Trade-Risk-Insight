@@ -38,6 +38,7 @@ import {
 import team2 from "assets/images/team-2.jpg";
 import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
 import {
+  Badge,
   Box,
   Button,
   Checkbox,
@@ -56,6 +57,7 @@ import StockPrice from "./StockPrice";
 import { Add, Logout } from "@mui/icons-material";
 import { AuthContext } from "context/Authcontext";
 import axios from "axios";
+import './loader.css';
 
 function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPortfolio }) {
   const [navbarType, setNavbarType] = useState();
@@ -92,24 +94,45 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
         console.log("User data is not yet loaded:", user); // Debugging missing user data
         return; // Exit early if user data is not ready
       }
-
+  
       const userId = user[0]?.user_id;
+  
+      // Calculate 2 days before today
+      const today = new Date();
+      let twoDaysAgo = new Date(today);
+      twoDaysAgo.setDate(today.getDate() - 2);
+
+      
+      // Format the date to YYYY-MM-DD
+      const twoDaysAgoISO = twoDaysAgo.toISOString().split("T")[0]; // Get date part only
+      console.log('twoDaysAgo',twoDaysAgoISO);
+  
+      // Fetch notifications created within the last 3 days
       const { data, error } = await supabase
         .from("notifications")
         .select("*")
-        .eq("user_id", userId);
-
+        .eq("user_id", userId)
+        .gte("created_at", twoDaysAgoISO); // Filter by date
+  
       if (error) throw error;
-
+  
       setNotifications(data);
     } catch (error) {
       console.error("Error fetching notifications:", error);
     }
   };
+  
 
   console.log('notifications', notifications);
 
   useEffect(() => {
+    const today = new Date();
+    const twoDaysAgo = new Date(today);
+    twoDaysAgo.setDate(today.getDate() - 2);
+  
+    // Ensure time zone matches the created_at format in your database
+    const cutoffDateISO = twoDaysAgo.toISOString();
+  
     const channel = supabase
       .channel('notification-channel')
       .on(
@@ -117,11 +140,13 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
         { event: '*', schema: 'public', table: 'notifications' },
         (payload) => {
           const { eventType, new: newNotification, old: oldNotification } = payload;
-
-          if (newNotification === user[0]?.user_id) {
+  
+          // Ensure notification belongs to the current user and is recent
+          if (
+            newNotification.user_id === user[0]?.user_id &&
+            new Date(newNotification.created_at) >= new Date(cutoffDateISO)
+          ) {
             setNotifications((prevNotifications) => {
-
-
               switch (eventType) {
                 case 'INSERT':
                   return [newNotification, ...prevNotifications]; // Add new notification at the beginning
@@ -180,8 +205,22 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
 
   const handleMiniSidenav = () => setMiniSidenav(dispatch, !miniSidenav);
   const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
-  const handleOpenMenu = (event) => setOpenMenu(event.currentTarget);
-  const handleCloseMenu = () => setOpenMenu(false);
+  const [unreadCount, setUnreadCount] = useState(notifications.length);
+
+  const handleOpenMenu = (event) => {
+    setOpenMenu(event.currentTarget); // Open the menu at the anchor point
+    setUnreadCount(0); // Reset unread notifications when menu opens
+  };
+
+  const handleCloseMenu = () => {
+    setOpenMenu(false); // Close the menu
+  };
+
+  useEffect(() => {
+    const unreadCount = notifications.filter(notification => !notification.read_status).length;
+    setUnreadCount(unreadCount);
+  }, [notifications]);
+  
 
   const getNotificationIcon = (type) => {
     switch (type) {
@@ -199,28 +238,93 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
     return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
   };
 
-  const handleNotificationClick = (id) => {
-    console.log(`Notification with ID ${id} clicked.`);
-    // Optionally, update read status in the database here
-    handleCloseMenu();
+  const handleNotificationClick = async (notificationId) => {
+    // Update the notification's read_status in the state
+    const updatedNotifications = notifications.map((notification) =>
+      notification.id === notificationId
+        ? { ...notification, read_status: true }
+        : notification
+    );
+  
+    setNotifications(updatedNotifications);
+  
+    // Update the notification's read_status in the database (optional)
+    try {
+      await supabase
+        .from('notifications') // Your table name
+        .update({ read_status: true })
+        .eq('id', notificationId);
+    } catch (error) {
+      console.error('Error updating read_status:', error);
+    }
   };
-
+  
+  const handleClearAllNotifications = () => {
+    setNotifications([]); // Clear the notifications state
+  };
+  
 
   // Render the notifications menu
   const renderMenu = () => (
-    <Menu
-      anchorEl={openMenu}
-      anchorReference={null}
-      anchorOrigin={{
-        vertical: "bottom",
-        horizontal: "left",
-      }}
-      open={Boolean(openMenu)}
-      onClose={handleCloseMenu}
-      sx={{ mt: 2 }}
-    >
-      {notifications.length > 0 ? (
-        notifications.map((notification) => (
+    notifications.length > 0 && (
+      <Menu
+        anchorEl={openMenu}
+        anchorReference="anchorEl"
+        open={Boolean(openMenu)}
+        onClose={handleCloseMenu}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        sx={{
+          mt: 2,
+          '& .MuiMenu-paper': {
+            width: '350px',
+            maxWidth: '90vw',
+            maxHeight: 400,
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            right: '16px !important',
+            left: 'auto !important',
+            '& .MuiMenuItem-root': {
+              whiteSpace: 'normal', // Allows text to wrap within menu items
+              wordBreak: 'break-word', // Ensures long words break and wrap
+            },
+            '&::-webkit-scrollbar': {
+              width: '6px',
+            },
+            '&::-webkit-scrollbar-track': {
+              backgroundColor: 'transparent',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              backgroundColor: '#888',
+              borderRadius: '10px',
+            },
+            '&::-webkit-scrollbar-thumb:hover': {
+              backgroundColor: '#555',
+            },
+          },
+        }}
+      >
+        {/* Conditionally render Clear All button only if there are notifications */}
+        <MenuItem
+          sx={{
+            display: 'flex',
+            justifyContent: 'flex-end', // Align the button text to the right
+            fontSize: '12px', // Smaller font
+            color: 'white',
+            padding: '10px 0',
+          }}
+          onClick={handleClearAllNotifications}
+        >
+          Clear All
+        </MenuItem>
+  
+        {notifications.map((notification) => (
           <NotificationItem
             key={notification.id}
             image={
@@ -229,36 +333,53 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
               </Icon>
             }
             title={[
-              <div style={{
-                display: 'flex',
-                flexDirection: 'column'
-              }}>
-                <span style={{
-                  fontWeight: 700
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  padding: '5px',
+                  borderRadius: '5px',
+                  width: '100%',
+                  minWidth: 0,
+                  textAlign : 'justify' // Important for flex child text wrapping
+                }}
+              >
+                <span style={{ 
+                  fontWeight: 700,
+                  wordWrap: 'break-word',
+                  overflowWrap: 'break-word'
                 }}>
                   {notification.notification_type}
                 </span>
-                <span style={{
+                <span style={{ 
                   fontSize: '12px',
-                  color: 'white'
+                  color: 'white',
+                  wordWrap: 'break-word',
+                  overflowWrap: 'break-word',
+                  whiteSpace: 'pre-wrap'
                 }}>
                   {notification.notification_message}
+                </span>
+                <span
+                  style={{
+                    fontSize: '10px',
+                    color: notification.read_status ? 'green' : 'red',
+                    marginTop: '5px',
+                  }}
+                >
+                  {notification.read_status ? 'Read' : 'Unread'}
                 </span>
               </div>
             ]}
             date={formatNotificationDate(notification.created_at)}
             onClick={() => handleNotificationClick(notification.id)}
           />
-        ))
-      ) : (
-        <NotificationItem
-          color="text"
-          title={["No notifications available"]}
-          onClick={handleCloseMenu}
-        />
-      )}
-    </Menu>
+        ))}
+      </Menu>
+    )
   );
+  
+
 
 
   // const [searchTerm, setSearchTerm] = useState("");
@@ -407,19 +528,13 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
       const exchange = userCountry === "United States" ? "NASDAQ" : "International Exchange"; // Mocked exchange
 
       setSelectedFilters({
-        countries: [userCountry],
-        exchanges: [exchange],
-        currencies: [],
-        types: [],
-      });
-    } catch (error) {
-      console.error("Error fetching user location:", error);
-      setSelectedFilters({
         countries: ["India"],
         exchanges: ["NSE"],
         currencies: [],
         types: [],
       });
+    } catch (error) {
+      console.error("Error fetching user location:", error);
     }
   };
 
@@ -709,7 +824,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
                                   {item.exchange}
                                 </Box>
                                 <Box sx={{ fontSize: "14px", fontWeight: 900 }}>
-                                  {isDefaultActive && item.currency === "INR" ? "" : item.currency}
+                                  {isDefaultActive && item.currency === "INR" ? "INR" : item.currency}
                                 </Box>
                               </Box>
                             </Box>
@@ -919,7 +1034,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
               </IconButton>
 
               <IconButton
-                size="small"
+                size="medium"
                 color="inherit"
                 sx={navbarIconButton}
                 aria-controls="notification-menu"
@@ -927,7 +1042,22 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
                 variant="contained"
                 onClick={handleOpenMenu}
               >
-                <Icon className={light ? "text-white" : "text-dark"}>notifications</Icon>
+                <Badge
+                  badgeContent={unreadCount} // Use the unreadCount state
+                  color="error" // Red color for the badge
+                  variant={unreadCount > 0 ? "standard" : "dot"} // Hide if unreadCount is 0
+                  sx={{
+                    '.MuiBadge-dot': {
+                      top: 10,
+                      right: 10,
+                      width: 10,
+                      height: 10,
+                      borderRadius: '50%',
+                    },
+                  }}
+                >
+                  <Icon className={light ? "text-white" : "text-dark"}>notifications</Icon>
+                </Badge>
               </IconButton>
 
               {renderMenu()}
