@@ -768,7 +768,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
                       sx={{ display: "flex", p: 1 }}
                       control={
                         <Checkbox
-                          checked={isDefaultActive}
+                          checked={!isDefaultActive}
                           onChange={handleDefaultChange}
                           sx={{ color: "white", "&.Mui-checked": { color: "white" }, ml: 3 }}
                         />

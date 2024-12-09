@@ -11,7 +11,7 @@ const LineChart = ({ newprice, selectedStock }) => {
   const [chartOptions, setChartOptions] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [timePeriod, setTimePeriod] = useState("1m");
+  const [timePeriod, setTimePeriod] = useState("1d");
   const [isClient, setIsClient] = useState(false);
   const stockData = useContext(AuthContext);
   const timeZoneRef = useRef(null);
@@ -19,6 +19,7 @@ const LineChart = ({ newprice, selectedStock }) => {
   const chartContainerRef = useRef(null);
   const currentMinutePricesRef = useRef([]);
   const lastMinuteRef = useRef(null);
+  const [graphApi,setGraphApi] = useState(null);
 
   const [stockDetails, setStockDetails] = useState({
     selectedSymbol: selectedStock?.symbol || stockData?.stockData?.symbol,
@@ -147,16 +148,20 @@ const LineChart = ({ newprice, selectedStock }) => {
       setLoading(true);
       setError(null);
 
-      const response = await axios.get(
+      let response = await axios.get(
         `https://rcapidev.neosme.co:2053/stock_price_graph/${stockDetails.selectedSymbol}/${timePeriod}/${stockDetails.selectedExchange}`
-      );
+      ).catch(error => setGraphApi(error));
 
-      if (!response?.data) {
-        throw new Error("No data received from server");
+      console.log('livedata',graphApi);
+      
+      if (graphApi.code === "ERR_BAD_REQUEST") {
+        response = await axios.get(
+          `https://rcapidev.neosme.co:2053/stock_price_graph/${stockDetails.selectedSymbol}/yesterday/${stockDetails.selectedExchange}`
+        );
+        console.log("livedata",response.data);
       }
-
+      
       const data = response.data;
-      console.log('livedata',data);
 
       if (timePeriod === '1d' && data.meta.interval === '1min') {
         const values = data.values;

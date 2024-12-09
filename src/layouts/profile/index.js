@@ -176,63 +176,75 @@ function Overview() {
             </Grid>
           </VuiBox>
           <Grid container spacing={3} mb="30px">
-            <Grid item xs={12} xl={3} height="100%">
-              <PlatformSettings />
-            </Grid>
-            <Grid item xs={12} xl={9}>
-              <Card sx={{ backgroundColor: '#1a202c', borderRadius: '12px', maxHeight: '520px', overflowY: 'auto' }}>
-                <VuiBox p={3}>
-                  <VuiTypography variant="lg" color="white" fontWeight="bold" mb={3}>
-                    Notifications History
-                  </VuiTypography>
+            <Grid item xs={12}>
+              <Card sx={{ display: "flex", gap: 3, flexDirection: { xs: "column", lg: "row" }, p: 3, borderRadius: "12px" }}>
+                {/* Platform Settings Section */}
+                <VuiBox flex={1}>
+                  <PlatformSettings />
+                </VuiBox>
 
-                  {notifications.map((notification, index) => (
-                    <VuiBox
-                      key={notification.id}
-                      mb={2}
-                      sx={{
-                        padding: '12px',
-                        borderRadius: '8px',
-                        transition: 'background-color 0.3s',
-                        '&:hover': {
-                          backgroundColor: '#3e5060',
-                        },
-                      }}
-                    >
-                      {/* Notification Type and Stock Exchange */}
-                      <VuiBox display="flex" justifyContent="space-between" alignItems="center" mb={1}>
-                        <VuiBox display="flex" alignItems="center">
-                          <VuiTypography variant="button" color="error" mr={1}>
-                            {notification.notification_type}
-                          </VuiTypography>
-                          <VuiTypography variant="button" color="text">
-                            • {notification.exchange}
+                {/* Notifications History Section */}
+                <VuiBox
+                  flex={1}
+                  sx={{
+                    backgroundColor: "#1a202c",
+                    borderRadius: "12px",
+                    maxHeight: "520px",
+                    overflowY: "auto",
+                  }}
+                >
+                  <VuiBox p={3}>
+                    <VuiTypography variant="lg" color="white" fontWeight="bold" mb={3}>
+                      Notifications History
+                    </VuiTypography>
+
+                    {notifications.map((notification) => (
+                      <VuiBox
+                        key={notification.id}
+                        mb={2}
+                        sx={{
+                          padding: "12px",
+                          borderRadius: "8px",
+                          transition: "background-color 0.3s",
+                          "&:hover": {
+                            backgroundColor: "#3e5060",
+                          },
+                        }}
+                      >
+                        {/* Notification Type and Stock Exchange */}
+                        <VuiBox display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+                          <VuiBox display="flex" alignItems="center">
+                            <VuiTypography variant="button" color="error" mr={1}>
+                              {notification.notification_type}
+                            </VuiTypography>
+                            <VuiTypography variant="button" color="text">
+                              • {notification.exchange}
+                            </VuiTypography>
+                          </VuiBox>
+                          <VuiTypography variant="caption" color="text">
+                            {new Date(notification.created_at).toLocaleDateString()}
                           </VuiTypography>
                         </VuiBox>
-                        <VuiTypography variant="caption" color="text">
-                          {new Date(notification.created_at).toLocaleDateString()}
+
+                        {/* Stock Symbol */}
+                        <VuiBox mb={1}>
+                          <VuiTypography variant="h6" color="white" fontWeight="bold">
+                            {notification.stock_symbol}
+                          </VuiTypography>
+                        </VuiBox>
+
+                        {/* Notification Message */}
+                        <VuiTypography variant="button" color="text">
+                          {notification.notification_message}
                         </VuiTypography>
                       </VuiBox>
-
-                      {/* Stock Symbol */}
-                      <VuiBox mb={1}>
-                        <VuiTypography variant="h6" color="white" fontWeight="bold">
-                          {notification.stock_symbol}
-                        </VuiTypography>
-                      </VuiBox>
-
-                      {/* Notification Message */}
-                      <VuiTypography variant="button" color="text">
-                        {notification.notification_message}
-                      </VuiTypography>
-                    </VuiBox>
-                  ))}
-                  
+                    ))}
+                  </VuiBox>
                 </VuiBox>
               </Card>
-
             </Grid>
           </Grid>
+
         </>
       ) : (
         <Box my={"15%"} mx={"33%"} sx={{ height: "27vh" }}>

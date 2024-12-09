@@ -90,114 +90,66 @@ function Header({ username, email, stocks }) {
     const calculateAnnualizedReturn = (purchasePrice, quantity, purchaseDate, livePrice) => {
       const currentDate = new Date();
       const purchaseDateObj = new Date(purchaseDate);
-      
-      // Handle future purchase date and negative or small years held
+
       if (purchaseDateObj > currentDate) {
         return 0;
       }
-      
-      const yearsHeld = (currentDate - purchaseDateObj) / (1000 * 60 * 60 * 24 * 365); // Convert to years
-      
+
+      const yearsHeld = (currentDate - purchaseDateObj) / (1000 * 60 * 60 * 24 * 365);
+
       if (yearsHeld <= 0) {
-        return 0; // Handle cases where the stock has been held for less than 1 day
+        return 0;
       }
-    
+
       const beginningValue = purchasePrice * quantity;
-      const endingValue = livePrice * quantity;
-      
-      // Avoid division by zero and unrealistic values
+      const endingValue = parseFloat(livePrice) * quantity; // Parse livePrice as float
+
       if (beginningValue === 0 || endingValue === 0) {
         return 0;
       }
-    
+
       const annualizedReturn = Math.pow(endingValue / beginningValue, 1 / yearsHeld) - 1;
       return annualizedReturn;
-    }
-    // Calculate annualized returns for each stock and store them along with the weighted value
-    const annualizedReturns = stocks.map((stock) => {
+    };
+
+    const annualizedReturns = stocks.map(stock => {
       const annualizedReturn = calculateAnnualizedReturn(
         stock.average_price,
         stock.quantity,
         stock.purchase_date,
         stock.live_price
       );
-      
-      // Calculate the total value for this stock
-      const stockValue = stock.quantity * stock.live_price;
-      
+
+      const stockValue = stock.quantity * parseFloat(stock.live_price);
+
       return {
         symbol: stock.symbol,
         annualizedReturn: annualizedReturn,
         stockValue: stockValue
       };
     });
-    
-    // Calculate the total portfolio value
+
     const totalPortfolioValue = annualizedReturns.reduce((total, stock) => total + stock.stockValue, 0);
-    
-    // Calculate the weighted annualized return
+
     const weightedAnnualizedReturn = annualizedReturns.reduce((total, stock) => {
       return total + (stock.annualizedReturn * stock.stockValue);
     }, 0) / totalPortfolioValue;
-    
-    // Convert to percentage and fix decimal places
-    const overallAnnualizedReturn = (weightedAnnualizedReturn * 100)
 
-    // const calculateAnnualizedReturn = (purchasePrice, quantity, purchaseDate, livePrice) => {
-    //   const currentDate = new Date();
-    //   const purchaseDateObj = new Date(purchaseDate);
-    //   const yearsHeld = (currentDate - purchaseDateObj) / (1000 * 60 * 60 * 24 * 365); // Convert to years
-    //   const beginningValue = purchasePrice * quantity;
-    //   const endingValue = livePrice * quantity;
-    //   return Math.pow(endingValue / beginningValue, 1 / yearsHeld) - 1;
-    // };
-
-    // const annualisedReturn = stocks.map((stock) => {
-    //   const annualizedReturn = calculateAnnualizedReturn(
-    //     stock.average_price,
-    //     stock.quantity,
-    //     stock.purchase_date,
-    //     stock.live_price
-    //   );
-    //   return {
-    //     symbol: stock.symbol,
-    //     annualizedReturn: (annualizedReturn * 100).toFixed(2), // Convert to percentage
-    //   };
-    // });
+    const overallAnnualizedReturn = (weightedAnnualizedReturn * 100).toFixed(2);
 
     console.log('annualisedReturn', overallAnnualizedReturn);
 
-    // Annualised Return Calculation
-    // const annualisedReturns = stocks.map(stock => {
-    //   const beginningValue = stock.quantity * stock.average_price;
-    //   const endingValue = stock.quantity * stock.live_price;
-
-    //   // Calculate years held
-    //   const purchaseDate = new Date(stock.purchase_date);
-    //   const currentDate = new Date();
-    //   const yearsHeld = (currentDate - purchaseDate) / (1000 * 60 * 60 * 24 * 365.25);
-
-    //   // Avoid division by zero and handle negative years
-    //   if (yearsHeld <= 0) return 0;
-
-    //   // CAGR Calculation
-    //   return Math.pow(endingValue / beginningValue, 1 / yearsHeld) - 1;
-    // });
-
-    // const returns = annualisedReturn.map(item => parseFloat(item.annualizedReturn));
-
-    // // Calculate the average annualized return
-    // const avgAnnualisedReturn = returns.length > 0
-    //   ? (returns.reduce((a, b) => a + b, 0) / returns.length) * 100
-    //   : 0;
-
     // Daily Change (simplified calculation)
     const dailyChange = mergedStocks.reduce((sum, stock) => {
-      console.log('stocksliveprice', stock.live_price, stock.previous_close, stock.quantity);
       const dailyChangePercent = ((stock.live_price - stock.previous_close) / stock.previous_close) * 100;
-      return sum + (dailyChangePercent * (stock.quantity * stock.live_price) / totalCurrentValue);
+      // Weight of the stock in the portfolio
+      const stockValue = stock.quantity * stock.live_price;
+      const weight = stockValue / totalCurrentValue;
+      // Add the weighted daily change percentage to the sum
+      return sum + (dailyChangePercent * weight);
     }, 0);
 
+    console.log('dailychange',mergedStocks);
 
     return {
       totalInvestment,
@@ -403,7 +355,7 @@ function Header({ username, email, stocks }) {
                   Annualised Return
                 </VuiTypography>
                 <VuiTypography variant="h5" color="white">
-                  {investmentMetrics.annualisedReturn.toFixed(2)}%
+                  {investmentMetrics.annualisedReturn}%
                 </VuiTypography>
               </Box>
               <Box sx={{
