@@ -84,24 +84,24 @@ function Dashboard() {
   console.log('websocketStocks', websocketStocks);
 
   const initialStockData = {
-    symbol: "TCS",
-    company_name: "Tata Consultancy Services Limited",
-    country: "India",
-    price: "4084.64990",
-    open: "4075.00000",
-    high: "4107.00000",
-    low: "4060.05005",
-    percent_change: 0.23066,
-    currency: "INR",
-    exchange: "NSE",
-    change: 9.39990,
-    previous_close: 4075.25000,
-    volume: "1934976",
-    close: 4084.64990,
-    type: "Common Stock",
-    is_market_open: false,
-    trading_date: "N/A",
-    last_updated: "2024-10-30T14:37:05.098775",
+    "symbol": "NSEI",
+    "company_name": "NIFTY 50",
+    "country": "India",
+    "price": "24620.50000",
+    "type": null,
+    "open": "24645.00000",
+    "high": "24677.75000",
+    "low": "24511.84961",
+    "percent_change": "0.00609",
+    "currency": "INR",
+    "exchange": "NSE",
+    "change": "1.50000",
+    "previous_close": "24619.00000",
+    "volume": "260940306",
+    "close": "24620.50000",
+    "is_market_open": false,
+    "trading_date": "N/A",
+    "last_updated": "2024-12-10T10:25:18.239145"
   };
 
   const [stocksData, setStocksData] = useState(stockData?.stockData || initialStockData)
@@ -124,44 +124,34 @@ function Dashboard() {
   });
 
   const [indicators, setIndicators] = useState({
-    "symbol": "TATAMOTORS",
-    "exchange": "NSE",
-    "current_price": 821.95,
-    "available_exchanges": [
-      "NSE",
-      "BSE"
-    ],
-    "signals": {
-      "symbol": "TATAMOTORS",
+      "symbol": "NSEI",
       "exchange": "NSE",
-      "current_price": 821.95,
-      "timestamp": "2024-11-11T12:59:33.611653",
+      "current_price": 24620.5,
       "signals": {
-        "macd": {
-          "datetime": "2024-11-11",
-          "macd": -34.32744,
-          "macd_signal": -34.05067,
-          "signal": "SELL"
-        },
-        "vwap": {
-          "datetime": "2024-11-11",
-          "vwap": 815.21665,
-          "current_price": 822,
-          "signal": "SELL"
-        },
-        "rsi": {
-          "datetime": "2024-11-11",
-          "rsi": 33.88858,
-          "signal": "SELL"
-        },
-        "sma": {
-          "datetime": "2024-11-11",
-          "sma": 829.32778,
-          "current_price": 822,
-          "signal": "SELL"
-        }
+          "macd": {
+              "datetime": "2024-12-10",
+              "macd": 79.40186,
+              "macd_signal": -29.96754,
+              "signal": "BUY"
+          },
+          "vwap": {
+              "datetime": "2024-12-10",
+              "vwap": 24603.36654,
+              "current_price": 24620.5,
+              "signal": "SELL"
+          },
+          "rsi": {
+              "datetime": "2024-12-10",
+              "rsi": 57.86982,
+              "signal": "SELL"
+          },
+          "sma": {
+              "datetime": "2024-12-10",
+              "sma": 24095.44268,
+              "current_price": 24620.5,
+              "signal": "BUY"
+          }
       }
-    }
   }
   )
 

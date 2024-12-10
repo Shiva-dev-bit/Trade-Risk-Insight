@@ -58,6 +58,7 @@ import { Add, Logout } from "@mui/icons-material";
 import { AuthContext } from "context/Authcontext";
 import axios from "axios";
 import './loader.css';
+import moment from "moment-timezone";
 
 function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPortfolio }) {
   const [navbarType, setNavbarType] = useState();
@@ -94,34 +95,34 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
         console.log("User data is not yet loaded:", user); // Debugging missing user data
         return; // Exit early if user data is not ready
       }
-  
+
       const userId = user[0]?.user_id;
-  
+
       // Calculate 2 days before today
       const today = new Date();
       let twoDaysAgo = new Date(today);
       twoDaysAgo.setDate(today.getDate() - 2);
 
-      
+
       // Format the date to YYYY-MM-DD
-      const twoDaysAgoISO = twoDaysAgo.toISOString().split("T")[0]; // Get date part only
-      console.log('twoDaysAgo',twoDaysAgoISO);
-  
+      const twoDaysAgoISO = twoDaysAgo.toISOString().split("T")[0];
+      console.log('twoDaysAgo', twoDaysAgoISO);
+
       // Fetch notifications created within the last 3 days
       const { data, error } = await supabase
         .from("notifications")
         .select("*")
         .eq("user_id", userId)
         .gte("created_at", twoDaysAgoISO); // Filter by date
-  
+
       if (error) throw error;
-  
+
       setNotifications(data);
     } catch (error) {
       console.error("Error fetching notifications:", error);
     }
   };
-  
+
 
   console.log('notifications', notifications);
 
@@ -129,10 +130,10 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
     const today = new Date();
     const twoDaysAgo = new Date(today);
     twoDaysAgo.setDate(today.getDate() - 2);
-  
+
     // Ensure time zone matches the created_at format in your database
     const cutoffDateISO = twoDaysAgo.toISOString();
-  
+
     const channel = supabase
       .channel('notification-channel')
       .on(
@@ -140,7 +141,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
         { event: '*', schema: 'public', table: 'notifications' },
         (payload) => {
           const { eventType, new: newNotification, old: oldNotification } = payload;
-  
+
           // Ensure notification belongs to the current user and is recent
           if (
             newNotification.user_id === user[0]?.user_id &&
@@ -220,7 +221,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
     const unreadCount = notifications.filter(notification => !notification.read_status).length;
     setUnreadCount(unreadCount);
   }, [notifications]);
-  
+
 
   const getNotificationIcon = (type) => {
     switch (type) {
@@ -245,9 +246,9 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
         ? { ...notification, read_status: true }
         : notification
     );
-  
+
     setNotifications(updatedNotifications);
-  
+
     // Update the notification's read_status in the database (optional)
     try {
       await supabase
@@ -258,11 +259,11 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
       console.error('Error updating read_status:', error);
     }
   };
-  
+
   const handleClearAllNotifications = () => {
     setNotifications([]); // Clear the notifications state
   };
-  
+
 
   // Render the notifications menu
   const renderMenu = () => (
@@ -323,7 +324,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
         >
           Clear All
         </MenuItem>
-  
+
         {notifications.map((notification) => (
           <NotificationItem
             key={notification.id}
@@ -341,17 +342,17 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
                   borderRadius: '5px',
                   width: '100%',
                   minWidth: 0,
-                  textAlign : 'justify' // Important for flex child text wrapping
+                  textAlign: 'justify' // Important for flex child text wrapping
                 }}
               >
-                <span style={{ 
+                <span style={{
                   fontWeight: 700,
                   wordWrap: 'break-word',
                   overflowWrap: 'break-word'
                 }}>
                   {notification.notification_type}
                 </span>
-                <span style={{ 
+                <span style={{
                   fontSize: '12px',
                   color: 'white',
                   wordWrap: 'break-word',
@@ -378,107 +379,14 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
       </Menu>
     )
   );
-  
 
-
-
-  // const [searchTerm, setSearchTerm] = useState("");
-  // const [filteredData, setFilteredData] = useState([]);
-  // const [isDefaultActive, setIsDefaultActive] = useState(true);
-  // const [activeDropdown, setActiveDropdown] = useState(null);
-  // const [loading, setLoading] = useState(false);
-
-  // const [selectedFilters, setSelectedFilters] = useState({
-  //   countries: ["India"],
-  //   exchanges: ["NSE"],
-  //   currencies: [],
-  //   types: [],
-  // });
-
-  // const filterCategories = {
-  //   countries: { label: "Countries", key: "country" },
-  //   exchanges: { label: "Exchanges", key: "exchange" },
-  //   currencies: { label: "Currencies", key: "currency" },
-  //   types: { label: "Financial Assets Types", key: "type" },
-  // };
-
-  // const handleSearch = (event) => {
-  //   const value = event.target.value;
-  //   setSearchTerm(value);
-
-  //   if (!value.trim()) {
-  //     setActiveDropdown(null);
-  //     setFilteredData([]);
-  //   }
-  // };
-
-  // const fetchSearchData = async (query) => {
-  //   setLoading(true); // Set loading to true before fetching
-  //   if(query.length >= 3){
-  //     try {
-  //       const response = await axios.get(
-  //         `https://rcapidev.neosme.co:2053/search/${query}`
-  //       );
-  //       let results = response.data || [];
-
-  //       Object.entries(selectedFilters).forEach(([category, selectedValues]) => {
-  //         if (selectedValues.length > 0) {
-  //           const key = filterCategories[category].key;
-  //           results =
-  //             results.length > 0 && results.filter((item) => selectedValues.includes(item[key]));
-  //         }
-  //       });
-
-  //       console.log('resultsresults',results);
-
-  //       setFilteredData(results);
-  //     } catch (error) {
-  //       console.error("Error fetching data:", error);
-  //       setFilteredData([]);
-  //     } finally {
-  //       setLoading(false); // Set loading to false after fetching
-  //     }
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   const debounceTimer = setTimeout(() => {
-  //     if (searchTerm.trim()) {
-  //       fetchSearchData(searchTerm);
-  //     } else {
-  //       setFilteredData([]);
-  //     }
-  //   }, 300); // Debounce to reduce API calls
-
-  //   return () => clearTimeout(debounceTimer);
-  // }, [searchTerm, selectedFilters]);
-
-  // const handleFilterChange = (category, value) => {
-  //   setSelectedFilters((prev) => {
-  //     const isChecked = prev[category].includes(value);
-  //     const updatedFilters = isChecked
-  //       ? prev[category].filter((v) => v !== value)
-  //       : [...prev[category], value];
-
-  //     return { ...prev, [category]: updatedFilters };
-  //   });
-  // };
-
-  // const handleDefaultChange = () => {
-  //   const newDefaultState = !isDefaultActive;
-  //   setIsDefaultActive(newDefaultState);
-
-  //   const defaultFilters = newDefaultState
-  //     ? { countries: ["India"], exchanges: ["NSE"], currencies: [], types: [] }
-  //     : { countries: [], exchanges: [], currencies: [], types: [] };
-
-  //   setSelectedFilters(defaultFilters);
-  // };
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredData, setFilteredData] = useState([]);
   const [isDefaultActive, setIsDefaultActive] = useState(true);
   const [loading, setLoading] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
+
+  console.log('filteredData', filteredData);
 
   const [selectedFilters, setSelectedFilters] = useState({
     countries: [],
@@ -948,6 +856,9 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
                                   </Box>
                                 </Box>
                               </Box>
+                            </Box>
+                            <Box sx={{ fontSize: "10px", fontWeight: 500 , textAlign : 'center' , color : 'gray'}}>
+                              {`As on  ${moment(item.last_updated).format("DD MMM, YYYY | HH:mm")}`}
                             </Box>
                           </Box>
                         </Box>

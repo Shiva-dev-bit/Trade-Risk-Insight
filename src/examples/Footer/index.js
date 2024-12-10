@@ -37,18 +37,7 @@ function Footer() {
           sx={{ textAlign: "center", fontWeight: "400 !important" }}
           color="white"
         >
-          @ 2021, Made with ❤️&nbsp;&nbsp;&nbsp; by{" "}
-          <VuiTypography
-            component="a"
-            variant="button"
-            href="https://simmmple.com/"
-            sx={{ textAlign: "center", fontWeight: "500 !important" }}
-            color="white"
-            mr="2px"
-          >
-            Simmmple
-          </VuiTypography>
-          &
+          @ 2024, Made with ❤️&nbsp;&nbsp;&nbsp; by
           <VuiTypography
             ml="2px"
             mr="2px"

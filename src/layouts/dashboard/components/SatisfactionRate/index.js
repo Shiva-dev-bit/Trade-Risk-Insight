@@ -24,7 +24,7 @@ const SatisfactionRate = () => {
   // volatility/AXISBANK
   useEffect(() => {
     axios
-      .get(`https://rcapidev.neosme.co:2053/volatility/${stockData?.stockData?.symbol}`)
+      .get(`https://rcapidev.neosme.co:2053/volatility/${stockData?.stockData?.symbol || 'NSEI'}`)
       .then((response) => {
         setData(response.data.data);
         setLoading(false);

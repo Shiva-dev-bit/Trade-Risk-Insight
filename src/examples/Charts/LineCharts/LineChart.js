@@ -5,6 +5,7 @@ import { AuthContext } from "context/Authcontext";
 import { Box } from "@mui/material";
 import { FaCaretDown, FaCaretUp } from "react-icons/fa";
 import axios from "axios";
+import { useLocation } from 'react-router-dom';
 
 const LineChart = ({ newprice, selectedStock }) => {
   const [chartData, setChartData] = useState([]);
@@ -19,7 +20,11 @@ const LineChart = ({ newprice, selectedStock }) => {
   const chartContainerRef = useRef(null);
   const currentMinutePricesRef = useRef([]);
   const lastMinuteRef = useRef(null);
-  const [graphApi,setGraphApi] = useState(null);
+  const [graphApi, setGraphApi] = useState([]);
+  const location = useLocation();
+
+  // Check if the current route is the dashboard route
+  const isDashboardRoute = location.pathname === '/dashboard';
 
   const [stockDetails, setStockDetails] = useState({
     selectedSymbol: selectedStock?.symbol || stockData?.stockData?.symbol,
@@ -30,13 +35,13 @@ const LineChart = ({ newprice, selectedStock }) => {
   });
 
   useEffect(() => {
-      setStockDetails({ 
-        selectedSymbol: selectedStock?.symbol || stockData?.stockData?.symbol,
-        selectedExchange: selectedStock?.exchange ||stockData?.stockData?.exchange,
-      });
+    setStockDetails({
+      selectedSymbol: selectedStock?.symbol || stockData?.stockData?.symbol,
+      selectedExchange: selectedStock?.exchange || stockData?.stockData?.exchange,
+    });
   }, [selectedStock, stockData?.stockData?.symbol, stockData?.stockData?.exchange]);
 
-  
+
   const isPositive = stockDetails?.selectedStocksChange >= 0;
 
   const getCurrencySymbol = (exchange) => {
@@ -150,89 +155,85 @@ const LineChart = ({ newprice, selectedStock }) => {
 
       let response = await axios.get(
         `https://rcapidev.neosme.co:2053/stock_price_graph/${stockDetails.selectedSymbol}/${timePeriod}/${stockDetails.selectedExchange}`
-      ).catch(error => setGraphApi(error));
+      );
 
-      console.log('livedata',graphApi);
-      
-      if (graphApi.code === "ERR_BAD_REQUEST") {
-        response = await axios.get(
-          `https://rcapidev.neosme.co:2053/stock_price_graph/${stockDetails.selectedSymbol}/yesterday/${stockDetails.selectedExchange}`
-        );
-        console.log("livedata",response.data);
-      }
-      
       const data = response.data;
+      const values = data.values;
+      setGraphApi(values);
+
 
       if (timePeriod === '1d' && data.meta.interval === '1min') {
-        const values = data.values;
-        console.log('values',values);
-      
         const maxHigh = Math.max(...values.map(entry => parseFloat(entry.high)));
         const minLow = Math.min(...values.map(entry => parseFloat(entry.low)));
-      
+
+        const endPrice = parseFloat(values[0].close);
+        const startPrice = parseFloat(values[values.length - 1].open);
+        const result = ((endPrice - startPrice) / startPrice) * 100;
+
         setStockDetails(prev => ({
           ...prev,
           selectedStocksHigh: maxHigh,
           selectedStocksLow: minLow,
+          selectedStocksChange: result
         }));
       }
 
       if (timePeriod === "1m" && data.meta.interval === "1day") {
-        const values = data.values;
-      
+        // const values = data.values;
+
         const maxHigh = Math.max(...values.map(entry => parseFloat(entry.high)));
         const minLow = Math.min(...values.map(entry => parseFloat(entry.low)));
 
         const endPrice = parseFloat(values[0].close);
         const startPrice = parseFloat(values[values.length - 1].open);
         const result = ((endPrice - startPrice) / startPrice) * 100;
-      
+
         setStockDetails(prev => ({
           ...prev,
           selectedStocksHigh: maxHigh,
           selectedStocksLow: minLow,
-          selectedStocksChange : result
+          selectedStocksChange: result
         }));
       }
-      
+
       if (timePeriod === "1y" && data.meta.interval === "1day") {
-        const values = data.values;
-      
+        // const values = data.values;
+
         const maxHigh = Math.max(...values.map(entry => parseFloat(entry.high)));
         const minLow = Math.min(...values.map(entry => parseFloat(entry.low)));
 
         const endPrice = parseFloat(values[0].close);
         const startPrice = parseFloat(values[values.length - 1].open);
         const result = ((endPrice - startPrice) / startPrice) * 100;
-      
+
         setStockDetails(prev => ({
           ...prev,
           selectedStocksHigh: maxHigh,
           selectedStocksLow: minLow,
-          selectedStocksChange : result
+          selectedStocksChange: result
         }));
       }
-      
+
       if (timePeriod === "5y" && data.meta.interval === "1day") {
-        const values = data.values;
-      
+        // const values = data.values;
+
         const maxHigh = Math.max(...values.map(entry => parseFloat(entry.high)));
         const minLow = Math.min(...values.map(entry => parseFloat(entry.low)));
 
         const endPrice = parseFloat(values[0].close);
         const startPrice = parseFloat(values[values.length - 1].open);
         const result = ((endPrice - startPrice) / startPrice) * 100;
-      
+
         setStockDetails(prev => ({
           ...prev,
           selectedStocksHigh: maxHigh,
           selectedStocksLow: minLow,
-          selectedStocksChange : result
+          selectedStocksChange: result
         }));
       }
       timeZoneRef.current = data.meta.exchange_timezone;
 
-      let processedValues = data.values;
+      let processedValues = values;
 
       if (timePeriod === "1d") {
         const today = moment().tz(timeZoneRef.current).format("YYYY-MM-DD");
@@ -326,7 +327,8 @@ const LineChart = ({ newprice, selectedStock }) => {
     } catch (error) {
       console.error("Error fetching the stock data: ", error);
       setLoading(false);
-      setError("Please check again during market hours");
+      setGraphApi([]);
+      setError("Error fetching the stock data");
     }
   };
 
@@ -340,7 +342,7 @@ const LineChart = ({ newprice, selectedStock }) => {
       fetchData(timePeriod);
     }
   }, [timePeriod, stockDetails?.selectedSymbol, stockDetails?.selectedExchange, isClient]);
-  
+
 
   useEffect(() => {
     if (isClient && newprice && timeZoneRef.current && timePeriod === "1d") {
@@ -373,23 +375,10 @@ const LineChart = ({ newprice, selectedStock }) => {
       </div>
     );
   }
-  if (error) {
-    return (
-      <div
-        style={{
-          color: 'red',
-          padding: '20px',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          textAlign: 'center', // Ensures the text is aligned in the center
-        }}
-      >
-        {error}
-      </div>
-    );
-  }
-  
+
+
+  console.log('processedValues ', graphApi.length);
+
 
   return (
     <div>
@@ -411,7 +400,7 @@ const LineChart = ({ newprice, selectedStock }) => {
           }}
         >
           {/* High */}
-          {stockDetails.selectedStocksHigh !== null && (
+          {graphApi?.length > 0 && (
             <div style={{ textAlign: "center" }}>
               <div>High</div>
               <div style={{ fontWeight: 600, fontSize: "14px" }}>
@@ -422,7 +411,7 @@ const LineChart = ({ newprice, selectedStock }) => {
           )}
 
           {/* Low */}
-          {stockDetails.selectedStocksLow !== null && (
+          {graphApi?.length > 0 && (
             <div style={{ textAlign: "center" }}>
               <div>Low</div>
               <div style={{ fontWeight: 600, fontSize: "15px" }}>
@@ -433,7 +422,7 @@ const LineChart = ({ newprice, selectedStock }) => {
           )}
 
           {/* Returns */}
-          {stockDetails.selectedStocksChange !== null && (
+          {graphApi?.length > 0 && (
             <div style={{ textAlign: "center" }}>
               <div>Returns</div>
               <div
@@ -446,7 +435,9 @@ const LineChart = ({ newprice, selectedStock }) => {
                 }}
               >
                 {isPositive ? <FaCaretUp /> : <FaCaretDown />}
-                {timePeriod === '1d' ? newprice?.percent_change?.toFixed(2) : stockDetails.selectedStocksChange?.toFixed(2)}%
+                {isDashboardRoute && timePeriod === '1d'
+                  ? newprice?.percent_change?.toFixed(2)
+                  : stockDetails.selectedStocksChange?.toFixed(2)}%
               </div>
             </div>
           )}
@@ -471,7 +462,7 @@ const LineChart = ({ newprice, selectedStock }) => {
         </Box>
       </div>
       <div style={{ height: '250px', width: '100%' }} ref={chartContainerRef}>
-        {chartData[0]?.data?.length > 0 && (
+        {graphApi?.length > 0 && (
           <Suspense fallback={<div>Loading chart...</div>}>
             <ReactApexChart
               key={`${stockDetails.selectedSymbol}-${timePeriod}-${stockDetails.selectedExchange}`}
@@ -483,9 +474,9 @@ const LineChart = ({ newprice, selectedStock }) => {
             />
           </Suspense>
         )}
-        {!chartData[0]?.data?.length && (
+        {graphApi?.length === 0 && (
           <div style={{ textAlign: "center", padding: "20px", color: "#fff" }}>
-            No data available
+            Please check During Market Hours
           </div>
         )}
       </div>

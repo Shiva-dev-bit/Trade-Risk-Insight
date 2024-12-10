@@ -11,10 +11,7 @@ import { AuthContext } from "context/Authcontext";
 import { useContext } from "react";
 
 function ReferralTracking() {
-  console.log('referal');
   const stockData = useContext(AuthContext);
-
-
   const [data, setData] = useState(null);
   const { gradients } = colors;
   const { cardContent } = gradients;
@@ -22,7 +19,7 @@ function ReferralTracking() {
     // Fetch the data from the API
     const fetchData = async () => {
       try {
-        const response = await axios(`https://rcapidev.neosme.co:2053/svs-widget/${stockData?.stockData?.symbol}`);
+        const response = await axios(`https://rcapidev.neosme.co:2053/svs-widget/${stockData?.stockData?.symbol || 'NSEI'}`);
         const result = await response.data;
         console.log('referal',result);
         setData(result);
