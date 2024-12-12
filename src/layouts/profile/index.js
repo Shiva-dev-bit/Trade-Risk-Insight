@@ -154,23 +154,23 @@ function Overview() {
                     email: `${userId?.email}`,
                     location: "United States",
                   }}
-                  social={[
-                    {
-                      link: "https://www.facebook.com/CreativeTim/",
-                      icon: <FacebookIcon />,
-                      color: "facebook",
-                    },
-                    {
-                      link: "https://twitter.com/creativetim",
-                      icon: <TwitterIcon />,
-                      color: "twitter",
-                    },
-                    {
-                      link: "https://www.instagram.com/riskprotectai/",
-                      icon: <InstagramIcon />,
-                      color: "instagram",
-                    },
-                  ]}
+                  // social={[
+                  //   {
+                  //     link: "https://www.facebook.com/CreativeTim/",
+                  //     icon: <FacebookIcon />,
+                  //     color: "facebook",
+                  //   },
+                  //   {
+                  //     link: "https://twitter.com/creativetim",
+                  //     icon: <TwitterIcon />,
+                  //     color: "twitter",
+                  //   },
+                  //   {
+                  //     link: "https://www.instagram.com/riskprotectai/",
+                  //     icon: <InstagramIcon />,
+                  //     color: "instagram",
+                  //   },
+                  // ]}
                 />
               </Grid>
             </Grid>

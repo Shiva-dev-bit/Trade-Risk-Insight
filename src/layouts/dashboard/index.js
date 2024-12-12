@@ -66,6 +66,7 @@ import { AuthContext } from "context/Authcontext";
 import { supabase } from "lib/supabase";
 import axios from "axios";
 import CompanyDescription from "./components/CompanySummary";
+import moment from "moment-timezone";
 
 function Dashboard() {
   const { gradients } = colors;
@@ -666,6 +667,9 @@ function Dashboard() {
                       {priceData?.icon}
                       {`${priceData?.price_change?.toFixed(2)} 
                       (${(priceData?.percent_change)?.toFixed(2)}%)`}
+                 <span style={{ fontSize: "0.6rem", fontWeight: 500, color: "gray", display: "block" }}>
+                  {`As on ${moment(stocksData?.last_updated).format("DD MMM, YYYY | HH:mm")}`}
+                </span>
                     </>
                   ),
                 }}

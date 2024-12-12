@@ -47,7 +47,7 @@ function Footer() {
             sx={{ textAlign: "center", fontWeight: "500 !important" }}
             color="white"
           >
-            RiskProtec AI
+            RiskCompass AI
           </VuiTypography>
           for a better web
         </VuiTypography>

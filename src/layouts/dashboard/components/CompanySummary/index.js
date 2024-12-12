@@ -10,7 +10,7 @@ const CompanyDescription = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isInitialTypingComplete, setIsInitialTypingComplete] = useState(false);
   const [summary, setSummary] = useState(
-    "TCS operates in the Technology and IT services sector. Its recent stock price was INR 1823.7, close to its 52-week high of INR 11.46. The RSI of 55.70398 indicates the stock is neither overbought nor oversold. No recent news headlines about the stock were identified. MACD of -19.67755 suggests bearish sentiment in the short term."
+    "The Nifty 50 index closed at 24,620.50 on December 10, 2024, reflecting a marginal increase of 1.50 points (0.00609%) from the previous close of 24,619.00. During the trading session, the index fluctuated between a low of 24,511.85 and a high of 24,677.75, with a substantial trading volume of approximately 260.94 million shares. Notably, the 52-week range for Nifty 50 shows considerable volatility, having ranged from a low of 20,769.50 to a high of 26,277.35, indicating potential for movement. Technical indicators reveal a mixed outlook: the MACD suggests a buy signal while the SMA also indicates a buy, although the RSI and VWAP suggest sell signals, reflecting market indecision. Recent news highlights concerns about the broader market sentiment, as analysts emphasize key support levels at 24,550 and caution regarding inflation impacts and economic indicators. Overall, while there are signs of strength, market performance remains cautiously optimistic amid mixed signals and global economic challenges."
   );
   const { stockData } = useContext(AuthContext);
 

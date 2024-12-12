@@ -311,19 +311,17 @@ function Table({
     <VuiBox>
       <TableContainer
         sx={{
-          overflowX: 'auto', // Ensure horizontal scrolling is allowed
-          "&::-webkit-scrollbar": {
-            height: "6px", // Change this to adjust scrollbar height
+          overflowX: 'hidden', // Prevent horizontal scrolling
+          "& thead th": {
+            padding: "8px", // Reduce padding in header cells
+            fontSize: "0.65rem", // Smaller font size
           },
-          "&::-webkit-scrollbar-track": {
-            backgroundColor: "transparent", // Style the track
-          },
-          "&::-webkit-scrollbar-thumb": {
-            backgroundColor: "#888", // Style the thumb
-            borderRadius: "10px",    // Round the edges
-          },
-          "&::-webkit-scrollbar-thumb:hover": {
-            backgroundColor: "#555", // Change thumb color on hover
+          "& tbody td": {
+            padding: "6px", // Reduce padding in body cells
+            fontSize: "0.875rem", // Smaller font size
+            whiteSpace: "nowrap", // Prevent text wrapping
+            overflow: "hidden",
+            textOverflow: "ellipsis", // Add ellipsis for overflow text
           },
         }}
       >

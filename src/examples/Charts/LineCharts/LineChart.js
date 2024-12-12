@@ -62,6 +62,8 @@ const LineChart = ({ newprice, selectedStock }) => {
     switch (period) {
       case "1d":
         return (value) => moment.tz(value, timezone).format("HH:mm");
+      case "1w":
+        return (value) => moment.tz(value, timezone).format("DD MMM");
       case "1m":
         return (value) => moment.tz(value, timezone).format("DD MMM");
       case "1y":
@@ -76,6 +78,8 @@ const LineChart = ({ newprice, selectedStock }) => {
   const getTooltipFormatter = (period, timezone) => {
     switch (period) {
       case "1d":
+        return (value) => moment.tz(value, timezone).format("HH:mm");
+      case "1w":
         return (value) => moment.tz(value, timezone).format("HH:mm");
       default:
         return (value) => moment.tz(value, timezone).format("DD MMM YYYY");
@@ -158,11 +162,30 @@ const LineChart = ({ newprice, selectedStock }) => {
       );
 
       const data = response.data;
+      console.log('values',data);
       const values = data.values;
       setGraphApi(values);
 
 
       if (timePeriod === '1d' && data.meta.interval === '1min') {
+        const maxHigh = Math.max(...values.map(entry => parseFloat(entry.high)));
+        const minLow = Math.min(...values.map(entry => parseFloat(entry.low)));
+
+        const endPrice = parseFloat(values[0].close);
+        const startPrice = parseFloat(values[values.length - 1].open);
+        const result = ((endPrice - startPrice) / startPrice) * 100;
+
+        setStockDetails(prev => ({
+          ...prev,
+          selectedStocksHigh: maxHigh,
+          selectedStocksLow: minLow,
+          selectedStocksChange: result
+        }));
+      }
+
+      if (timePeriod === "1w" && data.meta.interval === "1min") {
+        // const values = data.values;
+
         const maxHigh = Math.max(...values.map(entry => parseFloat(entry.high)));
         const minLow = Math.min(...values.map(entry => parseFloat(entry.low)));
 
@@ -195,6 +218,7 @@ const LineChart = ({ newprice, selectedStock }) => {
           selectedStocksChange: result
         }));
       }
+
 
       if (timePeriod === "1y" && data.meta.interval === "1day") {
         // const values = data.values;
@@ -242,16 +266,6 @@ const LineChart = ({ newprice, selectedStock }) => {
           return itemDate === today;
         });
 
-        if (processedValues.length === 0) {
-          const sortedValues = data.values.sort((a, b) =>
-            moment.tz(b.datetime, timeZoneRef.current).valueOf() -
-            moment.tz(a.datetime, timeZoneRef.current).valueOf()
-          );
-          const mostRecentDate = moment.tz(sortedValues[0].datetime, timeZoneRef.current).format("YYYY-MM-DD");
-          processedValues = sortedValues.filter((item) =>
-            moment.tz(item.datetime, timeZoneRef.current).format("YYYY-MM-DD") === mostRecentDate
-          );
-        }
         // Reset minute tracking when fetching new data
         lastMinuteRef.current = null;
         currentMinutePricesRef.current = [];
@@ -325,6 +339,80 @@ const LineChart = ({ newprice, selectedStock }) => {
       setChartOptions(options);
       setLoading(false);
     } catch (error) {
+      let response = await axios.get(
+        `https://rcapidev.neosme.co:2053/stock_price_graph/${stockDetails.selectedSymbol}/1w/${stockDetails.selectedExchange}`
+      );
+
+      const data = response.data;
+      const processedValues = data.values;
+      
+      const formattedData = [{
+        name: "Price",
+        data: processedValues.map((item) => ({
+          x: moment.tz(item.datetime, data.meta.exchange_timezone).valueOf(),
+          y: parseFloat(item.close),
+        })),
+      }];
+
+      const options = {
+        chart: {
+          id: `stock-chart-${stockDetails?.selectedSymbol}`,
+          type: "line",
+          toolbar: { show: false },
+          animations: {
+            enabled: true,
+            easing: 'linear',
+            dynamicAnimation: {
+              speed: 1000
+            }
+          },
+          background: 'transparent',
+        },
+        stroke: {
+          width: 2,
+        },
+        colors: ['#0075FF'],
+        xaxis: {
+          type: "datetime",
+          labels: {
+            style: {
+              colors: "#FFFFFF",
+              fontSize: "12px",
+            },
+            formatter: getDateTimeFormatter('1w', data.meta.exchange_timezone),
+          },
+          tooltip: {
+            enabled: false,
+          },
+        },
+        yaxis: {
+          labels: {
+            style: {
+              colors: "#FFFFFF",
+              fontSize: "12px",
+            },
+            formatter: (value) => `${currencySymbol}${value.toFixed(2)}`,
+          },
+          forceNiceScale: true,
+        },
+        tooltip: {
+          theme: "dark",
+          x: {
+            formatter: getTooltipFormatter('1w', data.meta.exchange_timezone),
+          },
+          y: {
+            formatter: (value) => `${currencySymbol}${value.toFixed(2)}`,
+          },
+        },
+        grid: {
+          strokeDashArray: 5,
+          borderColor: "#56577A",
+        },
+      };
+
+      setChartData(formattedData);
+      setChartOptions(options);
+
       console.error("Error fetching the stock data: ", error);
       setLoading(false);
       setGraphApi([]);
@@ -377,7 +465,7 @@ const LineChart = ({ newprice, selectedStock }) => {
   }
 
 
-  console.log('processedValues ', graphApi.length);
+  console.log('chartData ', chartData);
 
 
   return (
@@ -443,7 +531,7 @@ const LineChart = ({ newprice, selectedStock }) => {
           )}
         </Box>
         <Box display={"flex"} gap={"15px"}>
-          {["5y", "1y", "1m", "1d"].map((period) => (
+          {["5y", "1y", "1m", "1w","1d"].map((period) => (
             <button
               key={period}
               onClick={() => handleTimePeriodChange(period)}
@@ -462,7 +550,7 @@ const LineChart = ({ newprice, selectedStock }) => {
         </Box>
       </div>
       <div style={{ height: '250px', width: '100%' }} ref={chartContainerRef}>
-        {graphApi?.length > 0 && (
+        {chartData[0]?.data?.length > 0 && (
           <Suspense fallback={<div>Loading chart...</div>}>
             <ReactApexChart
               key={`${stockDetails.selectedSymbol}-${timePeriod}-${stockDetails.selectedExchange}`}
@@ -474,11 +562,11 @@ const LineChart = ({ newprice, selectedStock }) => {
             />
           </Suspense>
         )}
-        {graphApi?.length === 0 && (
+        {/* {graphApi?.length === 0 && (
           <div style={{ textAlign: "center", padding: "20px", color: "#fff" }}>
             Please check During Market Hours
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

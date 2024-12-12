@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Typography } from "@mui/material";
 // import { Link } from "react-router-dom";
 import { Link } from "react-router-dom";
 // import { Button } from '@mui/material';
@@ -196,20 +196,19 @@ const Portfolio = () => {
 
   }, [userId]);
 
-  console.log('Portfolio',stocks);
 
   return (
     <DashboardLayout>
-      {userId ? (
-        <Box display="flex" flexDirection="column" gap={2}>
-          <Header username={userData?.username} email={userData?.email} stocks={stocks}/>
-          <StockList
-            stocks={stocks}
-            fetchUserStocks={fetchUserStocks}
-            // fetchStockFromAPI={fetchStockFromAPI}
-          />
+
+      {/* Show loader if user data is still loading */}
+      {stocks.length === 0 && userData === undefined && (
+        <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: "50vh" }}>
+          <CircularProgress /> {/* Loader */}
         </Box>
-      ) : (
+      )}
+
+      {/* Show sign-in message if user is not logged in */}
+      {!userId && (
         <Box my={"15%"} mx={"28%"} sx={{ height: "27vh" }}>
           <Button
             component={Link}
@@ -217,12 +216,26 @@ const Portfolio = () => {
             to="/authentication/sign-in"
             sx={{ background: "#0047AB", fontSize: "15px" }}
           >
-            Sign in to add your stocks in portfolio or to see the existing stocks you added
+            Sign in to add your stocks in the portfolio or to see the existing stocks you added
           </Button>
         </Box>
       )}
+
+      {/* Show the main dashboard content if the user is logged in */}
+      {userId && (
+        <Box display="flex" flexDirection="column" gap={2}>
+          <Header username={userData?.username} email={userData?.email} stocks={stocks} />
+          <StockList
+            stocks={stocks}
+            fetchUserStocks={fetchUserStocks}
+          // fetchStockFromAPI={fetchStockFromAPI}
+          />
+        </Box>
+      )}
+
       <Footer />
     </DashboardLayout>
+
   );
 };
 

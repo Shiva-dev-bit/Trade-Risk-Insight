@@ -16,125 +16,216 @@
 
 */
 
-import { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 // @mui material components
-import Card from "@mui/material/Card";
-
+import { Card, Typography, Box, Switch, Tooltip, Button, Snackbar } from '@mui/material';
 // UI Risk LENS AI Dashboard React components
 import VuiBox from "components/VuiBox";
 import VuiTypography from "components/VuiTypography";
 import VuiSwitch from "components/VuiSwitch";
 import { MenuItem, Select } from "@mui/material";
+import { supabase } from "lib/supabase";
+import { AuthContext } from "context/Authcontext";
+
 
 function PlatformSettings() {
-  const [settings, setSettings] = useState({
-    majorSentimentShift: { enabled: false, frequency: "Real-time" },
-    highImpactNews: { enabled: false, frequency: "Real-time" },
-    technicalSignalChange: { enabled: false, frequency: "Real-time" },
-    financialHealthAlert: { enabled: false, frequency: "Real-time" },
-    riskThresholdBreach: { enabled: false, frequency: "Real-time" },
-    dividendChangeAlert: { enabled: false, frequency: "Monthly" },
-    fundHolderChangeAlert: { enabled: false, frequency: "Real-time" },
-  });
+  const [notifications, setNotifications] = useState([]);
+  const [settings, setSettings] = useState({}); // State to store settings
+  const { session } = useContext(AuthContext); // Session context
+  const userEmail = session?.user?.email; // Get user email from session
+  const [user, setUser] = useState([]); // To store fetched user data
+  const [successMessage, setSuccessMessage] = useState('');
 
-  const handleToggle = (key) => {
-    setSettings({
-      ...settings,
-      [key]: { ...settings[key], enabled: !settings[key].enabled },
-    });
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => {
+        setSuccessMessage('');
+      }, 5000); // Clear message after 5 seconds
+
+      return () => clearTimeout(timer); // Cleanup the timer on unmount
+    }
+  }, [successMessage]);
+  
+  const fetchUser = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("users")
+        .select("*")
+        .eq("email", userEmail);
+
+      if (error) throw error;
+      console.log("Fetched user data:", data); // Debugging user data
+      if (data.length > 0) setUser(data); // Set user data only if available
+      else console.log("No user found for the given email.");
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
   };
 
-  const handleFrequencyChange = (key, frequency) => {
-    setSettings({
-      ...settings,
-      [key]: { ...settings[key], frequency },
-    });
+  console.log('useruser', user);
+
+  // Fetch and initialize the state
+  const fetchNotifications = async () => {
+    const { data, error } = await supabase
+      .from('notification_types')
+      .select('*')
+      .eq('is_deleted_yn', false);
+
+    if (data) {
+      setNotifications(data);
+      setSettings(
+        data.reduce((acc, notification) => {
+          acc[notification.notification_id] = {
+            enabled: false, // Default enabled state
+            frequency: 'Real-time', // Default frequency
+          };
+          return acc;
+        }, {})
+      );
+    }
+
+    if (error) console.error('Error fetching notifications:', error);
   };
 
-  const renderNotificationItem = (label, key, frequencyOptions) => (
-    <VuiBox display="flex" alignItems="center" mb="14px">
-      <VuiBox mt={0.25}>
-        <VuiSwitch
-          color="info"
-          checked={settings[key].enabled}
-          onChange={() => handleToggle(key)}
-        />
-      </VuiBox>
-      <VuiBox width="60%" ml={2}>
-        <VuiTypography variant="button" fontWeight="regular" color="text">
-          {label}
-        </VuiTypography>
-      </VuiBox>
-      <VuiBox width="40%">
-        <Select
-          value={settings[key].frequency}
-          onChange={(e) => handleFrequencyChange(key, e.target.value)}
-          fullWidth
-          size="small"
-        >
-          {frequencyOptions.map((option) => (
-            <MenuItem key={option} value={option}>
-              {option}
-            </MenuItem>
-          ))}
-        </Select>
-      </VuiBox>
-    </VuiBox>
-  );
+  // Handle toggle switch
+  const handleToggle = (notificationId) => {
+    setSettings((prevSettings) => ({
+      ...prevSettings,
+      [notificationId]: {
+        ...prevSettings[notificationId],
+        enabled: !prevSettings[notificationId].enabled,
+      },
+    }));
+  };
+
+  // Handle frequency change
+  const handleFrequencyChange = (notificationId, frequency) => {
+    setSettings((prevSettings) => ({
+      ...prevSettings,
+      [notificationId]: {
+        ...prevSettings[notificationId],
+        frequency,
+      },
+    }));
+  };
+
+  // Save settings
+  const handleSave = async () => {
+    for (const [notificationId, { enabled, frequency }] of Object.entries(settings)) {
+      await upsertUserNotification(user[0]?.user_id, parseInt(notificationId), frequency, enabled);
+    }
+    setSuccessMessage('Settings saved successfully!');
+    console.log('Settings saved.');
+  };
+
+  // Upsert function to handle insert or update
+  const upsertUserNotification = async (userId, notificationTypeId, frequency, enabled) => {
+    const { data, error } = await supabase
+      .from('user_notifications')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('notification_type_id', notificationTypeId)
+      .single();
+
+    if (data) {
+      // Update existing record
+      const { error: updateError } = await supabase
+        .from('user_notifications')
+        .update({ frequency, enabled })
+        .eq('user_id', userId)
+        .eq('notification_type_id', notificationTypeId);
+
+      if (updateError) console.error('Error updating:', updateError);
+    } else {
+      // Insert new record
+      const { error: insertError } = await supabase
+        .from('user_notifications')
+        .insert([{ user_id: userId, notification_type_id: notificationTypeId, frequency, enabled }]);
+
+      if (insertError) console.error('Error inserting:', insertError);
+    }
+  };
+
+  // Fetch notifications when component mounts
+  useEffect(() => {
+    fetchNotifications();
+    fetchUser();
+  }, [userEmail]);
 
   return (
-    <Card sx={{ maxHeight: "520px", height: "100%" }}>
-      <VuiBox mb="26px">
-        <VuiTypography variant="lg" fontWeight="bold" color="white" textTransform="capitalize">
+    <Card
+      sx={{
+        padding: "20px",
+        maxHeight: "520px",
+        height: "100%",
+        backgroundColor: "#121212",
+        color: "#fff",
+        overflowY: "auto",
+      }}
+    >
+      <Box mb="26px">
+        <Typography variant="h6" fontWeight="bold" sx={{ color: "#fff" }}>
           Notification Settings
-        </VuiTypography>
-      </VuiBox>
-      <VuiBox lineHeight={1.25}>
-        <VuiTypography
-          variant="xxs"
-          fontWeight="medium"
-          mb="20px"
-          color="text"
-          textTransform="uppercase"
-        >
-          Notifications
-        </VuiTypography>
-        {renderNotificationItem("Major Sentiment Shift", "majorSentimentShift", [
-          "Real-time",
-          "Daily",
-          "Weekly",
-        ])}
-        {renderNotificationItem("High-Impact News Event", "highImpactNews", [
-          "Real-time",
-          "Daily",
-          "Weekly",
-        ])}
-        {renderNotificationItem("Technical Indicator Signal Change", "technicalSignalChange", [
-          "Real-time",
-          "Daily",
-          "Weekly",
-        ])}
-        {renderNotificationItem("Financial Health Alert", "financialHealthAlert", [
-          "Real-time",
-          "Daily",
-          "Weekly",
-        ])}
-        {renderNotificationItem("Portfolio Risk Threshold Breach", "riskThresholdBreach", [
-          "Real-time",
-          "Daily",
-          "Weekly",
-        ])}
-        {renderNotificationItem("Dividend or Income Change Alert", "dividendChangeAlert", [
-          "Real-time",
-          "Monthly",
-        ])}
-        {renderNotificationItem("Fund Holder Change Alert", "fundHolderChangeAlert", [
-          "Real-time",
-          "Daily",
-          "Weekly",
-        ])}
-      </VuiBox>
+        </Typography>
+      </Box>
+      <Box>
+        {notifications.map((notification) => (
+          <Box
+            key={notification.notification_id}
+            display="flex"
+            alignItems="center"
+            mb={2}
+            p={2}
+            border="1px solid #333"
+            borderRadius="8px"
+            bgcolor="#02041f"
+          >
+            <Box flex={1}>
+              <Typography variant="subtitle1" fontWeight="medium" sx={{ color: "#fff", fontSize: '16px', lineHeight: '20px' }}>
+                {notification.name}
+              </Typography>
+              <Tooltip title={notification.description} placement="right">
+                <Typography variant="body2" sx={{ color: "#aaa", fontSize: '14px', lineHeight: '16px' }}>
+                  {notification.description.length > 50
+                    ? `${notification.description.slice(0, 50)}...`
+                    : notification.description}
+                </Typography>
+              </Tooltip>
+            </Box>
+
+            <Box>
+              <Switch
+                checked={settings[notification.notification_id]?.enabled}
+                onChange={() => handleToggle(notification.notification_id)}
+              />
+            </Box>
+            <Box ml={2}>
+              <Select
+                value={settings[notification.notification_id]?.frequency}
+                onChange={(e) =>
+                  handleFrequencyChange(notification.notification_id, e.target.value)
+                }
+              >
+                <MenuItem value="Real-time">Real-time</MenuItem>
+                <MenuItem value="Daily">Daily</MenuItem>
+                <MenuItem value="Weekly">Weekly</MenuItem>
+              </Select>
+            </Box>
+          </Box>
+        ))}
+      </Box>
+      <Box mt={4} display={'flex'}>
+        <Button variant="contained" color="primary" onClick={handleSave}>
+          Save Settings
+        </Button>
+     {/* Success message */}
+     {successMessage && (
+       <Typography mt={2} ml={2} color="success.main" fontWeight="small" fontSize={'12px'}>
+          {successMessage}
+        </Typography>
+      )}
+      </Box>
     </Card>
   );
 }

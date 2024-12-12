@@ -64,22 +64,22 @@ function ProfileInfoCard({ title, description, info, social }) {
   ));
 
   // Render the card social media icons
-  const renderSocial = social.map(({ link, icon, color }) => (
-    <VuiBox
-      key={color}
-      component="a"
-      href={link}
-      target="_blank"
-      rel="noreferrer"
-      fontSize={size.lg}
-      color="white"
-      pr={1}
-      pl={0.5}
-      lineHeight={1}
-    >
-      {icon}
-    </VuiBox>
-  ));
+  // const renderSocial = social.map(({ link, icon, color }) => (
+  //   <VuiBox
+  //     key={color}
+  //     component="a"
+  //     href={link}
+  //     target="_blank"
+  //     rel="noreferrer"
+  //     fontSize={size.lg}
+  //     color="white"
+  //     pr={1}
+  //     pl={0.5}
+  //     lineHeight={1}
+  //   >
+  //     {icon}
+  //   </VuiBox>
+  // ));
 
   return (
     <Card
@@ -103,7 +103,7 @@ function ProfileInfoCard({ title, description, info, social }) {
         </VuiBox>
         <VuiBox>
           {renderItems}
-          <VuiBox display="flex" py={1} pr={2} color="white">
+          {/* <VuiBox display="flex" py={1} pr={2} color="white">
             <VuiTypography
               variant="button"
               fontWeight="regular"
@@ -113,7 +113,7 @@ function ProfileInfoCard({ title, description, info, social }) {
               social: &nbsp;
             </VuiTypography>
             {renderSocial}
-          </VuiBox>
+          </VuiBox> */}
         </VuiBox>
       </VuiBox>
     </Card>
