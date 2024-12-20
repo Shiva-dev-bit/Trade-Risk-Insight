@@ -17,92 +17,94 @@ Coded by www.creative-tim.com
 import PropTypes from "prop-types";
 
 // @mui material components
-import Card from "@mui/material/Card";
-import Grid from "@mui/material/Grid";
-import Icon from "@mui/material/Icon";
+import React from 'react';
+import { Card, Grid, Icon } from '@mui/material';
+import SoftBox from 'components/SoftBox';
+import SoftTypography from 'components/SoftTypography';
 
-// Soft UI Dashboard React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
 
-function MiniStatisticsCard({ bgColor, title, count, percentage, icon, direction }) {
+const MiniStatisticsCard = ({ title, count, percentage, icon, direction = "right" }) => {
   return (
-    <Card>
-      <SoftBox bgColor={bgColor} variant="gradient">
-        <SoftBox p={2}>
-          <Grid container alignItems="center">
-            {direction === "left" ? (
-              <Grid item>
-                <SoftBox
-                  variant="gradient"
-                  bgColor={bgColor === "white" ? icon.color : "white"}
-                  color={bgColor === "white" ? "dark" : "white"}
-                  width="3rem"
-                  height="3rem"
-                  borderRadius="md"
-                  display="flex"
-                  justifyContent="center"
-                  alignItems="center"
-                  shadow="md"
-                >
-                  <Icon fontSize="small" color="black">
-                    {icon.component}
-                  </Icon>
-                </SoftBox>
-              </Grid>
-            ) : null}
-            <Grid item xs={8}>
-              <SoftBox ml={direction === "left" ? 2 : 0} lineHeight={1}>
+    <Card className="h-full">
+      <SoftBox p={2} className="h-full">
+        <Grid container alignItems="center" spacing={2} className="h-full">
+          {direction === "left" && (
+            <Grid item>
+              <SoftBox
+                className="flex items-center justify-center w-12 h-12 rounded-lg shadow-md bg-white"
+              >
+                <Icon fontSize="small" className="text-black">
+                  {icon.component}
+                </Icon>
+              </SoftBox>
+            </Grid>
+          )}
+          
+          <Grid item xs className="min-w-0">
+            <SoftBox lineHeight={1} className="space-y-1">
+              {title && (
                 <SoftTypography
-                  variant="button"
-                  color={bgColor === "white" ? "text" : "black"}
-                  opacity={bgColor === "white" ? 1 : 0.7}
-                  textTransform="capitalize"
-                  fontWeight={title.fontWeight}
-                  fontSize="0.875rem" // Reduced font size for title
+                  className="text-sm font-medium text-black opacity-90"
+                  style={title.sx}
                 >
                   {title.text}
                 </SoftTypography>
-                <SoftTypography
-                  variant="h6" // Reduced font size for the count and percentage
-                  fontWeight="bold"
-                  color={bgColor === "white" ? "dark" : "white"}
-                  fontSize="1rem"
-                >
-                  {count}{" "}
-                  <SoftTypography variant="button" color={percentage?.color} fontWeight="bold">
-                    {percentage?.text}
-                  </SoftTypography>
-                </SoftTypography>
+              )}
+              
+              <div className="flex flex-row gap-2">
+                {count && (
+                  <span className="text-lg font-bold text-black">
+                    {count}
+                  </span>
+                )}
+                
+                {percentage && (
+                    <SoftTypography
+                      variant="button"
+                      color={percentage.color}
+                      style={{ 
+                        fontSize: '0.875rem',
+                        fontWeight: 500,
+                        lineHeight: 1.5
+                      }}
+                    >
+                      {typeof percentage.text === 'string' 
+                        ? percentage.text
+                        : React.Children.map(percentage.text.props.children, child => {
+                            if (React.isValidElement(child) && child.type === 'span') {
+                              return React.cloneElement(child, {
+                                style: {
+                                  ...child.props.style,
+                                  // display: 'block',
+                                  marginTop: '2px'
+                                }
+                              });
+                            }
+                            return child;
+                          })
+                      }
+                    </SoftTypography>
+                )}
+              </div>
+            </SoftBox>
+          </Grid>
+
+          {direction === "right" && (
+            <Grid item>
+              <SoftBox
+                className="flex items-center justify-center w-12 h-12 rounded-lg shadow-md bg-white"
+              >
+                <Icon fontSize="small" className="text-black">
+                  {icon.component}
+                </Icon>
               </SoftBox>
             </Grid>
-            {direction === "right" ? (
-              <Grid item xs={4}>
-                <SoftBox
-                  variant="gradient"
-                  bgColor={bgColor === "white" ? icon.color : "white"}
-                  color={bgColor === "white" ? "white" : "dark"}
-                  width="3rem"
-                  height="3rem"
-                  marginLeft="auto"
-                  borderRadius="md"
-                  display="flex"
-                  justifyContent="center"
-                  alignItems="center"
-                  shadow="md"
-                >
-                  <Icon fontSize="small" color="inherit">
-                    {icon.component}
-                  </Icon>
-                </SoftBox>
-              </Grid>
-            ) : null}
-          </Grid>
-        </SoftBox>
+          )}
+        </Grid>
       </SoftBox>
     </Card>
   );
-}
+};
 
 
 // Setting default values for the props of MiniStatisticsCard

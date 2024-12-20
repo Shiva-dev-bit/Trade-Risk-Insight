@@ -87,9 +87,9 @@ const routes = [
   // },
   {
     type: "collapse",
-    name: "Virtual Reality",
+    name: "Portfolio",
     key: "virtual-reality",
-    route: "/virtual-reality",
+    route: "/portfolio",
     icon: <Cube size="12px" />,
     component: <VirtualReality />,
     noCollapse: true,

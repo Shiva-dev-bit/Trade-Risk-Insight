@@ -771,7 +771,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
                                       sx={{ width: "20px" }}
                                     >
                                       <Add
-                                        color="white"
+                                        color="black"
                                         size="20"
                                         sx={{
                                           borderRadius: "5px",
@@ -906,7 +906,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
                     >
                       account_circle
                     </Icon>
-                    <SoftTypography variant="button" fontWeight="medium" color={"white"}>
+                    <SoftTypography variant="button" fontWeight="medium" color={"black"}>
                       {user[0]?.username}
                     </SoftTypography>
                   </IconButton>
@@ -919,9 +919,9 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
                     transformOrigin={{ horizontal: "left", vertical: "top" }}
                     anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
                   >
-                    <MenuItem onClick={handleLogout} sx={{ color: "#fff" }} fontSize="bold">
+                    <MenuItem onClick={handleLogout} sx={{ color: "#000" }} fontSize="bold">
                       <ListItemIcon>
-                        <Logout fontSize="small" sx={{ color: "#fff" }} />
+                        <Logout fontSize="small" sx={{ color: "#000" }} />
                       </ListItemIcon>
                       Logout
                     </MenuItem>

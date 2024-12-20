@@ -488,20 +488,20 @@ function GradientLineChart({ newprice, selectedStock }) {
   };
 
   if (!isClient) return null;
-  if (loading) {
-    return (
-      <div className="lds-roller">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="lds-roller">
+  //       <div></div>
+  //       <div></div>
+  //       <div></div>
+  //       <div></div>
+  //       <div></div>
+  //       <div></div>
+  //       <div></div>
+  //       <div></div>
+  //     </div>
+  //   );
+  // }
 
 
   console.log('graphApi ', graphApi.length);
@@ -635,7 +635,7 @@ function GradientLineChart({ newprice, selectedStock }) {
           }}
           ref={chartContainerRef}
         >
-          {chartData[0]?.data?.length > 0 && (
+          {/* {chartData[0]?.data?.length > 0 && ( */}
             <Suspense fallback={<div>Loading chart...</div>}>
               <ReactApexChart
                 key={`${stockDetails.selectedSymbol}-${timePeriod}-${stockDetails.selectedExchange}`}
@@ -646,7 +646,7 @@ function GradientLineChart({ newprice, selectedStock }) {
                 width="100%"
               />
             </Suspense>
-          )}
+          {/* )} */}
         </div>
       </CardContent>
     </Card>

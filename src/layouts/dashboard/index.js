@@ -629,82 +629,129 @@ function Dashboard() {
       {/* <DashboardNavbar /> */}
       <SoftBox py={3}>
         <SoftBox mb={3}>
-          <Grid container spacing={1} alignItems="stretch">
-            {/* First card with extra width */}
+          <Grid container spacing={2}>
+            {/* Stock Price Card */}
             <Grid item xs={12} md={6} lg={3.6}>
               <MiniStatisticsCard
                 title={{
                   text: stocksData?.company_name,
-                  sx: {  fontSize: "0.5rem" } // Set title color to black and reduce font size
+                  sx: {
+                    fontSize: "0.875rem",
+                    color: "#000000",
+                    fontWeight: 500
+                  }
                 }}
                 count={
-                  <span style={{ fontSize: "0.9rem", fontWeight: "bold", color: "#000" }}>
+                  <span style={{
+                    fontSize: "1.25rem",
+                    fontWeight: "bold",
+                    color: "#000000"
+                  }}>
                     {priceData?.New_price?.toFixed(2)}
                   </span>
                 }
                 percentage={{
-                  color: priceData?.percentageColor, // Retains dynamic color for percentage
+                  color: priceData?.percentageColor,
                   text: (
                     <>
-                      {priceData?.icon}
-                      <span style={{ fontSize: "0.9rem", fontWeight: "bold", color: "#000" }}>
-                        {`${priceData?.price_change?.toFixed(2)} (${priceData?.percent_change?.toFixed(2)}%)`}
-                      </span>
-                      <span
-                        style={{
-                          fontSize: "0.7rem",
-                          fontWeight: 500,
-                          color: "#000",
-                          display: "block",
-                        }}
-                      >
+                      {`${priceData?.price_change?.toFixed(2)} (${priceData?.percent_change?.toFixed(2)}%)`}
+                      <span style={{
+                        fontSize: "0.5rem",
+                        fontWeight: 500,
+                        color: "gray",
+                        display: "block"
+                      }}>
                         {`As on ${moment(stocksData?.last_updated).format("DD MMM, YYYY | HH:mm")}`}
                       </span>
                     </>
                   ),
+                  fontSize: "0.875rem"
                 }}
-                icon={{ color: "black", component: getIcon(stocksData?.company_name), sx: { fontSize: "1.5rem" } }} // Icon color set to black
-                sx={{ width: "100%", height: "100%", minHeight: "120px" }}
+                icon={{
+                  color: "black",
+                  component: getIcon(),
+                }}
               />
             </Grid>
 
-            {/* Next three cards with equal width */}
+            {/* Currency & Exchange Card */}
             <Grid item xs={12} md={6} lg={2.8}>
               <MiniStatisticsCard
-                title={{ text: "Currency & Exchange", sx: { fontSize: "1rem", color: "black" } }}
+                title={{
+                  text: "Currency & Exchange",
+                  sx: {
+                    fontSize: "0.875rem",
+                    color: "#000000",
+                    fontWeight: 500
+                  }
+                }}
                 count={
-                  <span style={{ fontSize: "0.9rem", fontWeight: "bold", color: "#000" }}>
+                  <span style={{
+                    fontSize: "1rem",
+                    fontWeight: "bold",
+                    color: "#000000"
+                  }}>
                     {`${stocksData?.currency} / ${stocksData?.exchange}`}
                   </span>
                 }
-                icon={{ color: "black", component: getIcon("Currency & Exchange"), sx: { fontSize: "1.5rem" } }} // Icon color set to black
-                sx={{ width: "100%", height: "100%", minHeight: "120px" }}
+                icon={{
+                  color: "black",
+                  component: getIcon("Currency & Exchange")
+                }}
               />
             </Grid>
 
+            {/* Symbol & Country Card */}
             <Grid item xs={12} md={6} lg={2.8}>
               <MiniStatisticsCard
-                title={{ text: "Symbol & Country", sx: { fontSize: "1rem", color: "#000" } }}
+                title={{
+                  text: "Symbol & Country",
+                  sx: {
+                    fontSize: "0.875rem",
+                    color: "#000000",
+                    fontWeight: 500
+                  }
+                }}
                 count={
-                  <span style={{ fontSize: "0.9rem", fontWeight: "bold", color: "#000" }}>
+                  <span style={{
+                    fontSize: "1rem",
+                    fontWeight: "bold",
+                    color: "#000000"
+                  }}>
                     {`${stocksData?.symbol}, ${stocksData?.country}`}
                   </span>
                 }
-                icon={{ color: "black", component: getIcon("MIC Code & Country"), sx: { fontSize: "1.5rem" } }} // Icon color set to black
-                sx={{ width: "100%", height: "100%", minHeight: "120px" }}
+                icon={{
+                  color: "black",
+                  component: getIcon("MIC Code & Country")
+                }}
               />
             </Grid>
 
+            {/* Type of Stock Card */}
             <Grid item xs={12} md={6} lg={2.8}>
               <MiniStatisticsCard
-                title={{ text: "Type of Stock", sx: { fontSize: "1rem", color: "#000" } }}
+                title={{
+                  text: "Type of Stock",
+                  sx: {
+                    fontSize: "0.875rem",
+                    color: "#000000",
+                    fontWeight: 500
+                  }
+                }}
                 count={
-                  <span style={{ fontSize: "0.9rem", fontWeight: "bold", color: "#000" }}>
+                  <span style={{
+                    fontSize: "1rem",
+                    fontWeight: "bold",
+                    color: "#000000"
+                  }}>
                     {stocksData?.type}
                   </span>
                 }
-                icon={{ color: "black", component: getIcon("Type of Stock"), sx: { fontSize: "1.5rem" } }} // Icon color set to black
-                sx={{ width: "100%", height: "100%", minHeight: "120px" }}
+                icon={{
+                  color: "black",
+                  component: getIcon("Type of Stock")
+                }}
               />
             </Grid>
           </Grid>

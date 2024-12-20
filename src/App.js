@@ -109,7 +109,7 @@ export default function App() {
   if (session?.refresh_token) {
     routesNew = routes.filter((route) => route.name !== "Sign Up" && route.name !== "Sign In" && route.name !== "Forget Password" && route.name !== "Reset Password");
   } else {
-    routesNew = routes.filter((route) => route.name !== "Profile" && route.name !== "Virtual Reality" && route.name !== "Forget Password" && route.name !== "Reset Password");
+    routesNew = routes.filter((route) => route.name !== "Profile" && route.name !== "Portfolio" && route.name !== "Forget Password" && route.name !== "Reset Password");
   }
 
   const getRoutes = (allRoutes) =>
