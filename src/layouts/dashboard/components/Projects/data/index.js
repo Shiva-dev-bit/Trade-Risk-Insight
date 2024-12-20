@@ -61,12 +61,12 @@ export default function data() {
       headline: (
         <>
           <SoftTypography variant="button" fontWeight="medium" color="black">
-            <a href={item.link} target="_blank" rel="noopener noreferrer" style={{ color: "inherit", textDecoration: "none" }}>
+            <a href={item.link} target="_blank" rel="noreferrer" style={{ color: "inherit", textDecoration: "none" }}>
               {item.headline.substring(0, 50)}
             </a>
           </SoftTypography>
           <SoftTypography variant="body2" color="black">
-            <a href={item.link} target="_blank" style={{ color: "inherit" }}>{item.summary.substring(0, 50)}... </a>
+            <a href={item.link} target="_blank" rel="noreferrer" style={{ color: "inherit" }}>{item.summary.substring(0, 50)}... </a>
           </SoftTypography>
         </>
       ),
