@@ -133,12 +133,37 @@ MiniStatisticsCard.propTypes = {
     "error",
     "dark",
   ]),
-  title: PropTypes.PropTypes.shape({
+  title: PropTypes.shape({
     fontWeight: PropTypes.oneOf(["light", "regular", "medium", "bold"]),
     text: PropTypes.string,
+    sx: PropTypes.object, // Added sx prop validation
   }),
-  count: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  count: PropTypes.oneOfType([
+    PropTypes.string, 
+    PropTypes.number,
+    PropTypes.node // Added to support JSX elements
+  ]).isRequired,
   percentage: PropTypes.shape({
+    color: PropTypes.oneOfType([
+      PropTypes.oneOf([
+        "primary",
+        "secondary",
+        "info",
+        "success",
+        "warning",
+        "error",
+        "dark",
+        "white",
+      ]),
+      PropTypes.string // Added to support custom color values
+    ]),
+    text: PropTypes.oneOfType([
+      PropTypes.string, 
+      PropTypes.number,
+      PropTypes.node // Added to support JSX elements
+    ]),
+  }),
+  icon: PropTypes.shape({
     color: PropTypes.oneOf([
       "primary",
       "secondary",
@@ -146,16 +171,25 @@ MiniStatisticsCard.propTypes = {
       "success",
       "warning",
       "error",
-      "dark",
-      "white",
+      "dark"
     ]),
-    text: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  }),
-  icon: PropTypes.shape({
-    color: PropTypes.oneOf(["primary", "secondary", "info", "success", "warning", "error", "dark"]),
     component: PropTypes.node.isRequired,
   }).isRequired,
   direction: PropTypes.oneOf(["right", "left"]),
+};
+
+MiniStatisticsCard.defaultProps = {
+  bgColor: "white",
+  title: {
+    fontWeight: "regular",
+    text: "",
+    sx: {}
+  },
+  percentage: {
+    color: "success",
+    text: "",
+  },
+  direction: "right"
 };
 
 export default MiniStatisticsCard;
