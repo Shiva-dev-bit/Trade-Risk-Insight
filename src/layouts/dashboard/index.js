@@ -1,6 +1,6 @@
 /**
 =========================================================
-* Soft UI Dashboard React - v4.0.1
+* RiskCompass AI React - v4.0.1
 =========================================================
 
 * Product Page: https://www.creative-tim.com/product/soft-ui-dashboard-react
@@ -17,11 +17,11 @@ Coded by www.creative-tim.com
 import Grid from "@mui/material/Grid";
 import Icon from "@mui/material/Icon";
 
-// Soft UI Dashboard React components
+// RiskCompass AI React components
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 
-// Soft UI Dashboard React examples
+// RiskCompass AI React examples
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
@@ -29,7 +29,7 @@ import MiniStatisticsCard from "examples/Cards/StatisticsCards/MiniStatisticsCar
 import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
 import GradientLineChart from "examples/Charts/LineCharts/GradientLineChart";
 
-// Soft UI Dashboard React base styles
+// RiskCompass AI React base styles
 import typography from "assets/theme/base/typography";
 
 // Dashboard layout components
@@ -49,6 +49,8 @@ import axios from "axios";
 import moment from "moment-timezone";
 import { Card, Stack } from "@mui/material";
 import SoftProgress from "components/SoftProgress";
+import WelcomeMark from "./components/WelcomeMark";
+import CompanyDescription from "./components/CompanySummary";
 
 function Dashboard() {
   const { size } = typography;
@@ -758,11 +760,25 @@ function Dashboard() {
         </SoftBox>
         <SoftBox mb={3}>
           <Grid container spacing={3}>
+            <Grid item xs={12} lg={12}>
+              <CompanyDescription />
+            </Grid>
+          </Grid>
+        </SoftBox>
+        <SoftBox mb={3}>
+          <Grid container spacing={3}>
             <Grid item xs={12} lg={7}>
               <BuildByDevelopers />
             </Grid>
             <Grid item xs={12} lg={5}>
               <WorkWithTheRockets />
+            </Grid>
+          </Grid>
+        </SoftBox>
+        <SoftBox mb={3}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} lg={12}>
+              <WelcomeMark stocksData={stocksData}/>
             </Grid>
           </Grid>
         </SoftBox>

@@ -1,6 +1,6 @@
 /**
 =========================================================
-* Soft UI Dashboard React - v4.0.1
+* RiskCompass AI React - v4.0.1
 =========================================================
 
 * Product Page: https://www.creative-tim.com/product/soft-ui-dashboard-react
@@ -18,7 +18,7 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "App";
 
-// Soft UI Dashboard React Context Provider
+// RiskCompass AI React Context Provider
 import { SoftUIControllerProvider } from "context";
 import { AuthProvider } from "context/Authcontext";
 import { StockProvider } from "context/StockContext";

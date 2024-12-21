@@ -1,6 +1,6 @@
 /**
 =========================================================
-* Soft UI Dashboard React - v3.1.0
+* RiskCompass AI React - v3.1.0
 =========================================================
 
 * Product Page: https://www.creative-tim.com/product/soft-ui-dashboard-pro-react
@@ -14,15 +14,15 @@ Coded by www.creative-tim.com
 */
 
 /**
- * The base box-shadow styles for the Soft UI Dashboard React.
+ * The base box-shadow styles for the RiskCompass AI React.
  * You can add new box-shadow using this file.
- * You can customized the box-shadow for the entire Soft UI Dashboard React using thie file.
+ * You can customized the box-shadow for the entire RiskCompass AI React using thie file.
  */
 
-// Soft UI Dashboard React Base Styles
+// RiskCompass AI React Base Styles
 import colors from "assets/theme/base/colors";
 
-// Soft UI Dashboard React Helper Functions
+// RiskCompass AI React Helper Functions
 import boxShadow from "assets/theme/functions/boxShadow";
 
 const { black, white, info, inputColors, tabs } = colors;

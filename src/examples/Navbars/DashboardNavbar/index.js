@@ -59,6 +59,7 @@ import { AuthContext } from "context/Authcontext";
 import axios from "axios";
 import './loader.css';
 import moment from "moment-timezone";
+import { dark } from "@mui/material/styles/createPalette";
 
 function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPortfolio }) {
   const [navbarType, setNavbarType] = useState();  
@@ -875,7 +876,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
                 )}
               </Box>
             </SoftBox>
-            <SoftBox color={light ? "white" : "inherit"}>
+            <SoftBox color={light ? "white" : "black"}>
               {!user[0]?.username ? (
                 <Link to="/authentication/sign-in">
                   <IconButton sx={navbarIconButton} size="small">
@@ -900,7 +901,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
                   <IconButton sx={{ ml: 2 }} size="small" onClick={handleClick}>
                     <Icon
                       sx={({ palette: { white } }) => ({
-                        color: light ? white.main : white.main,
+                        color: light ? white.main : dark.main,
                         mx: 0.5,
                       })}
                     >

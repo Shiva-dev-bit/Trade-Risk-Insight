@@ -1,6 +1,6 @@
 /**
 =========================================================
-* Soft UI Dashboard React - v3.1.0
+* RiskCompass AI React - v3.1.0
 =========================================================
 
 * Product Page: https://www.creative-tim.com/product/soft-ui-dashboard-pro-react
@@ -14,9 +14,9 @@ Coded by www.creative-tim.com
 */
 
 /**
- * The base breakpoints for the Soft UI Dashboard React.
+ * The base breakpoints for the RiskCompass AI React.
  * You can add new breakpoints using this file.
- * You can customized the breakpoints for the entire Soft UI Dashboard React using thie file.
+ * You can customized the breakpoints for the entire RiskCompass AI React using thie file.
  */
 
 const breakpoints = {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SoftBox from 'components/SoftBox';
 import SoftTypography from 'components/SoftTypography';
 import SoftInput from 'components/SoftInput';
@@ -12,6 +12,12 @@ import curved9 from "assets/images/curved-images/curved-6.jpg";
 const ForgotPassword = () => {
     const [email, setEmail] = useState(''); 
     const [resetMessage, setResetMessage] = useState(''); // State for success or error message
+
+    useEffect(() => {
+        setTimeout(() => {
+            setResetMessage('');
+        }, 5000);
+    },[resetMessage])
     // const history = useHistory();
 
     const handleResetPassword = async (e) => {
@@ -66,7 +72,7 @@ const ForgotPassword = () => {
                 </SoftBox>
                 {resetMessage && ( // Conditionally render the message
                     <SoftBox mt={2}>
-                        <SoftTypography color="black" fontWeight="small">
+                        <SoftTypography color="black" fontWeight="small" >
                             {resetMessage}
                         </SoftTypography>
                     </SoftBox>
