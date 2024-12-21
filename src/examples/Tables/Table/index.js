@@ -1,10 +1,12 @@
 import { useMemo, useState } from "react";
 import PropTypes from "prop-types";
 import { v4 as uuidv4 } from "uuid";
-import { Table as MuiTable } from "@mui/material";
+import { IconButton, Table as MuiTable } from "@mui/material";
 import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 // RiskCompass AI React components
 import SoftBox from "components/SoftBox";
@@ -80,58 +82,7 @@ function Table({ columns, rows, pagination = false, rowsPerPageOptions = [5, 10,
 
   const renderRows = pagination
     ? useMemo(() =>
-        rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, key) => {
-          const rowKey = `row-${key}`;
-
-          const tableRow = columns.map(({ name, align }) => {
-            let template;
-
-            if (Array.isArray(row[name])) {
-              template = (
-                <SoftBox
-                  key={uuidv4()}
-                  component="td"
-                  p={1}
-                  borderBottom={row.hasBorder ? `${borderWidth[1]} solid ${light.main}` : null}
-                >
-                  <SoftBox display="flex" alignItems="center" py={0.5} px={1}>
-                    <SoftBox mr={2}>
-                      <SoftAvatar src={row[name][0]} name={row[name][1]} variant="rounded" size="sm" />
-                    </SoftBox>
-                    <SoftTypography variant="button" fontWeight="medium" sx={{ width: "max-content" }}>
-                      {row[name][1]}
-                    </SoftTypography>
-                  </SoftBox>
-                </SoftBox>
-              );
-            } else {
-              template = (
-                <SoftBox
-                  key={uuidv4()}
-                  component="td"
-                  p={1}
-                  textAlign={align}
-                  borderBottom={row.hasBorder ? `${borderWidth[1]} solid ${light.main}` : null}
-                >
-                  <SoftTypography
-                    variant="button"
-                    fontWeight="regular"
-                    color="secondary"
-                    sx={{ display: "inline-block", width: "max-content", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
-                  >
-                    {row[name]}
-                  </SoftTypography>
-                </SoftBox>
-              );
-            }
-
-            return template;
-          });
-
-          return <TableRow key={rowKey}>{tableRow}</TableRow>;
-        }),
-      [page, rowsPerPage, rows, columns])
-    : rows.map((row, key) => {
+      rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, key) => {
         const rowKey = `row-${key}`;
 
         const tableRow = columns.map(({ name, align }) => {
@@ -180,7 +131,58 @@ function Table({ columns, rows, pagination = false, rowsPerPageOptions = [5, 10,
         });
 
         return <TableRow key={rowKey}>{tableRow}</TableRow>;
+      }),
+      [page, rowsPerPage, rows, columns])
+    : rows.map((row, key) => {
+      const rowKey = `row-${key}`;
+
+      const tableRow = columns.map(({ name, align }) => {
+        let template;
+
+        if (Array.isArray(row[name])) {
+          template = (
+            <SoftBox
+              key={uuidv4()}
+              component="td"
+              p={1}
+              borderBottom={row.hasBorder ? `${borderWidth[1]} solid ${light.main}` : null}
+            >
+              <SoftBox display="flex" alignItems="center" py={0.5} px={1}>
+                <SoftBox mr={2}>
+                  <SoftAvatar src={row[name][0]} name={row[name][1]} variant="rounded" size="sm" />
+                </SoftBox>
+                <SoftTypography variant="button" fontWeight="medium" sx={{ width: "max-content" }}>
+                  {row[name][1]}
+                </SoftTypography>
+              </SoftBox>
+            </SoftBox>
+          );
+        } else {
+          template = (
+            <SoftBox
+              key={uuidv4()}
+              component="td"
+              p={1}
+              textAlign={align}
+              borderBottom={row.hasBorder ? `${borderWidth[1]} solid ${light.main}` : null}
+            >
+              <SoftTypography
+                variant="button"
+                fontWeight="regular"
+                color="secondary"
+                sx={{ display: "inline-block", width: "max-content", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
+              >
+                {row[name]}
+              </SoftTypography>
+            </SoftBox>
+          );
+        }
+
+        return template;
       });
+
+      return <TableRow key={rowKey}>{tableRow}</TableRow>;
+    });
 
   const renderPaginationControls = () => (
     <SoftBox display="flex" justifyContent="space-between" alignItems="center" mt={2} px={2}>
@@ -212,103 +214,102 @@ function Table({ columns, rows, pagination = false, rowsPerPageOptions = [5, 10,
           {`Page ${page + 1} of ${totalPages}`}
         </SoftTypography>
 
-        <button
+        <IconButton
           disabled={page === 0}
           onClick={() => handleChangePage(page - 1)}
           style={{
-            minWidth: "40px",
-            height: "40px",
             backgroundColor: page === 0 ? dark.main : "dark",
             color: page === 0 ? dark.main : "white",
             border: `1px solid ${dark.main}`,
-            borderRadius: "4px",
-            marginRight: "8px",
+            height : '25px',
+            width : '25px',
+            marginRight : '7px'
           }}
         >
-          Prev
-        </button>
+          <ArrowBackIosIcon />
+        </IconButton>
 
-        <button
+        <IconButton
           disabled={page === totalPages - 1}
           onClick={() => handleChangePage(page + 1)}
           style={{
-            minWidth: "40px",
-            height: "40px",
             backgroundColor: page === totalPages - 1 ? dark.main : "dark",
-            color: page === totalPages - 1 ? dark.main : "white",
+            color: "white",
             border: `1px solid ${dark.main}`,
-            borderRadius: "4px",
+            height : '25px',
+            width : '25px',
+            fontSize : '15px'
           }}
         >
-          Next
-        </button>
+          <ArrowForwardIosIcon />
+        </IconButton>
       </SoftBox>
     </SoftBox>
   );
 
- // Update the TableContainer styling in the Table component
-return (
-  <SoftBox>
-    <TableContainer
-      sx={{
-        width: "100%",
-        overflowX: "auto", // Enable horizontal scroll only when needed
-        "&::-webkit-scrollbar": {
-          height: "8px"
-        },
-        "&::-webkit-scrollbar-track": {
-          background: "#f1f1f1"
-        },
-        "&::-webkit-scrollbar-thumb": {
-          background: "#888",
-          borderRadius: "4px"
-        },
-        "& table": {
-          minWidth: "100%", // Ensure table takes full width
-          tableLayout: "auto", // Allow table to adjust column widths
-        },
-        "& thead th": {
-          padding: {
-            xs: "8px 4px", // Smaller padding on mobile
-            sm: "8px 8px", // Regular padding on larger screens
+  // Update the TableContainer styling in the Table component
+  return (
+    <SoftBox>
+      <TableContainer
+        sx={{
+          width: "100%",
+          overflowX: "auto", // Enable horizontal scroll only when needed
+          "&::-webkit-scrollbar": {
+            height: "8px"
           },
-          fontSize: {
-            xs: "0.65rem",
-            sm: "0.75rem"
+          "&::-webkit-scrollbar-track": {
+            background: "#f1f1f1"
           },
-          color: "#000", // Pure black text
-          whiteSpace: "nowrap",
-        },
-        "& tbody td": {
-          padding: {
-            xs: "6px 4px", // Smaller padding on mobile
-            sm: "6px 8px", // Regular padding on larger screens
+          "&::-webkit-scrollbar-thumb": {
+            background: "#888",
+            borderRadius: "4px"
           },
-          fontSize: {
-            xs: "0.75rem",
-            sm: "0.875rem"
+          "& table": {
+            minWidth: "100%", // Ensure table takes full width
+            tableLayout: "auto", // Allow table to adjust column widths
           },
-          color: "#000", // Pure black text
-          whiteSpace: "nowrap",
-          maxWidth: {
-            xs: "120px", // Limit cell width on mobile
-            sm: "200px", // More space on larger screens
+          "& thead th": {
+            padding: {
+              xs: "8px 4px", // Smaller padding on mobile
+              sm: "8px 8px", // Regular padding on larger screens
+            },
+            fontSize: {
+              xs: "0.65rem",
+              sm: "0.75rem"
+            },
+            color: "#000", // Pure black text
+            whiteSpace: "nowrap",
           },
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-        }
-      }}
-    >
-      <MuiTable>
-        <SoftBox component="thead">
-          <TableRow>{renderColumns}</TableRow>
-        </SoftBox>
-        <TableBody>{renderRows}</TableBody>
-      </MuiTable>
-    </TableContainer>
-    {pagination && renderPaginationControls()}
-  </SoftBox>
-);
+          "& tbody td": {
+            padding: {
+              xs: "6px 4px", // Smaller padding on mobile
+              sm: "6px 8px", // Regular padding on larger screens
+            },
+            fontSize: {
+              xs: "0.75rem",
+              sm: "0.875rem"
+            },
+            color: "#000", // Pure black text
+            whiteSpace: "nowrap",
+            maxWidth: {
+              xs: "120px", // Limit cell width on mobile
+              sm: "200px", // More space on larger screens
+            },
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }
+        }}
+      >
+        <MuiTable>
+          <SoftBox component="thead">
+            <TableRow>{renderColumns}</TableRow>
+          </SoftBox>
+          <TableBody>{renderRows}</TableBody>
+        </MuiTable>
+      </TableContainer>
+      {pagination && renderPaginationControls()}
+    </SoftBox>
+  );
 }
 
 // Setting default values for the props of Table

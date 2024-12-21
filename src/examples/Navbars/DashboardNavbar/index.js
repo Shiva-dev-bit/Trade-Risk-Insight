@@ -62,7 +62,7 @@ import moment from "moment-timezone";
 import { dark } from "@mui/material/styles/createPalette";
 
 function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPortfolio }) {
-  const [navbarType, setNavbarType] = useState();  
+  const [navbarType, setNavbarType] = useState();
   const [controller, dispatch] = useSoftUIController();
   const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator } = controller;
   const [openMenu, setOpenMenu] = useState(false);
@@ -318,15 +318,22 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
             display: 'flex',
             justifyContent: 'flex-end', // Align the button text to the right
             fontSize: '12px', // Smaller font
-            color: 'white',
-            padding: '10px 0',
+            color: 'black',
+            padding: '0',
+            backgroundColor: 'transparent', // Ensure consistent background
+    '&:hover': {
+      backgroundColor: 'transparent', // Prevent hover effect
+    },
+    '&:focus': {
+      backgroundColor: 'transparent', // Prevent focus background change
+    },
           }}
           onClick={handleClearAllNotifications}
         >
           Clear All
         </MenuItem>
 
-        {notifications.map((notification,index) => (
+        {notifications.map((notification, index) => (
           <NotificationItem
             key={notification.id}
             image={
@@ -336,7 +343,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
             }
             title={[
               <div
-              key={notification.id}
+                key={notification.id}
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
@@ -356,7 +363,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
                 </span>
                 <span style={{
                   fontSize: '12px',
-                  color: 'white',
+                  color: 'black',
                   wordWrap: 'break-word',
                   overflowWrap: 'break-word',
                   whiteSpace: 'pre-wrap'
@@ -421,7 +428,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
           }
         });
 
-        console.log('results',results);
+        console.log('results', results);
         setFilteredData(results);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -667,7 +674,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
                     sx={{
                       mt: 2,
                       bgcolor: "#fff",
-                      color : '#000',
+                      color: '#000',
                       borderRadius: 2,
                       position: "absolute",
                       // width: "100%",
@@ -682,7 +689,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
                         <Checkbox
                           checked={!isDefaultActive}
                           onChange={handleDefaultChange}
-                          sx={{ color: "black", "&.Mui-checked": { color: "white" }, ml: 3 , border : 'solid blue 2px' }}
+                          sx={{ color: "black", "&.Mui-checked": { color: "white" }, ml: 3, border: 'solid blue 2px' }}
                         />
                       }
                       label={
@@ -861,7 +868,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
                                 </Box>
                               </Box>
                             </Box>
-                            <Box sx={{ fontSize: "10px", fontWeight: 500 , textAlign : 'center' , color : 'gray'}}>
+                            <Box sx={{ fontSize: "10px", fontWeight: 500, textAlign: 'center', color: 'gray' }}>
                               {`As on  ${moment(item.last_updated).format("DD MMM, YYYY | HH:mm")}`}
                             </Box>
                           </Box>
@@ -992,7 +999,7 @@ DashboardNavbar.propTypes = {
   handleClickStock: PropTypes.func, // Replace with the correct name, likely 'handleClickStock'
   addStockPortfolio: PropTypes.func,
   category: PropTypes.string,
-  key:PropTypes.string // Adjust the type according to its actual data type
+  key: PropTypes.string // Adjust the type according to its actual data type
 };
 
 export default DashboardNavbar;

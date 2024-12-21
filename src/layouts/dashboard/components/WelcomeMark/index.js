@@ -6,6 +6,7 @@ import { supabase } from "lib/supabase";
 // import gif from "assets/images/cardimgfree.png";
 import CloseIcon from '@mui/icons-material/Close';
 import  axios  from "axios";
+import PropTypes from "prop-types";
 
 const WelcomeMark = ({ stocksData }) => {
 
@@ -339,6 +340,17 @@ const WelcomeMark = ({ stocksData }) => {
     </Card>
   );
   
+};
+
+
+WelcomeMark.propTypes = {
+  stocksData: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired, // Example: replace 'id' with the actual key from your stocksData
+      name: PropTypes.string.isRequired, // Replace 'name' with the actual key
+      price: PropTypes.number, // Example key, update as per your data structure
+    })
+  ).isRequired,
 };
 
 export default WelcomeMark;

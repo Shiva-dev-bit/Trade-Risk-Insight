@@ -239,16 +239,14 @@ function VRInfo() {
 
   return (
     <DashboardLayout>
-
-      {/* Show loader if user data is still loading */}
-      {stocks.length === 0 && userData === undefined && (
+      {/* Conditional rendering logic */}
+      {stocks.length === 0 && userData === undefined ? (
+        // Show loader if user data is still loading
         <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: "50vh" }}>
           <CircularProgress /> {/* Loader */}
         </Box>
-      )}
-
-      {/* Show sign-in message if user is not logged in */}
-      {!userId && (
+      ) : !userId ? (
+        // Show sign-in message if the user is not logged in
         <Box my={"15%"} mx={"28%"} sx={{ height: "27vh" }}>
           <Button
             component={Link}
@@ -259,10 +257,8 @@ function VRInfo() {
             Sign in to add your stocks in the portfolio or to see the existing stocks you added
           </Button>
         </Box>
-      )}
-
-      {/* Show the main dashboard content if the user is logged in */}
-      {userId && (
+      ) : (
+        // Show the main dashboard content if the user is logged in
         <Box display="flex" flexDirection="column" gap={2}>
           <Emails username={userData?.username} email={userData?.email} stocks={stocks} />
           <Messages
@@ -275,7 +271,6 @@ function VRInfo() {
 
       <Footer />
     </DashboardLayout>
-
   );
 }
 
