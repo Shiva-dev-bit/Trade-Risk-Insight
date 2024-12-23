@@ -63,8 +63,9 @@ const CompanyDescription = () => {
         border: "2px solid rgba(255, 255, 255, 0.3)",
         width: "100%",
         overflow: "hidden",
-        fontFamily : '-moz-initial',
-        paddingBottom: '7px'
+        // fontFamily : '-moz-initial',
+        paddingBottom: '7px',
+        fontWeight : '500'
       }}
     >
       <CardContent sx={{ paddingBottom: '7px' }}>

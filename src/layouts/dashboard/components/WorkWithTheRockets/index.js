@@ -54,10 +54,10 @@ function WorkWithTheRockets() {
       }}
     >
       <SoftBox sx={{ width: "100%" }}>
-        <SoftBox sx={{ width: "100%" }} mb="20px" mt="20px">
-          <Typography variant="h5" color="black" fontWeight="bold">
+        <SoftBox sx={{ width: "100%" , display : 'flex' }}>
+          <SoftTypography variant="h5" color="black" fontWeight="bold" sx={{textAlign : 'center'}}>
             <span style={{ fontSize: "medium" }}>{data?.title || "Safety Score"}</span>
-          </Typography>
+          </SoftTypography>
         </SoftBox>
         <SoftBox
           display="flex"
@@ -71,7 +71,8 @@ function WorkWithTheRockets() {
             sx={{
               position: "relative",
               display: "inline-flex",
-              mt: "24px",
+              mt: "40px",
+              mb:"55px",
               width: { xs: "100%", sm: "auto" }, // Adjust width for small screens
               justifyContent: "center",
             }}
@@ -124,6 +125,7 @@ function WorkWithTheRockets() {
             </SoftBox>
           </SoftBox>
           {/* Metrics and Sentiment Boxes */}
+        </SoftBox>
           <SoftBox
             display="flex"
             flexDirection={{ xs: "column", md: "row" }} // Responsive direction
@@ -136,7 +138,7 @@ function WorkWithTheRockets() {
             <SoftBox
               display="flex"
               width={{ xs: "100%", sm: "220px" }} // Responsive width
-              p="20px 22px"
+              // p="20px 22px"
               flexDirection="column"
               sx={{
                 borderRadius: "20px",
@@ -156,7 +158,7 @@ function WorkWithTheRockets() {
             <SoftBox
               display="flex"
               width={{ xs: "100%", sm: "220px" }} // Responsive width
-              p="20px 22px"
+              // p="20px 22px"
               flexDirection="column"
               sx={{
                 borderRadius: "20px",
@@ -174,7 +176,6 @@ function WorkWithTheRockets() {
               </SoftTypography>
             </SoftBox>
           </SoftBox>
-        </SoftBox>
       </SoftBox>
     </Card>
   );

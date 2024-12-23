@@ -29,6 +29,9 @@ import MiniStatisticsCard from "examples/Cards/StatisticsCards/MiniStatisticsCar
 import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
 import GradientLineChart from "examples/Charts/LineCharts/GradientLineChart";
 
+import { DollarSign, Users, Award, BarChart } from 'lucide-react';
+
+
 // RiskCompass AI React base styles
 import typography from "assets/theme/base/typography";
 
@@ -179,7 +182,7 @@ function Dashboard() {
       tooltip: {
         style: {
           fontSize: "10px",
-          fontFamily: "Plus Jakarta Display",
+          fontFamily: "Roboto Helvetica Arial sans-serif",
         },
         theme: "dark",
         y: {
@@ -198,7 +201,7 @@ function Dashboard() {
         categories: ["MACD", "VWAP", "RSI", "SMA"],
         labels: {
           style: {
-            colors: "#fff",
+            colors: "#000",
             fontSize: "12px",
           },
         },
@@ -207,7 +210,7 @@ function Dashboard() {
         show: false,
         labels: {
           style: {
-            colors: "#fff",
+            colors: "#000",
             fontSize: "12px",
           },
         },
@@ -229,8 +232,8 @@ function Dashboard() {
       title: {
         text: `Technical Indicators : ${indicators?.symbol}`,
         style: {
-          color: "#fff",
-          fontSize: "16px",
+          color: "#000",
+          fontSize: "14px",
         },
       }
     };
@@ -615,13 +618,13 @@ function Dashboard() {
   const getIcon = (title) => {
     switch (title) {
       case "Currency & Exchange":
-        return <FaMoneyBillWave size="22px" color="black" />;
+        return <DollarSign size={22} className="text-black" />;
       case "MIC Code & Country":
-        return <FaMoneyBillWave size="22px" color="black" />;
+        return <Users size={22} className="text-black" />;
       case "Type of Stock":
-        return <FaMoneyBillWave size="22px" color="black" />;
+        return <Award size={22} className="text-black" />;
       default:
-        return <FaMoneyBillWave size="22px" color="black" />;
+        return <BarChart size={22} className="text-black" />;
     }
   };
 
@@ -629,14 +632,16 @@ function Dashboard() {
   return (
     <DashboardLayout>
       {/* <DashboardNavbar /> */}
-      <SoftBox py={3}>
+      <SoftBox py={1}>
         <SoftBox mb={3}>
           <Grid container spacing={2}>
             {/* Stock Price Card */}
-            <Grid item xs={12} md={6} lg={3.6}>
+            <Grid item xs={12} md={6} lg={3.7}>
               <MiniStatisticsCard
                 title={{
-                  text: stocksData?.company_name,
+                  text: stocksData?.company_name?.length > 40 
+                  ? stocksData?.company_name.slice(0, 34) + '...' 
+                  : stocksData?.company_name,
                   sx: {
                     fontSize: "0.875rem",
                     color: "#000000",
@@ -647,7 +652,8 @@ function Dashboard() {
                   <span style={{
                     fontSize: "1.25rem",
                     fontWeight: "bold",
-                    color: "#000000"
+                    color: "#000000",
+                    marginRight : '5px'
                   }}>
                     {priceData?.New_price?.toFixed(2)}
                   </span>
@@ -657,14 +663,6 @@ function Dashboard() {
                   text: (
                     <>
                       {`${priceData?.price_change?.toFixed(2)} (${priceData?.percent_change?.toFixed(2)}%)`}
-                      <span style={{
-                        fontSize: "0.5rem",
-                        fontWeight: 500,
-                        color: "gray",
-                        display: "block"
-                      }}>
-                        {`As on ${moment(stocksData?.last_updated).format("DD MMM, YYYY | HH:mm")}`}
-                      </span>
                     </>
                   ),
                   fontSize: "0.875rem"
@@ -677,7 +675,7 @@ function Dashboard() {
             </Grid>
 
             {/* Currency & Exchange Card */}
-            <Grid item xs={12} md={6} lg={2.8}>
+            <Grid item xs={12} md={6} lg={2.7}>
               <MiniStatisticsCard
                 title={{
                   text: "Currency & Exchange",
@@ -704,7 +702,7 @@ function Dashboard() {
             </Grid>
 
             {/* Symbol & Country Card */}
-            <Grid item xs={12} md={6} lg={2.8}>
+            <Grid item xs={12} md={6} lg={3.3}>
               <MiniStatisticsCard
                 title={{
                   text: "Symbol & Country",
@@ -731,10 +729,10 @@ function Dashboard() {
             </Grid>
 
             {/* Type of Stock Card */}
-            <Grid item xs={12} md={6} lg={2.8}>
+            <Grid item xs={12} md={6} lg={2.3}>
               <MiniStatisticsCard
                 title={{
-                  text: "Type of Stock",
+                  text: "High & Low",
                   sx: {
                     fontSize: "0.875rem",
                     color: "#000000",
@@ -752,11 +750,20 @@ function Dashboard() {
                 }
                 icon={{
                   color: "black",
-                  component: getIcon("Type of Stock")
+                  component: getIcon("High & Low")
                 }}
               />
             </Grid>
           </Grid>
+                    <span style={{
+                      fontSize: "0.7rem",
+                      fontWeight: 500,
+                      color: "gray",
+                      display: "block",
+                      marginLeft : '10px'
+                    }}>
+                      {`As on ${moment(stocksData?.last_updated).format("DD MMM, YYYY | HH:mm")}`}
+                    </span>
         </SoftBox>
         <SoftBox mb={3}>
           <Grid container spacing={3}>
@@ -767,24 +774,89 @@ function Dashboard() {
         </SoftBox>
         <SoftBox mb={3}>
           <Grid container spacing={3}>
-            <Grid item xs={12} lg={7}>
-              <BuildByDevelopers />
-            </Grid>
-            <Grid item xs={12} lg={5}>
-              <WorkWithTheRockets />
-            </Grid>
-          </Grid>
-        </SoftBox>
-        <SoftBox mb={3}>
-          <Grid container spacing={3}>
             <Grid item xs={12} lg={12}>
-              <WelcomeMark stocksData={stocksData}/>
+              <Card sx={{ height: "100%", padding: "16px" }}>
+                {/* <SoftTypography color="black" variant="lg" mb="2px" gutterBottom fontWeight="bold">
+                  Technical Indicators
+                </SoftTypography> */}
+                <SoftBox>
+                  <SoftBox
+                    mb="24px"
+                    sx={{
+                      borderRadius: "20px",
+                      backgroundColor: "rgba(0, 0, 0, 0.05)",
+                      color : '#000' // Light gray transparent background
+                    }}
+                  >
+                    <ReportsBarChart
+                      barChartData={chartConfig?.barChartData}
+                      barChartOptions={chartConfig?.barChartOptions}
+                    />
+                  </SoftBox>
+
+                  <SoftBox mb="10px">
+                    <SoftTypography variant="sm" color="black" fontWeight="bold">
+                      Financials
+                    </SoftTypography>
+                  </SoftBox>
+                  <Grid container spacing="5px">
+                    <Grid item xs={6} md={3} lg={6}>
+                      <Stack direction="row" spacing={{ sm: "8px", xl: "1px", xxl: "8px" }} mb="6px">
+                        <SoftTypography color="text" variant="button" fontSize="xxs">
+                          Forward P/E
+                        </SoftTypography>
+                      </Stack>
+                      <SoftTypography color="black" variant="xxs" fontWeight="bold" mb="8px">
+                        {(StatisticsData?.statistics?.valuations_metrics?.forward_pe ?? 0).toFixed(3)}
+                      </SoftTypography>
+                      <SoftProgress value={10} color="info" sx={{ background: "#2D2E5F" }} />
+                    </Grid>
+
+                    <Grid item xs={6} md={3} lg={6}>
+                      <Stack direction="row" spacing={{ sm: "8px", xl: "1px", xxl: "8px" }} mb="6px">
+                        <SoftTypography color="text" variant="button" fontSize="xxs">
+                          Price/Sales (P/S)
+                        </SoftTypography>
+                      </Stack>
+                      <SoftTypography color="black" variant="xxs" fontWeight="bold" mb="8px">
+                        {(StatisticsData?.statistics?.valuations_metrics?.price_to_sales_ttm ?? 0).toFixed(3)}
+                      </SoftTypography>
+                      <SoftProgress value={10} color="info" sx={{ background: "#2D2E5F" }} />
+                    </Grid>
+
+                    <Grid item xs={6} md={3} lg={6}>
+                      <Stack direction="row" spacing={{ sm: "8px", xl: "1px", xxl: "8px" }} mb="6px">
+                        <SoftTypography color="text" variant="button" fontSize="xxs">
+                          Enterprise Value / EBITDA
+                        </SoftTypography>
+                      </Stack>
+                      <SoftTypography color="black" variant="xxs" fontWeight="bold" mb="8px">
+                        {(StatisticsData?.statistics?.valuations_metrics?.enterprise_to_ebitda ?? 0).toFixed(3)}
+                      </SoftTypography>
+                      <SoftProgress value={60} color="info" sx={{ background: "#2D2E5F" }} />
+                    </Grid>
+
+                    <Grid item xs={6} md={3} lg={6}>
+                      <Stack direction="row" spacing={{ sm: "8px", xl: "1px", xxl: "8px" }} mb="6px">
+                        <SoftTypography color="text" variant="button" fontSize="xxs">
+                          Forward Annual Dividend Rate
+                        </SoftTypography>
+                      </Stack>
+                      <SoftTypography color="black" variant="xxs" fontWeight="bold" mb="8px">
+                        {(StatisticsData?.statistics?.dividends_and_splits?.forward_annual_dividend_yield ?? 0).toFixed(3)}
+                      </SoftTypography>
+                      <SoftProgress value={60} color="info" sx={{ background: "#2D2E5F" }} />
+                    </Grid>
+                  </Grid>
+
+                </SoftBox>
+              </Card>
             </Grid>
           </Grid>
         </SoftBox>
         <SoftBox mb={3}>
           <Grid container spacing={3}>
-            <Grid item xs={12} lg={5}>
+            {/* <Grid item xs={12} lg={5}>
               <Card sx={{ height: "100%", padding: "16px" }}>
                 <SoftTypography color="black" variant="lg" mb="2px" gutterBottom fontWeight="bold">
                   Technical Indicators
@@ -858,10 +930,8 @@ function Dashboard() {
 
                 </SoftBox>
               </Card>
-
-
-            </Grid>
-            <Grid item xs={12} lg={7}>
+            </Grid> */}
+            <Grid item xs={12} lg={12}>
               <GradientLineChart
                 title="Stock Price Overview"
                 height="20.25rem"
@@ -870,14 +940,29 @@ function Dashboard() {
             </Grid>
           </Grid>
         </SoftBox>
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={6} lg={8}>
-            <Projects />
+        <SoftBox mb={3}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={6} lg={8}>
+              <Projects />
+            </Grid>
+            <Grid item xs={12} md={6} lg={4}>
+              <OrderOverview />
+            </Grid>
           </Grid>
-          <Grid item xs={12} md={6} lg={4}>
-            <OrderOverview />
+        </SoftBox>
+        <SoftBox mb={3}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} lg={4}>
+              <WelcomeMark stocksData={stocksData} />
+            </Grid>
+            <Grid item xs={12} lg={4}>
+              <BuildByDevelopers />
+            </Grid>
+            <Grid item xs={12} lg={4}>
+              <WorkWithTheRockets />
+            </Grid>
           </Grid>
-        </Grid>
+        </SoftBox>
       </SoftBox>
       <Footer />
     </DashboardLayout>

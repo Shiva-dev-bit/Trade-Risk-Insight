@@ -98,173 +98,180 @@ const OrdersOverview = () => {
     });
 
   return (
-    <Card className="h-100" style={{padding : '14px'}}>
-    <SoftBox mb="16px" display="flex" justifyContent="space-between">
-      <SoftTypography variant="lg" fontWeight="bold" mb="5px" color="black">
-        Quarterly Results
-      </SoftTypography>
-      <SoftTypography variant="lg" fontWeight="bold" mb="5px" color="black">
-        {stockData?.symbol}
-      </SoftTypography>
-    </SoftBox>
-  
-    <SoftBox
-      sx={{
-        maxHeight: "420px",
-        minHeight: "420px",
-        overflowY: "auto",
-        "&::-webkit-scrollbar": {
-          width: "6px",
-        },
-        "&::-webkit-scrollbar-track": {
-          backgroundColor: "transparent",
-        },
-        "&::-webkit-scrollbar-thumb": {
-          backgroundColor: "#888",
-          borderRadius: "10px",
-        },
-        "&::-webkit-scrollbar-thumb:hover": {
-          backgroundColor: "#555",
-        },
-      }}
-    >
-      {processedData?.map(
-        (holder, index) =>
-          (holder.sales ||
-            holder.cost_of_goods ||
-            holder.gross_profit ||
-            holder.operating_income ||
-            holder.net_income ||
-            holder.ebitda) &&
-          holder.fiscal_date && ( // Ensure fiscal_date exists
-            <React.Fragment key={index}>
-              <TimelineItem
-                icon={<FaCoins size="20px" color="black" />}
-                title={
-                  <SoftTypography
-                    variant="subtitle1"
-                    sx={{ fontSize: "15px", lineHeight: "1.2" }}
-                    color="black"
-                  >
-                    {new Date(holder.fiscal_date).toLocaleDateString("en-US", {
-                      day: "2-digit",
-                      month: "short",
-                      year: "numeric",
-                    })}
-                  </SoftTypography>
-                }
-                description={
-                  <SoftBox sx={{ width: "100%" }}>
-                    {holder.sales && (
-                      <SoftTypography
-                        variant="body2"
-                        sx={{
-                          fontSize: "13px",
-                          lineHeight: "1.5",
-                          textAlign: "justify",
-                        }}
-                        color="black"
-                      >
-                        {`Total Revenue: ${formatNumber(holder.sales)} `}
-                        {holder.comparison.sales}
-                      </SoftTypography>
-                    )}
-  
-                    {holder.cost_of_goods && (
-                      <SoftTypography
-                        variant="body2"
-                        sx={{
-                          fontSize: "13px",
-                          lineHeight: "1.5",
-                          textAlign: "justify",
-                        }}
-                        color="black"
-                      >
-                        {`Cost of Goods Sold: ${formatNumber(
-                          holder.cost_of_goods
-                        )} `}
-                        {holder.comparison.cost_of_goods}
-                      </SoftTypography>
-                    )}
-  
-                    {holder.gross_profit && (
-                      <SoftTypography
-                        variant="body2"
-                        sx={{
-                          fontSize: "13px",
-                          lineHeight: "1.5",
-                          textAlign: "justify",
-                        }}
-                        color="black"
-                      >
-                        {`Gross Profit: ${formatNumber(holder.gross_profit)} `}
-                        {holder.comparison.gross_profit}
-                      </SoftTypography>
-                    )}
-  
-                    {holder.operating_income && (
-                      <SoftTypography
-                        variant="body2"
-                        sx={{
-                          fontSize: "13px",
-                          lineHeight: "1.5",
-                          textAlign: "justify",
-                        }}
-                        color="black"
-                      >
-                        {`Operating Income: ${formatNumber(
-                          holder.operating_income
-                        )} `}
-                        {holder.comparison.operating_income}
-                      </SoftTypography>
-                    )}
-  
-                    {holder.net_income && (
-                      <SoftTypography
-                        variant="body2"
-                        sx={{
-                          fontSize: "13px",
-                          lineHeight: "1.5",
-                          textAlign: "justify",
-                        }}
-                        color="black"
-                      >
-                        {`Net Income: ${formatNumber(holder.net_income)} `}
-                        {holder.comparison.net_income}
-                      </SoftTypography>
-                    )}
-  
-                    {holder.ebitda && (
-                      <SoftTypography
-                        variant="body2"
-                        sx={{
-                          fontSize: "13px",
-                          lineHeight: "1.5",
-                          textAlign: "justify",
-                        }}
-                        color="black"
-                      >
-                        {`EBITDA: ${formatNumber(holder.ebitda)} `}
-                        {holder.comparison.ebitda}
-                      </SoftTypography>
-                    )}
-                  </SoftBox>
-                }
-              />
-              {index < processedData.length - 1 && (
-                <Divider
-                  sx={{
-                    backgroundColor: "rgba(0, 0, 0, 0.3)",
-                    marginY: "8px",
-                  }}
+    <Card className="h-100" style={{ padding: '14px' }}>
+      <SoftBox mb="16px" display="flex" justifyContent="space-between">
+        <SoftTypography variant="lg" fontWeight="bold" mb="5px" color="black">
+          Quarterly Results
+        </SoftTypography>
+        <SoftTypography
+          variant="lg"
+          fontWeight="bold"
+          mb="5px"
+          color="black"
+          sx={{ fontSize: "14px" }}
+        >
+          {stockData?.symbol}
+        </SoftTypography>
+
+      </SoftBox>
+
+      <SoftBox
+        sx={{
+          maxHeight: "420px",
+          minHeight: "420px",
+          overflowY: "auto",
+          "&::-webkit-scrollbar": {
+            width: "6px",
+          },
+          "&::-webkit-scrollbar-track": {
+            backgroundColor: "transparent",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor: "#888",
+            borderRadius: "10px",
+          },
+          "&::-webkit-scrollbar-thumb:hover": {
+            backgroundColor: "#555",
+          },
+        }}
+      >
+        {processedData?.map(
+          (holder, index) =>
+            (holder.sales ||
+              holder.cost_of_goods ||
+              holder.gross_profit ||
+              holder.operating_income ||
+              holder.net_income ||
+              holder.ebitda) &&
+            holder.fiscal_date && ( // Ensure fiscal_date exists
+              <React.Fragment key={index}>
+                <TimelineItem
+                  icon={<FaCoins size="20px" color="black" />}
+                  title={
+                    <SoftTypography
+                      variant="subtitle1"
+                      sx={{ fontSize: "15px", lineHeight: "1.2" }}
+                      color="black"
+                    >
+                      {new Date(holder.fiscal_date).toLocaleDateString("en-US", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </SoftTypography>
+                  }
+                  description={
+                    <SoftBox sx={{ width: "100%" }}>
+                      {holder.sales && (
+                        <SoftTypography
+                          variant="body2"
+                          sx={{
+                            fontSize: "13px",
+                            lineHeight: "1.5",
+                            textAlign: "justify",
+                          }}
+                          color="black"
+                        >
+                          {`Total Revenue: ${formatNumber(holder.sales)} `}
+                          {holder.comparison.sales}
+                        </SoftTypography>
+                      )}
+
+                      {holder.cost_of_goods && (
+                        <SoftTypography
+                          variant="body2"
+                          sx={{
+                            fontSize: "13px",
+                            lineHeight: "1.5",
+                            textAlign: "justify",
+                          }}
+                          color="black"
+                        >
+                          {`Cost of Goods Sold: ${formatNumber(
+                            holder.cost_of_goods
+                          )} `}
+                          {holder.comparison.cost_of_goods}
+                        </SoftTypography>
+                      )}
+
+                      {holder.gross_profit && (
+                        <SoftTypography
+                          variant="body2"
+                          sx={{
+                            fontSize: "13px",
+                            lineHeight: "1.5",
+                            textAlign: "justify",
+                          }}
+                          color="black"
+                        >
+                          {`Gross Profit: ${formatNumber(holder.gross_profit)} `}
+                          {holder.comparison.gross_profit}
+                        </SoftTypography>
+                      )}
+
+                      {holder.operating_income && (
+                        <SoftTypography
+                          variant="body2"
+                          sx={{
+                            fontSize: "13px",
+                            lineHeight: "1.5",
+                            textAlign: "justify",
+                          }}
+                          color="black"
+                        >
+                          {`Operating Income: ${formatNumber(
+                            holder.operating_income
+                          )} `}
+                          {holder.comparison.operating_income}
+                        </SoftTypography>
+                      )}
+
+                      {holder.net_income && (
+                        <SoftTypography
+                          variant="body2"
+                          sx={{
+                            fontSize: "13px",
+                            lineHeight: "1.5",
+                            textAlign: "justify",
+                          }}
+                          color="black"
+                        >
+                          {`Net Income: ${formatNumber(holder.net_income)} `}
+                          {holder.comparison.net_income}
+                        </SoftTypography>
+                      )}
+
+                      {holder.ebitda && (
+                        <SoftTypography
+                          variant="body2"
+                          sx={{
+                            fontSize: "13px",
+                            lineHeight: "1.5",
+                            textAlign: "justify",
+                          }}
+                          color="black"
+                        >
+                          {`EBITDA: ${formatNumber(holder.ebitda)} `}
+                          {holder.comparison.ebitda}
+                        </SoftTypography>
+                      )}
+                    </SoftBox>
+                  }
                 />
-              )}
-            </React.Fragment>
-          )
-      )}
-    </SoftBox>
-  </Card>
-  
+                {index < processedData.length - 1 && (
+                  <Divider
+                    sx={{
+                      backgroundColor: "rgba(0, 0, 0, 0.3)",
+                      marginY: "8px",
+                    }}
+                  />
+                )}
+              </React.Fragment>
+            )
+        )}
+      </SoftBox>
+    </Card>
+
   );
 };
 

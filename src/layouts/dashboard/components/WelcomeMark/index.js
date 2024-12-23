@@ -111,20 +111,25 @@ const WelcomeMark = ({ stocksData }) => {
   // console.log(companyData.website);
 
   return (
-    <Card sx={() => ({
-      py: "32px",
-      px: "24px",
-      backgroundSize: "cover",
-      backgroundPosition: "50%",
+    <Card 
+    sx={() => ({
+      p : '20px',
+    //   py: "32px",
+      // p: "25px",
+    //   // backgroundSize: "cover",
+    //   // backgroundPosition: "50%",
       height: '100%',
-      backgroundColor: "#fff",
-      boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)"
-    })}>
+    //   backgroundColor: "#fff",
+    //   boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)"
+    width : '100%',
+    margin : 0
+    })}
+    >
       <SoftBox height="100%" display="flex" flexDirection="column" justifyContent="space-between">
         <SoftBox>
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <SoftTypography color="black" variant="button" fontWeight="bold" mb="12px">
+          <Grid container spacing={3} width={'100%'} margin={0}>
+            <Grid xs={12} >
+              <SoftTypography color="black" variant="button" fontWeight="bold" mb="12px" >
                 Company Description:
               </SoftTypography>
               <SoftTypography color="black" variant="h6" fontWeight="regular">
@@ -133,7 +138,7 @@ const WelcomeMark = ({ stocksData }) => {
             </Grid>
   
             {/* Grid layout for company details */}
-            <Grid item xs={12} sm={6} md={6}>
+            <Grid  xs={12} sm={6} md={6}>
               <SoftTypography color="black" variant="button" fontWeight="bold" mb="6px">
                 CEO:
               </SoftTypography>
@@ -142,7 +147,7 @@ const WelcomeMark = ({ stocksData }) => {
               </SoftTypography>
             </Grid>
   
-            <Grid item xs={12} sm={6} md={6}>
+            <Grid xs={12} sm={6} md={6}>
               <SoftTypography color="black" variant="button" fontWeight="bold" mb="6px">
                 Website:
               </SoftTypography>
@@ -153,7 +158,7 @@ const WelcomeMark = ({ stocksData }) => {
               </SoftTypography>
             </Grid>
   
-            <Grid item xs={12} sm={6} md={6}>
+            <Grid xs={12} sm={6} md={6}>
               <SoftTypography color="black" variant="button" fontWeight="bold" mb="6px">
                 Industry:
               </SoftTypography>
@@ -162,7 +167,7 @@ const WelcomeMark = ({ stocksData }) => {
               </SoftTypography>
             </Grid>
   
-            <Grid item xs={12} sm={6} md={6}>
+            <Grid xs={12} sm={6} md={6}>
               <SoftTypography color="black" variant="button" fontWeight="bold" mb="6px">
                 Country:
               </SoftTypography>
@@ -172,7 +177,7 @@ const WelcomeMark = ({ stocksData }) => {
             </Grid>
   
             {companyData?.companyDescription?.length > 100 && (
-              <Grid item xs={12} sm={6} md={3}>
+              <Grid xs={12} sm={6} md={3}>
                 <SoftTypography
                   variant="button"
                   fontWeight="bold"

@@ -71,7 +71,7 @@ function Projects() {
         </SoftBox>
 
         <SoftBox>
-          <SoftTypography color="black" variant="lg" mb="6px" gutterBottom style={{ fontSize: "15px" }}fontWeight="bold">
+          <SoftTypography color="black" variant="lg" mb="6px" gutterBottom style={{ fontSize: "12px" }}fontWeight="bold">
             {stockData?.company_name}
           </SoftTypography>
         </SoftBox>

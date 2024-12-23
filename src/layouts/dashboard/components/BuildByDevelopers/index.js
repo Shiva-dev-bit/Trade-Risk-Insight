@@ -30,6 +30,10 @@ import { FaArrowsAltV } from "react-icons/fa";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "context/Authcontext";
 import axios from "axios";
+import { BiUpArrowAlt, BiDownArrowAlt } from 'react-icons/bi';
+
+
+
 
 function BuildByDevelopers() {
   const [data, setData] = useState(null);
@@ -54,7 +58,7 @@ function BuildByDevelopers() {
 
 
     return (
-      <Card sx={{ height: "100%", color: 'black' }}>
+      <Card sx={{ color: 'black' , height : '100%' }}>
         <SoftBox display="flex" flexDirection="column" padding={2} sx={{ textAlign: 'center' }}>
           <SoftBox>
             <SoftTypography variant="h5" color="black" fontWeight="bold" mb="45px">
@@ -93,8 +97,7 @@ function BuildByDevelopers() {
                     alignItems: "center",
                   }}
                 >
-                  <FaArrowsAltV size="40px" color="#000   " />
-                </SoftBox>
+<BiUpArrowAlt size="40px" color="#000" />                </SoftBox>
               </SoftBox>
             </SoftBox>
           </SoftBox>

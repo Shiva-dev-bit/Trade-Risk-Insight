@@ -520,7 +520,7 @@ function GradientLineChart({ newprice, selectedStock }) {
         <SoftTypography color="black" variant="lg" mb="10px" gutterBottom fontWeight="bold">
           Stock Price Overview
         </SoftTypography>
-      <CardContent>
+      <CardContent sx={{padding : '0px' , paddingBottom : '0px'}}>
         {/* Title */}
   
         {/* Header Section */}
@@ -538,7 +538,7 @@ function GradientLineChart({ newprice, selectedStock }) {
             sx={{
               display: 'flex',
               flexDirection: { xs: 'column', md: 'row' }, // Responsive flex direction
-              justifyContent: 'space-around',
+              justifyContent: 'space-between',
               fontSize: { xs: '10px', md: '12px' }, // Responsive font size
               gap: { xs: '12px', md: '18px' }, // Responsive gap
             }}
@@ -629,7 +629,7 @@ function GradientLineChart({ newprice, selectedStock }) {
         {/* Chart Section */}
         <div
           style={{
-            height: '250px',
+            height: '280px',
             width: '100%',
             marginTop: '20px',
           }}
