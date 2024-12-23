@@ -44,6 +44,7 @@ import RTL from "layouts/rtl";
 import Profile from "layouts/profile";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
+import TermsAndConditions from "layouts/authentication/terms-and-conditions";
 
 // RiskCompass AI React icons
 import Shop from "examples/Icons/Shop";
@@ -56,8 +57,10 @@ import CreditCard from "examples/Icons/CreditCard";
 import Cube from "examples/Icons/Cube";
 import ForgotPassword from "layouts/authentication/forget-password";
 import ResetPassword from "layouts/authentication/reset-password";
+import PrivacyPolicy from "layouts/authentication/privacyPolicy";
 
 const routes = [
+  
   {
     type: "collapse",
     name: "Dashboard",
@@ -147,6 +150,22 @@ const routes = [
     component: <ResetPassword/>,
     noCollapse: true,
   },
+  {
+    type: "collapse",
+    name: "Terms and Conditions",
+    key: "terms-and-conditions",
+    route: "/terms-and-conditions",
+    component: <TermsAndConditions />,
+    noCollapse: true,
+  },
+  {
+    type: "collapse",
+    name: "Privacy policy",
+    key: "Privacy-policy",
+    route: "/privacy-policy",
+    component: <PrivacyPolicy />,
+    noCollapse: true,
+  }
 ];
 
 export default routes;
