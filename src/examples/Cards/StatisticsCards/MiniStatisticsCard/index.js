@@ -90,13 +90,28 @@ const MiniStatisticsCard = ({ title, count, percentage, icon, direction = "right
           </Grid>
 
           {direction === "right" && (
-            <Grid item>
+            <Grid >
               <SoftBox
-                className="flex items-center justify-center w-12 h-12 rounded-lg shadow-md bg-white"
               >
-                <Icon fontSize="small" className="text-black">
+                <div
+                  style={{
+                    width: "2rem",
+                    height: "2rem",
+                    marginLeft: "auto",
+                    display: "flex",
+                    WebkitBoxPack: "center",
+                    justifyContent: "center",
+                    WebkitBoxAlign: "center",
+                    alignItems: "center",
+                    opacity: 1,
+                    background: "linear-gradient(310deg, rgb(33, 82, 255), rgb(33, 212, 253))",
+                    color: "rgb(255, 255, 255)",
+                    borderRadius: "0.5rem",
+                    boxShadow:
+                      "rgba(20, 20, 20, 0.12) 0rem 0.25rem 0.375rem -0.0625rem, rgba(20, 20, 20, 0.07) 0rem 0.125rem 0.25rem -0.0625rem",
+                  }}>
                   {icon.component}
-                </Icon>
+                </div>
               </SoftBox>
             </Grid>
           )}

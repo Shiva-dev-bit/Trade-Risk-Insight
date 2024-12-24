@@ -751,7 +751,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
                               <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                                 <Box
                                   sx={{
-                                    background: "#81878c",
+                                    background: "#D7D3D3",
                                     padding: "0.1rem 0.1rem",
                                     borderRadius: "10px",
                                     letterSpacing: "0.4px",

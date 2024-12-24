@@ -122,14 +122,15 @@ const WelcomeMark = ({ stocksData }) => {
     //   backgroundColor: "#fff",
     //   boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)"
     width : '100%',
-    margin : 0
+    margin : 0,
+    color : 'rgb(103, 116, 142)'
     })}
     >
       <SoftBox height="100%" display="flex" flexDirection="column" justifyContent="space-between">
         <SoftBox>
           <Grid container spacing={3} width={'100%'} margin={0}>
             <Grid xs={12} >
-              <SoftTypography color="black" variant="button" fontWeight="bold" mb="12px" >
+              <SoftTypography  variant="button" fontWeight="bold" mb="12px" >
                 Company Description:
               </SoftTypography>
               <SoftTypography color="black" variant="h6" fontWeight="regular">

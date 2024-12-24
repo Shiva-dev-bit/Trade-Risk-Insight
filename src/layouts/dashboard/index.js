@@ -229,13 +229,13 @@ function Dashboard() {
         },
       },
       colors: barColors,
-      title: {
-        text: `Technical Indicators : ${indicators?.symbol}`,
-        style: {
-          color: "#000",
-          fontSize: "14px",
-        },
-      }
+      // title: {
+      //   text: `Technical Indicators : ${indicators?.symbol}`,
+      //   style: {
+      //     color: "#000",
+      //     fontSize: "14px",
+      //   },
+      // }
     };
 
     setChartConfig({
@@ -640,20 +640,35 @@ function Dashboard() {
               <MiniStatisticsCard
                 title={{
                   text: stocksData?.company_name?.length > 40 
-                  ? stocksData?.company_name.slice(0, 34) + '...' 
+                  ? stocksData?.company_name.slice(0, 30) + '...' 
                   : stocksData?.company_name,
                   sx: {
+                    margin: "0px",
+                    fontFamily: "Roboto, Helvetica, Arial, sans-serif",
                     fontSize: "0.875rem",
-                    color: "#000000",
-                    fontWeight: 500
+                    fontWeight: "700",
+                    lineHeight: "1.5",
+                    letterSpacing: "0.02857em",
+                    opacity: "1",
+                    textTransform: "capitalize",
+                    verticalAlign: "unset",
+                    textDecoration: "none",
+                    color: "rgb(103, 116, 142)",
                   }
                 }}
                 count={
                   <span style={{
-                    fontSize: "1.25rem",
-                    fontWeight: "bold",
-                    color: "#000000",
-                    marginRight : '5px'
+                    marginRight: "5px",
+                      fontSize: "1rem",
+                      lineHeight: "1.375",
+                      fontFamily: "Roboto, Helvetica, Arial, sans-serif",
+                      letterSpacing: "0em",
+                      opacity: "1",
+                      textTransform: "none",
+                      verticalAlign: "unset",
+                      textDecoration: "none",
+                      color: "rgb(52, 71, 103)",
+                      fontWeight: "700"
                   }}>
                     {priceData?.New_price?.toFixed(2)}
                   </span>
@@ -680,16 +695,32 @@ function Dashboard() {
                 title={{
                   text: "Currency & Exchange",
                   sx: {
+                    margin: "0px",
+                    fontFamily: "Roboto, Helvetica, Arial, sans-serif",
                     fontSize: "0.875rem",
-                    color: "#000000",
-                    fontWeight: 500
+                    fontWeight: "700",
+                    lineHeight: "1.5",
+                    letterSpacing: "0.02857em",
+                    opacity: "1",
+                    textTransform: "capitalize",
+                    verticalAlign: "unset",
+                    textDecoration: "none",
+                    color: "rgb(103, 116, 142)",
                   }
                 }}
                 count={
                   <span style={{
-                    fontSize: "1rem",
-                    fontWeight: "bold",
-                    color: "#000000"
+                    marginRight: "5px",
+                      fontSize: "1rem",
+                      lineHeight: "1.375",
+                      fontFamily: "Roboto, Helvetica, Arial, sans-serif",
+                      letterSpacing: "0em",
+                      opacity: "1",
+                      textTransform: "none",
+                      verticalAlign: "unset",
+                      textDecoration: "none",
+                      color: "rgb(52, 71, 103)",
+                      fontWeight: "700"
                   }}>
                     {`${stocksData?.currency} / ${stocksData?.exchange}`}
                   </span>
@@ -702,21 +733,37 @@ function Dashboard() {
             </Grid>
 
             {/* Symbol & Country Card */}
-            <Grid item xs={12} md={6} lg={3.3}>
+            <Grid item xs={12} md={6} lg={3}>
               <MiniStatisticsCard
                 title={{
                   text: "Symbol & Country",
                   sx: {
+                    margin: "0px",
+                    fontFamily: "Roboto, Helvetica, Arial, sans-serif",
                     fontSize: "0.875rem",
-                    color: "#000000",
-                    fontWeight: 500
+                    fontWeight: "700",
+                    lineHeight: "1.5",
+                    letterSpacing: "0.02857em",
+                    opacity: "1",
+                    textTransform: "capitalize",
+                    verticalAlign: "unset",
+                    textDecoration: "none",
+                    color: "rgb(103, 116, 142)",
                   }
                 }}
                 count={
                   <span style={{
-                    fontSize: "1rem",
-                    fontWeight: "bold",
-                    color: "#000000"
+                    marginRight: "5px",
+                      fontSize: "1rem",
+                      lineHeight: "1.375",
+                      fontFamily: "Roboto, Helvetica, Arial, sans-serif",
+                      letterSpacing: "0em",
+                      opacity: "1",
+                      textTransform: "none",
+                      verticalAlign: "unset",
+                      textDecoration: "none",
+                      color: "rgb(52, 71, 103)",
+                      fontWeight: "700"
                   }}>
                     {`${stocksData?.symbol}, ${stocksData?.country}`}
                   </span>
@@ -729,23 +776,39 @@ function Dashboard() {
             </Grid>
 
             {/* Type of Stock Card */}
-            <Grid item xs={12} md={6} lg={2.3}>
+            <Grid item xs={12} md={6} lg={2.6}>
               <MiniStatisticsCard
                 title={{
-                  text: "High & Low",
+                  text: "52 Week High & Low",
                   sx: {
+                    margin: "0px",
+                    fontFamily: "Roboto, Helvetica, Arial, sans-serif",
                     fontSize: "0.875rem",
-                    color: "#000000",
-                    fontWeight: 500
+                    fontWeight: "700",
+                    lineHeight: "1.5",
+                    letterSpacing: "0.02857em",
+                    opacity: "1",
+                    textTransform: "capitalize",
+                    verticalAlign: "unset",
+                    textDecoration: "none",
+                    color: "rgb(103, 116, 142)",
                   }
                 }}
                 count={
                   <span style={{
-                    fontSize: "1rem",
-                    fontWeight: "bold",
-                    color: "#000000"
+                    marginRight: "5px",
+                      fontSize: "1rem",
+                      lineHeight: "1.375",
+                      fontFamily: "Roboto, Helvetica, Arial, sans-serif",
+                      letterSpacing: "0em",
+                      opacity: "1",
+                      textTransform: "none",
+                      verticalAlign: "unset",
+                      textDecoration: "none",
+                      color: "rgb(52, 71, 103)",
+                      fontWeight: "700"
                   }}>
-                    {stocksData?.type}
+                    {'-'}
                   </span>
                 }
                 icon={{
@@ -775,10 +838,10 @@ function Dashboard() {
         <SoftBox mb={3}>
           <Grid container spacing={3}>
             <Grid item xs={12} lg={12}>
-              <Card sx={{ height: "100%", padding: "16px" }}>
-                {/* <SoftTypography color="black" variant="lg" mb="2px" gutterBottom fontWeight="bold">
+              <Card sx={{ height: "100%", padding: "16px", color : 'rgb(103, 116, 142)'}}>
+                <SoftTypography color="gray" variant="lg" mb="2px" gutterBottom fontWeight="bold">
                   Technical Indicators
-                </SoftTypography> */}
+                </SoftTypography>
                 <SoftBox>
                   <SoftBox
                     mb="24px"
@@ -795,7 +858,7 @@ function Dashboard() {
                   </SoftBox>
 
                   <SoftBox mb="10px">
-                    <SoftTypography variant="sm" color="black" fontWeight="bold">
+                    <SoftTypography variant="sm" fontWeight="bold">
                       Financials
                     </SoftTypography>
                   </SoftBox>
@@ -951,14 +1014,14 @@ function Dashboard() {
           </Grid>
         </SoftBox>
         <SoftBox mb={3}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} lg={4}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} lg={6}>
               <WelcomeMark stocksData={stocksData} />
             </Grid>
-            <Grid item xs={12} lg={4}>
+            <Grid item xs={12} lg={3}>
               <BuildByDevelopers />
             </Grid>
-            <Grid item xs={12} lg={4}>
+            <Grid item xs={12} lg={3}>
               <WorkWithTheRockets />
             </Grid>
           </Grid>

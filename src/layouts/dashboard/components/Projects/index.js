@@ -46,14 +46,15 @@ function Projects() {
         height: "100% !important",
         position: "relative", // Required for positioning child elements
         overflowX: "auto",
-        padding : '10px'
+        padding : '10px',
+        color : 'rgb(103, 116, 142)'
       }}
     >
       {/* Content Section */}
       <SoftBox display="flex" justifyContent="space-between" alignItems="center" mb="32px">
         <SoftBox mb="auto">
           {/* Top Stock Market News */}
-          <SoftTypography color="black" variant="lg" mb="6px" gutterBottom fontWeight="bold">
+          <SoftTypography  variant="lg" mb="6px" gutterBottom fontWeight="bold">
             Top Stock Market News
           </SoftTypography>
 
@@ -71,7 +72,7 @@ function Projects() {
         </SoftBox>
 
         <SoftBox>
-          <SoftTypography color="black" variant="lg" mb="6px" gutterBottom style={{ fontSize: "12px" }}fontWeight="bold">
+          <SoftTypography variant="lg" mb="6px" gutterBottom style={{ fontSize: "12px" }}fontWeight="bold">
             {stockData?.company_name}
           </SoftTypography>
         </SoftBox>

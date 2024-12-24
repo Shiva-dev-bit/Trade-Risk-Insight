@@ -30,7 +30,7 @@ import { FaArrowsAltV } from "react-icons/fa";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "context/Authcontext";
 import axios from "axios";
-import { BiUpArrowAlt, BiDownArrowAlt } from 'react-icons/bi';
+import { BiUpArrowAlt, BiDownArrowAlt, BiSolidUpArrowAlt } from 'react-icons/bi';
 
 
 
@@ -53,92 +53,106 @@ function BuildByDevelopers() {
         console.error("Error fetching data:", error);
         setLoading(false);
       });
-    }, [stockData?.stockData?.symbol]);
-    
+  }, [stockData?.stockData?.symbol]);
 
 
-    return (
-      <Card sx={{ color: 'black' , height : '100%' }}>
-        <SoftBox display="flex" flexDirection="column" padding={2} sx={{ textAlign: 'center' }}>
-          <SoftBox>
-            <SoftTypography variant="h5" color="black" fontWeight="bold" mb="45px">
-              <span style={{fontSize:'medium'}}>Volatility Score </span>
-              <span style={{fontSize:'medium'}}> {stockData?.stockData?.symbol}</span>
-            </SoftTypography>
-          </SoftBox>
-          <SoftBox sx={{ alignSelf: "center", justifySelf: "center", zIndex: "-1", mb: 4 }}>
-            <SoftBox sx={{ position: "relative", display: "inline-flex" }}>
-              <CircularProgress
-                variant="determinate"
-                value={(data?.volatility_score ?? 0) * 100}
-                size={150}
-                color="black"
-              />
-    
-              <SoftBox
-                sx={{
-                  top: 0,
-                  left: 0,
-                  bottom: 0,
-                  right: 0,
-                  position: "absolute",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <SoftBox
-                  sx={{
-                    width: "50px",
-                    height: "50px",
-                    borderRadius: "50%",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-<BiUpArrowAlt size="40px" color="#000" />                </SoftBox>
-              </SoftBox>
-            </SoftBox>
-          </SoftBox>
+
+  return (
+    <Card sx={{ color: 'rgb(103, 116, 142)', height: '100%' }}>
+      <SoftBox display="flex" flexDirection="column" padding={2} sx={{ textAlign: 'center' }}>
+        <SoftBox>
+          <SoftTypography variant="h5"  fontWeight="bold" mb="45px">
+            <span style={{ fontSize: 'medium' }}>Volatility Score </span>
+            <span style={{ fontSize: 'medium' }}> {stockData?.stockData?.symbol}</span>
+          </SoftTypography>
+        </SoftBox>
+        <SoftBox
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: -1, // Use numeric value without quotes
+            mb: 4,
+          }}
+        >
+          {/* Circular Progress Container */}
           <SoftBox
-            sx={({ breakpoints }) => ({
-              width: "90%",
-              padding: "18px 22px",
-              display: "flex",
-              justifyContent: "space-between",
-              flexDirection: "row",
-              height: "82px",
-              mx: "auto",
-              borderRadius: "20px",
-              transform: "translateY(10%)",
-              zIndex: "1000",
-            })}
+            sx={{
+              position: "relative",
+              display: "inline-flex",
+            }}
           >
-            <SoftTypography color="black" variant="caption" display="inline-block" fontWeight="regular">
-              0%
-            </SoftTypography>
+            {/* Circular Progress */}
+            <CircularProgress
+              variant="determinate"
+              value={(data?.volatility_score ?? 0) * 100}
+              size={150}
+              thickness={4} // Optional: Adjust the thickness of the circle
+              sx={{
+                color: "black", // Set progress bar color
+              }}
+            />
+
+            {/* Inner Content (Centered Arrow) */}
             <SoftBox
-              flexDirection="column"
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              sx={{ minWidth: "80px" }}
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)", // Center the content
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "50%",
+                width: "50px",
+                height: "50px",
+                backgroundColor: "black", // Optional: Add a background color for contrast
+                boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", // Optional: Add shadow for styling
+              }}
             >
-              <SoftTypography color="black" variant="h5">
-                {(data?.volatility_score * 100).toFixed(2)}%
-              </SoftTypography>
-              <SoftTypography color="black" variant="caption" fontWeight="regular" sx={{ fontSize: '10px' }}>
-                Based on APARCH model volatility
-              </SoftTypography>
+              <BiSolidUpArrowAlt size="30px" color="black" /> {/* Adjust size and color */}
             </SoftBox>
-            <SoftTypography color="black" variant="caption" display="inline-block" fontWeight="regular">
-              100%
-            </SoftTypography>
           </SoftBox>
         </SoftBox>
-      </Card>
-    );
+
+        <SoftBox
+          sx={({ breakpoints }) => ({
+            width: "90%",
+            padding: "18px 22px",
+            display: "flex",
+            justifyContent: "space-between",
+            flexDirection: "row",
+            height: "82px",
+            mx: "auto",
+            borderRadius: "20px",
+            transform: "translateY(10%)",
+            zIndex: "1000",
+          })}
+        >
+          <SoftTypography color="black" variant="caption" display="inline-block" fontWeight="regular">
+            0%
+          </SoftTypography>
+          <SoftBox
+            flexDirection="column"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            sx={{ minWidth: "80px" }}
+          >
+            <SoftTypography color="black" variant="h5">
+              {(data?.volatility_score * 100).toFixed(2)}%
+            </SoftTypography>
+            <SoftTypography color="black" variant="caption" fontWeight="regular" sx={{ fontSize: '10px' }}>
+              Based on APARCH model volatility
+            </SoftTypography>
+          </SoftBox>
+          <SoftTypography color="black" variant="caption" display="inline-block" fontWeight="regular">
+            100%
+          </SoftTypography>
+        </SoftBox>
+      </SoftBox>
+    </Card>
+  );
 }
 
 export default BuildByDevelopers;
