@@ -172,13 +172,16 @@ function Header({ username, email }) {
                 />
               </Tabs>
             </AppBar>
-          </Grid>
+          </Grid> 
         </Grid>
       </Card>
     </SoftBox>
 
   );
 }
+Header.propTypes = {
+  user: PropTypes.object.isRequired,
+};
 
 Header.propTypes = {
     username: PropTypes.string,

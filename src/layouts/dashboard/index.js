@@ -46,6 +46,7 @@ import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
 import gradientLineChartData from "layouts/dashboard/data/gradientLineChartData";
 import { FaCaretDown, FaCaretUp, FaMoneyBillWave } from "react-icons/fa";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "context/Authcontext";
 import { supabase } from "lib/supabase";
 import axios from "axios";
@@ -62,6 +63,7 @@ function Dashboard() {
   // const [stocks, setStocks] = useState([]);
   const wsRef = useRef(null);
   const reconnectTimeoutRef = useRef(null);
+  const navigate = useNavigate();
 
 
   const [supabaseStocks, setSupabaseStocks] = useState([]);
@@ -285,6 +287,7 @@ function Dashboard() {
       fetchIndicators();
       setStocksData(stockData.stockData);
     }
+    navigate(`/dashboard/${stocksData?.symbol}`);
   }, [stockData, stocksData?.symbol, stocksData?.exchange]);
 
 

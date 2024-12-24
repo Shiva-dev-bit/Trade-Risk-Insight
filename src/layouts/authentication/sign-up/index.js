@@ -313,7 +313,6 @@ function SignUp() {
                 to="/terms-and-conditions" // route for Terms And Conditions
                 variant="button"
                 fontWeight="bold"
-                textGradient
                 sx={{ ml: 1 }}
               >
                 Terms & Conditions
@@ -333,7 +332,6 @@ function SignUp() {
                 to="/privacy-policy" // route for Privacy policy
                 variant="button"
                 fontWeight="bold"
-                textGradient
                 sx={{ ml: 1 }}
               >
                 Privacy policy
