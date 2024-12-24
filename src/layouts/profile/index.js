@@ -49,135 +49,160 @@ import team1 from "assets/images/team-1.jpg";
 import team2 from "assets/images/team-2.jpg";
 import team3 from "assets/images/team-3.jpg";
 import team4 from "assets/images/team-4.jpg";
+import { useState, useEffect, useContext } from "react";
+import { AuthContext } from "context/Authcontext";
+import { supabase } from "lib/supabase";
+import { Alert } from "@mui/material";
+
 
 function Overview() {
+  const [user, setUser] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedUser, setEditedUser] = useState(null);
+  const [alert, setAlert] = useState({ show: false, message: "", severity: "" });
+  const { session } = useContext(AuthContext);
+  const userEmail = session?.user?.email;
+
+  const fetchUser = async (userMail) => {
+    try {
+      const { data, error } = await supabase
+        .from("users")
+        .select("*")
+        .eq("email", userMail)
+        .single();
+
+      if (error) throw error;
+
+      if (data) {
+        console.log("User data:", data);
+        setUser(data);
+        setEditedUser(data);
+        return data;
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (userEmail) {
+      fetchUser(userEmail);
+    }
+  }, [userEmail]);
+
+  const handleEdit = () => {
+    setIsEditing(true);
+    // Set editedUser with raw values, no defaults
+    setEditedUser({
+      ...user,
+      username: user?.username || "",
+      mobile_number: user?.mobile_number || "",
+      country: user?.country || "",
+      email: user?.email || userEmail
+    });
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+    setEditedUser(user);
+  };
+
+  const handleSave = async () => {
+    try {
+      // Only update fields that are not empty
+      const updateData = {};
+      if (editedUser.username) updateData.username = editedUser.username;
+      if (editedUser.mobile_number) updateData.mobile_number = editedUser.mobile_number;
+      if (editedUser.country) updateData.country = editedUser.country;
+
+      const { data, error } = await supabase
+        .from("users")
+        .update(updateData)
+        .eq("email", userEmail)
+        .select();
+
+      if (error) throw error;
+
+      setUser({ ...user, ...updateData });
+      setIsEditing(false);
+      setAlert({
+        show: true,
+        message: "Profile updated successfully!",
+        severity: "success"
+      });
+
+      setTimeout(() => {
+        setAlert({ show: false, message: "", severity: "" });
+      }, 3000);
+
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      setAlert({
+        show: true,
+        message: "Error updating profile. Please try again.",
+        severity: "error"
+      });
+    }
+  };
+
+  const handleChange = (field) => (event) => {
+    console.log("Changing field:", field, "to value:", event.target.value);
+    setEditedUser(prev => ({
+      ...prev,
+      [field]: event.target.value
+    }));
+  };
+
+  const getProfileInfo = () => {
+    if (isEditing) {
+      // When editing, use raw values with no defaults
+      return {
+        fullName: editedUser?.username || "",
+        mobile: editedUser?.mobile_number || "",
+        email: editedUser?.email || userEmail,
+        location: editedUser?.country || ""
+      };
+    } else {
+      // When displaying, use defaults for empty values
+      return {
+        fullName: user?.username || "Not provided",
+        mobile: user?.mobile_number || "Not provided",
+        email: user?.email || userEmail || "Not provided",
+        location: user?.country || "Not provided"
+      };
+    }
+  };
+
   return (
     <DashboardLayout>
-      <Header />
+      <Header 
+        user={user}
+      />
       <SoftBox mt={5} mb={3}>
+        {alert.show && (
+          <Alert severity={alert.severity} sx={{ mb: 2 }}>
+            {alert.message}
+          </Alert>
+        )}
         <Grid container spacing={3}>
-          <Grid item xs={12} md={6} xl={4}>
+          {/* <Grid item xs={12} md={6} xl={4}>
             <PlatformSettings />
-          </Grid>
+          </Grid> */}
           <Grid item xs={12} md={6} xl={4}>
             <ProfileInfoCard
-              title="profile information"
-              description="Hi, I’m Alec Thompson, Decisions: If you can’t decide, the answer is no. If two equally difficult paths, choose the one more painful in the short term (pain avoidance is creating an illusion of equality)."
-              info={{
-                fullName: "Alec M. Thompson",
-                mobile: "(44) 123 1234 123",
-                email: "alecthompson@mail.com",
-                location: "USA",
+              title={isEditing ? "edit profile information" : "profile information"}
+              info={getProfileInfo()}
+              action={{
+                tooltip: isEditing ? "Save Changes" : "Edit Profile",
+                onClick: isEditing ? handleSave : handleEdit
               }}
-              social={[
-                {
-                  link: "https://www.facebook.com/CreativeTim/",
-                  icon: <FacebookIcon />,
-                  color: "facebook",
-                },
-                {
-                  link: "https://twitter.com/creativetim",
-                  icon: <TwitterIcon />,
-                  color: "twitter",
-                },
-                {
-                  link: "https://www.instagram.com/creativetimofficial/",
-                  icon: <InstagramIcon />,
-                  color: "instagram",
-                },
-              ]}
-              action={{ route: "", tooltip: "Edit Profile" }}
+              isEditing={isEditing}
+              onChange={handleChange}
+              onCancel={handleCancel}
             />
-          </Grid>
-          <Grid item xs={12} xl={4}>
-            <ProfilesList title="conversations" profiles={profilesListData} />
           </Grid>
         </Grid>
       </SoftBox>
-      <SoftBox mb={3}>
-        <Card>
-          <SoftBox pt={2} px={2}>
-            <SoftBox mb={0.5}>
-              <SoftTypography variant="h6" fontWeight="medium">
-                Projects
-              </SoftTypography>
-            </SoftBox>
-            <SoftBox mb={1}>
-              <SoftTypography variant="button" fontWeight="regular" color="text">
-                Architects design houses
-              </SoftTypography>
-            </SoftBox>
-          </SoftBox>
-          <SoftBox p={2}>
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={6} xl={3}>
-                <DefaultProjectCard
-                  image={homeDecor1}
-                  label="project #2"
-                  title="modern"
-                  description="As Uber works through a huge amount of internal management turmoil."
-                  action={{
-                    type: "internal",
-                    route: "/pages/profile/profile-overview",
-                    color: "info",
-                    label: "view project",
-                  }}
-                  authors={[
-                    { image: team1, name: "Elena Morison" },
-                    { image: team2, name: "Ryan Milly" },
-                    { image: team3, name: "Nick Daniel" },
-                    { image: team4, name: "Peterson" },
-                  ]}
-                />
-              </Grid>
-              <Grid item xs={12} md={6} xl={3}>
-                <DefaultProjectCard
-                  image={homeDecor2}
-                  label="project #1"
-                  title="scandinavian"
-                  description="Music is something that every person has his or her own specific opinion about."
-                  action={{
-                    type: "internal",
-                    route: "/pages/profile/profile-overview",
-                    color: "info",
-                    label: "view project",
-                  }}
-                  authors={[
-                    { image: team3, name: "Nick Daniel" },
-                    { image: team4, name: "Peterson" },
-                    { image: team1, name: "Elena Morison" },
-                    { image: team2, name: "Ryan Milly" },
-                  ]}
-                />
-              </Grid>
-              <Grid item xs={12} md={6} xl={3}>
-                <DefaultProjectCard
-                  image={homeDecor3}
-                  label="project #3"
-                  title="minimalist"
-                  description="Different people have different taste, and various types of music."
-                  action={{
-                    type: "internal",
-                    route: "/pages/profile/profile-overview",
-                    color: "info",
-                    label: "view project",
-                  }}
-                  authors={[
-                    { image: team4, name: "Peterson" },
-                    { image: team3, name: "Nick Daniel" },
-                    { image: team2, name: "Ryan Milly" },
-                    { image: team1, name: "Elena Morison" },
-                  ]}
-                />
-              </Grid>
-              <Grid item xs={12} md={6} xl={3}>
-                <PlaceholderCard title={{ variant: "h5", text: "New project" }} outlined />
-              </Grid>
-            </Grid>
-          </SoftBox>
-        </Card>
-      </SoftBox>
-
       <Footer />
     </DashboardLayout>
   );

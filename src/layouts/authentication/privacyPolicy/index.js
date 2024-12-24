@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 
 function PrivacyPolicy() {
   return (
-    <Card sx={{ width: "75%", marginLeft: "auto", marginRight: "auto", marginTop: "100px"}}>
+    <Card sx={{ width: "60%", marginLeft: "auto", marginRight: "auto", marginTop: "100px"}}>
       <SoftBox p={3}>
         <SoftTypography variant="h5" fontWeight="medium" mb={2}>
           privacy policy

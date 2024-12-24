@@ -24,6 +24,8 @@ import Card from "@mui/material/Card";
 import Divider from "@mui/material/Divider";
 import Tooltip from "@mui/material/Tooltip";
 import Icon from "@mui/material/Icon";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
 
 // RiskCompass AI React components
 import SoftBox from "components/SoftBox";
@@ -33,54 +35,39 @@ import SoftTypography from "components/SoftTypography";
 import colors from "assets/theme/base/colors";
 import typography from "assets/theme/base/typography";
 
-function ProfileInfoCard({ title, description, info, social, action }) {
-  const labels = [];
-  const values = [];
-  const { socialMediaColors } = colors;
-  const { size } = typography;
+function ProfileInfoCard({ title, info, action, isEditing, onChange, onCancel }) {
+  // Updated fields mapping to match database fields
+  const fields = {
+    fullName: { label: "Username", key: "username" },        // Changed key to match database
+    mobile: { label: "Mobile Number", key: "mobile_number" }, // Changed key to match database
+    email: { label: "Email", key: "email" },
+    location: { label: "Location", key: "country" }          // Changed key to match database
+  };
 
-  // Convert this form `objectKey` of the object key in to this `object key`
-  Object.keys(info).forEach((el) => {
-    if (el.match(/[A-Z\s]+/)) {
-      const uppercaseLetter = Array.from(el).find((i) => i.match(/[A-Z]+/));
-      const newElement = el.replace(uppercaseLetter, ` ${uppercaseLetter.toLowerCase()}`);
-
-      labels.push(newElement);
-    } else {
-      labels.push(el);
-    }
-  });
-
-  // Push the object values into the values array
-  Object.values(info).forEach((el) => values.push(el));
-
-  // Render the card info items
-  const renderItems = labels.map((label, key) => (
-    <SoftBox key={label} display="flex" py={1} pr={2}>
+  const renderItems = Object.entries(fields).map(([fieldName, { label, key }]) => (
+    <SoftBox key={fieldName} display="flex" flexDirection="column" py={1} pr={2}>
       <SoftTypography variant="button" fontWeight="bold" textTransform="capitalize">
-        {label}: &nbsp;
+        {label}
       </SoftTypography>
-      <SoftTypography variant="button" fontWeight="regular" color="text">
-        &nbsp;{values[key]}
-      </SoftTypography>
-    </SoftBox>
-  ));
-
-  // Render the card social media icons
-  const renderSocial = social.map(({ link, icon, color }) => (
-    <SoftBox
-      key={color}
-      component="a"
-      href={link}
-      target="_blank"
-      rel="noreferrer"
-      fontSize={size.lg}
-      color={socialMediaColors[color].main}
-      pr={1}
-      pl={0.5}
-      lineHeight={1}
-    >
-      {icon}
+      {isEditing ? (
+        <TextField
+          fullWidth
+          value={info[fieldName] || ""}
+          onChange={onChange(key)}  // Use the database field key here
+          disabled={fieldName === "email"}
+          size="small"
+          sx={{ 
+            mt: 1,
+            '& .MuiInputBase-input': {
+              fontSize: '0.875rem',
+            }
+          }}
+        />
+      ) : (
+        <SoftTypography variant="button" fontWeight="regular" color="text">
+          {info[fieldName]}
+        </SoftTypography>
+      )}
     </SoftBox>
   ));
 
@@ -90,45 +77,68 @@ function ProfileInfoCard({ title, description, info, social, action }) {
         <SoftTypography variant="h6" fontWeight="medium" textTransform="capitalize">
           {title}
         </SoftTypography>
-        <SoftTypography component={Link} to={action.route} variant="body2" color="secondary">
-          <Tooltip title={action.tooltip} placement="top">
-            <Icon>edit</Icon>
-          </Tooltip>
-        </SoftTypography>
+        {!isEditing && (
+          <SoftTypography 
+            component="button" 
+            onClick={action.onClick} 
+            variant="body2" 
+            color="secondary"
+            sx={{ 
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              padding: 0
+            }}
+          >
+            <Tooltip title={action.tooltip} placement="top">
+              <Icon>edit</Icon>
+            </Tooltip>
+          </SoftTypography>
+        )}
       </SoftBox>
       <SoftBox p={2}>
-        <SoftBox mb={2} lineHeight={1}>
-          <SoftTypography variant="button" color="text" fontWeight="regular">
-            {description}
-          </SoftTypography>
-        </SoftBox>
-        <SoftBox opacity={0.3}>
-          <Divider />
-        </SoftBox>
-        <SoftBox>
-          {renderItems}
-          <SoftBox display="flex" py={1} pr={2}>
-            <SoftTypography variant="button" fontWeight="bold" textTransform="capitalize">
-              social: &nbsp;
-            </SoftTypography>
-            {renderSocial}
+        <SoftBox>{renderItems}</SoftBox>
+        {isEditing && (
+          <SoftBox display="flex" justifyContent="flex-end" gap={2} mt={2}>
+            <Button 
+              variant="contained" 
+              color="dark" 
+              onClick={onCancel}
+              sx={{ textTransform: 'capitalize' }}
+            >
+              Cancel
+            </Button>
+            <Button 
+              variant="contained" 
+              color="dark" 
+              onClick={action.onClick}
+              sx={{ textTransform: 'capitalize' }}
+            >
+              Save Changes
+            </Button>
           </SoftBox>
-        </SoftBox>
+        )}
       </SoftBox>
     </Card>
   );
 }
 
-// Typechecking props for the ProfileInfoCard
 ProfileInfoCard.propTypes = {
   title: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
-  info: PropTypes.objectOf(PropTypes.string).isRequired,
-  social: PropTypes.arrayOf(PropTypes.object).isRequired,
+  info: PropTypes.object.isRequired,
   action: PropTypes.shape({
-    route: PropTypes.string.isRequired,
     tooltip: PropTypes.string.isRequired,
+    onClick: PropTypes.func.isRequired,
   }).isRequired,
+  isEditing: PropTypes.bool,
+  onChange: PropTypes.func,
+  onCancel: PropTypes.func,
+};
+
+ProfileInfoCard.defaultProps = {
+  isEditing: false,
 };
 
 export default ProfileInfoCard;
