@@ -47,7 +47,7 @@ function Projects() {
         position: "relative", // Required for positioning child elements
         overflowX: "auto",
         padding : '10px',
-        color : 'rgb(103, 116, 142)'
+        color : 'rgb(103, 116, 142)',
       }}
     >
       {/* Content Section */}

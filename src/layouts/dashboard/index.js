@@ -98,54 +98,55 @@ function Dashboard() {
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState(null);
 
-  console.log('stocksData', stocksData);
-
+  
   const [StatisticsData, setStatisticsData] = useState({
     statistics: {
       valuations_metrics: {
-        forward_pe: 26.9,
-        price_to_sales_ttm: 7.3,
-        enterprise_to_ebitda: 23.6,
+        forward_pe: 0.000,
+        price_to_sales_ttm: 0.000,
+        enterprise_to_ebitda: 0.000,
       },
       dividends_and_splits: {
-        forward_annual_dividend_yield: 0.05,
+        forward_annual_dividend_yield: 0.000,
       },
     }
   });
-
+  
+  console.log('StatisticsData', StatisticsData);
+  
   const [indicators, setIndicators] = useState({
     "symbol": "NSEI",
     "exchange": "NSE",
-    "current_price": 24620.5,
+    "current_price": 736.099976,
     "signals": {
-      "macd": {
-        "datetime": "2024-12-10",
-        "macd": 79.40186,
-        "macd_signal": -29.96754,
-        "signal": "BUY"
-      },
-      "vwap": {
-        "datetime": "2024-12-10",
-        "vwap": 24603.36654,
-        "current_price": 24620.5,
-        "signal": "SELL"
-      },
-      "rsi": {
-        "datetime": "2024-12-10",
-        "rsi": 57.86982,
-        "signal": "SELL"
-      },
-      "sma": {
-        "datetime": "2024-12-10",
-        "sma": 24095.44268,
-        "current_price": 24620.5,
-        "signal": "BUY"
-      }
+        "macd": {
+            "datetime": "2024-12-24",
+            "macd": -22.41159,
+            "macd_signal": -18.16149,
+            "signal": "SELL"
+        },
+        "vwap": {
+            "datetime": "2024-12-24",
+            "vwap": 734.63332,
+            "current_price": 736.099976,
+            "signal": "SELL"
+        },
+        "sma": {
+            "datetime": "2024-12-24",
+            "sma": 777.9825,
+            "current_price": 736.099976,
+            "signal": "SELL"
+        },
+        "long_sma": {
+            "datetime": "2024-12-24",
+            "sma": 954.72425,
+            "current_price": 736.099976,
+            "signal": "SELL"
+        }
     }
-  }
+}
   )
 
-  console.log('indicators', indicators);
 
   const [chartConfig, setChartConfig] = useState({
     barChartData: [],
@@ -156,6 +157,8 @@ function Dashboard() {
 
   useEffect(() => {
     if (!indicators) return;
+
+    console.log('indicators',indicators);
 
     let barChartData = [{
       name: indicators?.symbol,
@@ -170,8 +173,8 @@ function Dashboard() {
     let barColors = [
       indicators?.signals?.macd?.signal === "SELL" ? '#ef4444' : '#22c55e',
       indicators?.signals?.vwap?.signal === "SELL" ? '#ef4444' : '#22c55e',
-      indicators?.signals?.rsi?.signal === "SELL" ? '#ef4444' : '#22c55e',
       indicators?.signals?.sma?.signal === "SELL" ? '#ef4444' : '#22c55e',
+      indicators?.signals?.long_sma?.signal === "SELL" ? '#ef4444' : '#22c55e',
     ];
 
     let barChartOptions = {
@@ -190,17 +193,17 @@ function Dashboard() {
         y: {
           formatter: function (value, { seriesIndex, dataPointIndex, w }) {
             const values = [
-              indicators?.signals.signals.macd.macd,
-              indicators?.signals.signals.vwap.vwap,
-              indicators?.signals.signals.rsi.rsi,
-              indicators?.signals.signals.sma.sma
+              indicators?.signals?.macd?.macd,
+              indicators?.signals?.vwap?.vwap,
+              indicators?.signals?.sma?.sma,
+              indicators?.signals?.sma?.sma
             ];
-            return values[dataPointIndex]?.toFixed(2);
+            return values[dataPointIndex];
           }
         }
       },
       xaxis: {
-        categories: ["MACD", "VWAP", "RSI", "SMA"],
+        categories: ["MACD", "VWAP", "SMA", "LONG_SMA"],
         labels: {
           style: {
             colors: "#000",
@@ -249,7 +252,7 @@ function Dashboard() {
 
   const fetchStatistics = async () => {
     try {
-      const response = await axios(`https://rcapidev.neosme.co:2053/statistics/${stockData?.stockData?.symbol}`);
+      const response = await axios(`https://rcapidev.neosme.co:2053/statistics/${stockData?.stockData?.symbol}/${stocksData?.exchange}`);
       const data = response.data;
 
       if (data) {
@@ -268,7 +271,6 @@ function Dashboard() {
       const response = await axios(`https://rcapidev.neosme.co:2053/technical-analysis/${stocksData?.symbol}/${stocksData?.exchange}`);
       const data = response.data;
       if (data) {
-        console.log('indicators', data);
         setIndicators(data);
       } else {
         console.log('No data available');
@@ -639,7 +641,7 @@ function Dashboard() {
         <SoftBox mb={3}>
           <Grid container spacing={2}>
             {/* Stock Price Card */}
-            <Grid item xs={12} md={6} lg={3.7}>
+            <Grid item xs={12} md={6} xl={3.7}>
               <MiniStatisticsCard
                 title={{
                   text: stocksData?.company_name?.length > 40 
@@ -693,7 +695,7 @@ function Dashboard() {
             </Grid>
 
             {/* Currency & Exchange Card */}
-            <Grid item xs={12} md={6} lg={2.7}>
+            <Grid item xs={12} md={6} xl={2.7}>
               <MiniStatisticsCard
                 title={{
                   text: "Currency & Exchange",
@@ -736,7 +738,7 @@ function Dashboard() {
             </Grid>
 
             {/* Symbol & Country Card */}
-            <Grid item xs={12} md={6} lg={3}>
+            <Grid item xs={12} md={6} xl={2.8}>
               <MiniStatisticsCard
                 title={{
                   text: "Symbol & Country",
@@ -779,7 +781,7 @@ function Dashboard() {
             </Grid>
 
             {/* Type of Stock Card */}
-            <Grid item xs={12} md={6} lg={2.6}>
+            <Grid item xs={12} md={6} xl={2.8}>
               <MiniStatisticsCard
                 title={{
                   text: "52 Week High & Low",
@@ -866,19 +868,19 @@ function Dashboard() {
                     </SoftTypography>
                   </SoftBox>
                   <Grid container spacing="5px">
-                    <Grid item xs={6} md={3} lg={6}>
+                    <Grid item xs={6} md={6} lg={3}>
                       <Stack direction="row" spacing={{ sm: "8px", xl: "1px", xxl: "8px" }} mb="6px">
                         <SoftTypography color="text" variant="button" fontSize="xxs">
                           Forward P/E
                         </SoftTypography>
                       </Stack>
                       <SoftTypography color="black" variant="xxs" fontWeight="bold" mb="8px">
-                        {(StatisticsData?.statistics?.valuations_metrics?.forward_pe ?? 0).toFixed(3)}
+                        {(StatisticsData?.statistics?.valuations_metrics?.forward_pe?? 0).toFixed(3)}
                       </SoftTypography>
-                      <SoftProgress value={10} color="info" sx={{ background: "#2D2E5F" }} />
+                      <SoftProgress value={(StatisticsData?.statistics?.valuations_metrics?.forward_pe ?? 0).toFixed(3)} color="info" sx={{ background: "#2D2E5F" }} />
                     </Grid>
 
-                    <Grid item xs={6} md={3} lg={6}>
+                    <Grid item xs={6} md={6} lg={3}>
                       <Stack direction="row" spacing={{ sm: "8px", xl: "1px", xxl: "8px" }} mb="6px">
                         <SoftTypography color="text" variant="button" fontSize="xxs">
                           Price/Sales (P/S)
@@ -887,10 +889,10 @@ function Dashboard() {
                       <SoftTypography color="black" variant="xxs" fontWeight="bold" mb="8px">
                         {(StatisticsData?.statistics?.valuations_metrics?.price_to_sales_ttm ?? 0).toFixed(3)}
                       </SoftTypography>
-                      <SoftProgress value={10} color="info" sx={{ background: "#2D2E5F" }} />
+                      <SoftProgress value={(StatisticsData?.statistics?.valuations_metrics?.price_to_sales_ttm ?? 0).toFixed(3)} color="info" sx={{ background: "#2D2E5F" }} />
                     </Grid>
 
-                    <Grid item xs={6} md={3} lg={6}>
+                    <Grid item xs={6} md={6} lg={3}>
                       <Stack direction="row" spacing={{ sm: "8px", xl: "1px", xxl: "8px" }} mb="6px">
                         <SoftTypography color="text" variant="button" fontSize="xxs">
                           Enterprise Value / EBITDA
@@ -899,10 +901,10 @@ function Dashboard() {
                       <SoftTypography color="black" variant="xxs" fontWeight="bold" mb="8px">
                         {(StatisticsData?.statistics?.valuations_metrics?.enterprise_to_ebitda ?? 0).toFixed(3)}
                       </SoftTypography>
-                      <SoftProgress value={60} color="info" sx={{ background: "#2D2E5F" }} />
+                      <SoftProgress value={(StatisticsData?.statistics?.valuations_metrics?.enterprise_to_ebitda ?? 0).toFixed(3)} color="info" sx={{ background: "#2D2E5F" }} />
                     </Grid>
 
-                    <Grid item xs={6} md={3} lg={6}>
+                    <Grid item xs={6} md={6} lg={3}>
                       <Stack direction="row" spacing={{ sm: "8px", xl: "1px", xxl: "8px" }} mb="6px">
                         <SoftTypography color="text" variant="button" fontSize="xxs">
                           Forward Annual Dividend Rate
@@ -911,7 +913,7 @@ function Dashboard() {
                       <SoftTypography color="black" variant="xxs" fontWeight="bold" mb="8px">
                         {(StatisticsData?.statistics?.dividends_and_splits?.forward_annual_dividend_yield ?? 0).toFixed(3)}
                       </SoftTypography>
-                      <SoftProgress value={60} color="info" sx={{ background: "#2D2E5F" }} />
+                      <SoftProgress value={(StatisticsData?.statistics?.dividends_and_splits?.forward_annual_dividend_yield ?? 0).toFixed(3)} color="info" sx={{ background: "#2D2E5F" }} />
                     </Grid>
                   </Grid>
 

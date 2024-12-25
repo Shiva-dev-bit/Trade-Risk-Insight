@@ -156,8 +156,8 @@ function PlatformSettings() {
         padding: "20px",
         maxHeight: "520px",
         height: "100%",
-        backgroundColor: "rgba(0, 0, 0, 0.04)", // Light gray transparent
-        color: "#000", // Black text
+        backgroundColor: "#fff", // Light gray transparent
+        color: "#67748e", // Black text
         overflowY: "auto",
         fontFamily: '"Roboto","Helvetica","Arial","sans-serif"', // Set font family
       }}
@@ -167,7 +167,7 @@ function PlatformSettings() {
           variant="h6"
           fontWeight="bold"
           sx={{
-            color: "#000",
+            color: "#67748e",
             fontFamily: '"Roboto","Helvetica","Arial","sans-serif"', // Ensure consistent font family
           }}
         >
@@ -194,7 +194,7 @@ function PlatformSettings() {
                 variant="subtitle1"
                 fontWeight="medium"
                 sx={{
-                  color: "#000",
+                  color: "#67748e",
                   fontSize: "16px",
                   lineHeight: "20px",
                   fontFamily: '"Roboto","Helvetica","Arial","sans-serif"', // Add font family

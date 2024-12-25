@@ -14,6 +14,7 @@ Coded by www.creative-tim.com
 */
 
 // @mui material components
+import { Divider } from "@mui/material";
 import Card from "@mui/material/Card";
 import Icon from "@mui/material/Icon";
 import Tooltip from "@mui/material/Tooltip";
@@ -21,42 +22,178 @@ import Tooltip from "@mui/material/Tooltip";
 // RiskCompass AI React components
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
+import { AuthContext } from "context/Authcontext";
+import { supabase } from "lib/supabase";
+import PropTypes from "prop-types";
+import React, { useContext, useEffect, useState } from "react";
 
-function TodoCard() {
+function TodoCard({selectedStock}) {
+  const [notifications, setNotifications] = useState([]);
+  const { session } = useContext(AuthContext); // Session context
+  const userEmail = session?.user?.email; // Get user email from session
+  const [user, setUser] = useState([]);
+
+  console.log('todonotifications',selectedStock);
+
+
+  const fetchUser = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("users")
+        .select("*")
+        .eq("email", userEmail);
+
+      if (error) throw error;
+      console.log("Fetched user data:", data); // Debugging user data
+      if (data.length > 0) setUser(data); // Set user data only if available
+      else console.log("No user found for the given email.");
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
+  console.log('useruser', user);
+
+  // Fetch and initialize the state
+  const fetchNotifications = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("notifications")
+        .select("*")
+        .eq("user_id", selectedStock?.users?.user_id)
+        .eq("stock_symbol", selectedStock?.symbol)
+
+      // .gte("created_at", twoDaysAgoISO); // Filter by date
+
+      if (error) throw error;
+
+      if (data) {
+        console.log('profilenotifications', data);
+        setNotifications(data);
+      }
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  };
+
+  // Fetch notifications when component mounts
+  useEffect(() => {
+    fetchNotifications();
+    fetchUser();
+  }, [userEmail , selectedStock?.symbol]);
+
   return (
-    <Card>
-      <SoftBox bgColor="dark" variant="gradient">
-        <SoftBox p={3}>
-          <SoftBox display="flex" justifyContent="space-between">
-            <SoftTypography variant="h5" color="white">
-              To Do
-            </SoftTypography>
-            <SoftBox textAlign="center" lineHeight={1}>
-              <SoftTypography variant="h1" color="white" fontWeight="bold">
-                7
-              </SoftTypography>
-              <SoftTypography variant="button" color="white" fontWeight="regular">
-                items
-              </SoftTypography>
-            </SoftBox>
-          </SoftBox>
-          <SoftTypography variant="body2" color="white" fontWeight="regular">
-            Shopping
+    <Card sx={{ height: '100%' , color: '#67748e' }}>
+      <SoftBox
+        sx={{
+          backgroundColor: "#fff",
+          borderRadius: "12px",
+          overflowY: "auto",
+          maxHeight: '460px',
+          height: '100%'
+        }}
+      >
+        <SoftBox p={2.5}>
+          <SoftTypography
+            variant="lg"     
+            fontWeight="bold"
+            mb={2}
+            sx={{
+              fontSize: "16px",
+              display: 'block'
+            }}
+          >
+            Notifications History
           </SoftTypography>
-          <SoftTypography variant="body2" color="white" fontWeight="regular">
-            Meeting
-          </SoftTypography>
+
+          {notifications.map((notification, index) => (
+            <React.Fragment key={notification.id}>
+              <SoftBox
+                sx={{
+                  padding: "12px",
+                  borderRadius: "8px",
+                  transition: "background-color 0.3s",
+                  "&:hover": {
+                    backgroundColor: "#f5f5f5",
+                  },
+                  mb: index < notifications.length - 1 ? 1 : 0
+                }}
+              >
+                <SoftBox
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="flex-start"
+                  mb={1}
+                >
+                  <SoftBox display="flex" alignItems="center" flexGrow={1}>
+                    <SoftTypography
+                      variant="button"
+                      sx={{
+                        fontSize: "13px",
+                        textTransform: "none",
+                      }}
+                    >
+                      <span style={{ color: '#f44335' }}>{notification.notification_type}</span>
+                      <span style={{ color: '#67748e', marginLeft: '4px' }}>{`(${notification.exchange})`}</span>
+                    </SoftTypography>
+                  </SoftBox>
+                  <SoftTypography
+                    variant="caption"
+                    color="textSecondary"
+                    sx={{
+                      fontSize: "12px",
+                      whiteSpace: 'nowrap',
+                      marginLeft: '8px'
+                    }}
+                  >
+                    {new Date(notification.created_at).toLocaleDateString()}
+                  </SoftTypography>
+                </SoftBox>
+
+                <SoftTypography
+                  variant="h6"
+                  
+                  fontWeight="bold"
+                  sx={{
+                    fontSize: "14px",
+                    mb: 0.5
+                  }}
+                >
+                  {notification.stock_symbol}
+                </SoftTypography>
+
+                <SoftTypography
+                  variant="button"
+                  color="textSecondary"
+                  sx={{
+                    fontSize: "13px",
+                    textTransform: "none",
+                    lineHeight: '1.4',
+                    display: 'block'
+                  }}
+                >
+                  {notification.notification_message}
+                </SoftTypography>
+              </SoftBox>
+
+              {index < notifications.length - 1 && (
+                <Divider
+                  sx={{
+                    borderColor: "#eeeeee",
+                    my: 1
+                  }}
+                />
+              )}
+            </React.Fragment>
+          ))}
         </SoftBox>
-        <Tooltip title="Show More" placement="top" sx={{ cursor: "pointer" }}>
-          <SoftBox textAlign="center" color="white" py={0.5} lineHeight={0}>
-            <Icon sx={{ fontWeight: "bold" }} color="inherit" fontSize="default">
-              keyboard_arrow_down
-            </Icon>
-          </SoftBox>
-        </Tooltip>
       </SoftBox>
     </Card>
   );
 }
+
+TodoCard.propTypes = {
+  selectedStock: PropTypes.string,
+};
 
 export default TodoCard;

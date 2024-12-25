@@ -88,9 +88,8 @@ function Overview() {
         <>
           <Header username={userId?.username && userId?.username} email={userId?.email} />
           <SoftBox mt={5} mb={3}>
-            <Grid container spacing={3}>
               {/* Welcome Component */}
-              <Grid
+              {/* <Grid
                 item
                 xs={12}
                 sx={{
@@ -98,12 +97,12 @@ function Overview() {
                 }}
               >
                 <Welcome username={userId?.username} email={userId?.email} />
-              </Grid>
+              </Grid> */}
 
               {/* Remaining Components: CarInformations and ProfileInfoCard */}
               <Grid container item xs={12} spacing={3}>
                 {/* CarInformations Component */}
-                <Grid
+                {/* <Grid
                   item
                   xs={12}
                   md={6} // Takes half width on medium screens and above
@@ -112,13 +111,12 @@ function Overview() {
                   }}
                 >
                   <CarInformations userdata={userId?.username} />
-                </Grid>
+                </Grid> */}
 
                 {/* ProfileInfoCard Component */}
                 <Grid
                   item
-                  xs={12}
-                  md={6} // Takes half width on medium screens and above
+                  xl={12} // Takes half width on medium screens and above
                   sx={{
                     minHeight: "300px", // Adjust height as needed
                   }}
@@ -135,9 +133,6 @@ function Overview() {
                   />
                 </Grid>
               </Grid>
-            </Grid>
-
-
           </SoftBox>
           <Grid container spacing={3} mb="30px">
             <Grid item xs={12}>
@@ -147,7 +142,8 @@ function Overview() {
                   gap: 3,
                   flexDirection: { xs: "column", lg: "row" },
                   p: 3,
-                  borderRadius: "12px"
+                  borderRadius: "12px",
+                  background : '#E9E4E4'
                 }}
               >
                 {/* Platform Settings Section */}
@@ -159,16 +155,17 @@ function Overview() {
                 <SoftBox
                   flex={1}
                   sx={{
-                    backgroundColor: "#f9f9f9", // Light gray background
+                    backgroundColor: "#fff", // Light gray background
                     borderRadius: "12px",
                     maxHeight: "520px",
                     overflowY: "auto",
+                    color : '#67748e'
                   }}
                 >
                   <SoftBox p={3}>
                     <SoftTypography
                       variant="lg"
-                      color="black"
+                      
                       fontWeight="bold"
                       mb={3}
                       sx={{ fontSize: "18px" }} // Reduced font size
@@ -221,7 +218,7 @@ function Overview() {
                           <SoftBox mb={1}>
                             <SoftTypography
                               variant="h6"
-                              color="black"
+                              
                               fontWeight="bold"
                               sx={{ fontSize: "16px", textTransform: "none" }} // Reduced font size
                             >

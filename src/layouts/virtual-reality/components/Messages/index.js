@@ -28,7 +28,7 @@ import team3 from "assets/images/team-3.jpg";
 import team4 from "assets/images/team-4.jpg";
 
 import { MdDelete } from "react-icons/md";
-import { Box, Button, Card, Modal, Snackbar, SnackbarContent, Typography } from "@mui/material";
+import { Box, Button, Card, Grid, Modal, Snackbar, SnackbarContent, Typography } from "@mui/material";
 import { supabase } from "lib/supabase";
 import { useEffect, useState } from "react";
 import Table from "examples/Tables/Table";
@@ -36,6 +36,7 @@ import Table from "examples/Tables/Table";
 // import SoftBox from "components/SoftBox";
 import GradientLineChart from "examples/Charts/LineCharts/GradientLineChart";
 import PropTypes from "prop-types";
+import TodoCard from "../TodoCard";
 
 function Messages({ stocks, fetchUserStocks }) {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -304,16 +305,39 @@ function Messages({ stocks, fetchUserStocks }) {
 
       {/* Render Line Chart Below the Table */}
       {selectedStock && (
-        <SoftBox mt={2}>
-          <Card sx={{ backgroundColor: 'background.paper', color: 'text.primary' }}>
-            <SoftBox p={3}>
-              <SoftTypography variant="lg" color="text.primary" mb={2} fontWeight="bold"> {/* Add bold font weight */}
-                {`${selectedStock.symbol}`}
-              </SoftTypography>
-              <GradientLineChart selectedStock={selectedStock} />
-            </SoftBox>
-          </Card>
-        </SoftBox>
+        <Card
+          sx={{
+            backgroundColor: 'rgba(245, 245, 245, 0.9)',
+            backdropFilter: 'blur(8px)',
+            boxShadow: '0 4px 20px 0 rgba(0,0,0,0.1)',
+            p: 2,
+            minHeight: '500px'  // Add minimum height to ensure consistent card size
+          }}
+        >
+          <SoftBox mb={3}>
+            <SoftTypography
+              variant="h4"
+              color="text.primary"
+              fontWeight="bold"
+              sx={{ letterSpacing: 0.5 , color: '#67748e' }}
+            >
+              {selectedStock.symbol}
+            </SoftTypography>
+          </SoftBox>
+
+          <Grid container spacing={2}>
+            <Grid item xl={7.5} xs={12}>
+              <SoftBox height="100%">
+                <GradientLineChart selectedStock={selectedStock} />
+              </SoftBox>
+            </Grid>
+            <Grid item xl={4.5} xs={12}>
+              <SoftBox>
+                <TodoCard selectedStock={selectedStock}/>
+              </SoftBox>
+            </Grid>
+          </Grid>
+        </Card>
       )}
 
       <Snackbar

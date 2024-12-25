@@ -98,7 +98,7 @@ const OrdersOverview = () => {
     });
 
   return (
-    <Card className="h-100" style={{ padding: '14px' , color : 'rgb(103, 116, 142)' }}>
+    <Card className="h-100" style={{ padding: '14px' , color : 'rgb(103, 116, 142)' , height : '100%' }}>
       <SoftBox mb="16px" display="flex" justifyContent="space-between">
         <SoftTypography variant="lg" fontWeight="bold" mb="5px">
           Quarterly Results

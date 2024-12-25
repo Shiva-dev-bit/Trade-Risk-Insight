@@ -55,28 +55,25 @@ const CompanyDescription = () => {
   return (
     <Card
       sx={{
-        py: "10px",
-        px: "0px",
         background : 'white',
-        color: "black",
         borderRadius: "12px",
         border: "2px solid rgba(255, 255, 255, 0.3)",
         width: "100%",
         overflow: "hidden",
-        // fontFamily : '-moz-initial',
-        paddingBottom: '7px',
-        fontWeight : '500'
+        fontWeight : '500',
+        fontFamily: "Roboto, Helvetica, Arial, sans-serif",
+        color: "rgb(103, 116, 142)"
       }}
     >
-      <CardContent sx={{ paddingBottom: '7px' }}>
+      <CardContent sx={{ padding: '10px'}}>
         <Box sx={{ display: 'flex', gap: 1 }}>
           {/* AI Icon and Text Content Container */}
           <Box>
-            <SmartToyOutlinedIcon style={{ fontSize: "42px", color: "black" }} />
+            <SmartToyOutlinedIcon style={{ fontSize: "42px" }} />
           </Box>
 
           {/* Text Content */}
-          <Box style={{ color: "black" }} fontSize="16px" sx={{ flex: 1 }}>
+          <Box fontSize="16px" sx={{ flex: 1 }}>
             {/* Initial Typing Effect */}
             {!isInitialTypingComplete && (
               <ReactTyped
@@ -106,7 +103,6 @@ const CompanyDescription = () => {
               variant="text"
               onClick={toggleExpand}
               sx={{
-                color: "black",
                 textTransform: "none",
                 fontSize: "14px",
                 padding: "0",
@@ -122,14 +118,13 @@ const CompanyDescription = () => {
       </CardContent>
       {isInitialTypingComplete && (
       <Box
-        sx={{
-          position: "absolute",
-          bottom: "0",
-          right: "0",
-          padding: "10px",
-          marginRight: "30px",
-          borderRadius: "4px",
-        }}
+      sx={{
+        position: "absolute",
+        bottom: "0",
+        right: "0",
+        paddingRight: "30px",
+        paddingBottom: "15px",
+      }} 
       >
         <Typography fontWeight="regular" sx={{ fontSize: '11px' }}>
           <span style={{ color: '#b4b4b4' }}> *For investor education purposes only.</span>

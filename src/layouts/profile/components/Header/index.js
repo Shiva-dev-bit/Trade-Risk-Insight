@@ -52,38 +52,17 @@ function Header({ username, email }) {
       <Card
         sx={{
           px: 3,
-          py: 2, // Added padding for top and bottom
-          mt: 2,
+          py: 2,
+          mt: 2
         }}
       >
         <Grid
           container
           alignItems="center"
-          justifyContent="center"
-          sx={({ breakpoints }) => ({
-            [breakpoints.up("xs")]: {
-              gap: "16px",
-            },
-            [breakpoints.up("sm")]: {
-              gap: "0px",
-            },
-          })}
+          sx={{ gap: '16px' }}
         >
-          <Grid
-            item
-            xs={12}
-            md={1.7}
-            lg={1.5}
-            xl={1.2}
-            xxl={0.8}
-            display="flex"
-            sx={({ breakpoints }) => ({
-              [breakpoints.only("sm")]: {
-                justifyContent: "center",
-                alignItems: "center",
-              },
-            })}
-          >
+          {/* Avatar Grid */}
+          <Grid item>
             <SoftAvatar
               src={burceMars}
               alt="profile-image"
@@ -92,27 +71,22 @@ function Header({ username, email }) {
               shadow="sm"
             />
           </Grid>
-          <Grid item xs={12} md={4.3} lg={4} xl={3.8} xxl={7}>
+
+          {/* Text Content Grid */}
+          <Grid item>
             <SoftBox
               height="100%"
-              mt={0.5}
               lineHeight={1}
               display="flex"
               flexDirection="column"
-              sx={({ breakpoints }) => ({
-                [breakpoints.only("sm")]: {
-                  justifyContent: "center",
-                  alignItems: "center",
-                },
-              })}
             >
               <SoftTypography
                 variant="lg"
                 color="black"
                 fontWeight="bold"
                 sx={{
-                  fontSize: "18px", // Adjusted font size
-                  fontFamily: "'Roboto', sans-serif", // Applied consistent font-family
+                  fontSize: "18px",
+                  fontFamily: "'Roboto', sans-serif",
                 }}
               >
                 {username}
@@ -122,57 +96,14 @@ function Header({ username, email }) {
                 color="text"
                 fontWeight="regular"
                 sx={{
-                  fontSize: "14px", // Adjusted font size for email
-                  fontFamily: "'Roboto', sans-serif", // Applied consistent font-family
+                  fontSize: "14px",
+                  fontFamily: "'Roboto', sans-serif",
                 }}
               >
                 {email}
               </SoftTypography>
             </SoftBox>
           </Grid>
-          <Grid item xs={12} md={6} lg={6.5} xl={6} xxl={4} sx={{ ml: "auto" }}>
-            <AppBar position="static">
-              <Tabs
-                orientation={tabsOrientation}
-                value={tabValue}
-                onChange={handleSetTabValue}
-                sx={{
-                  background: "transparent",
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  px: 2, // Added horizontal padding
-                }}
-              >
-                <Tab
-                  label="OVERVIEW"
-                  icon={<IoCube color="black" size="16px" />}
-                  sx={{
-                    fontFamily: "'Roboto', sans-serif", // Consistent font-family
-                    fontSize: "14px", // Adjusted font size
-                    textTransform: "none", // Removed uppercase
-                  }}
-                />
-                <Tab
-                  label="TEAMS"
-                  icon={<IoDocument color="black" size="16px" />}
-                  sx={{
-                    fontFamily: "'Roboto', sans-serif", // Consistent font-family
-                    fontSize: "14px", // Adjusted font size
-                    textTransform: "none", // Removed uppercase
-                  }}
-                />
-                <Tab
-                  label="PROJECTS"
-                  icon={<IoBuild color="black" size="16px" />}
-                  sx={{
-                    fontFamily: "'Roboto', sans-serif", // Consistent font-family
-                    fontSize: "14px", // Adjusted font size
-                    textTransform: "none", // Removed uppercase
-                  }}
-                />
-              </Tabs>
-            </AppBar>
-          </Grid> 
         </Grid>
       </Card>
     </SoftBox>
@@ -184,8 +115,8 @@ Header.propTypes = {
 };
 
 Header.propTypes = {
-    username: PropTypes.string,
-    email: PropTypes.string,
+  username: PropTypes.string,
+  email: PropTypes.string,
 };
 
 export default Header;
