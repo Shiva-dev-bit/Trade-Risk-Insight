@@ -20,12 +20,18 @@ import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "context/Authcontext";
 import { Box, Button, Divider } from "@mui/material";
 import { Link } from "react-router-dom";
+import { Alert } from "@mui/material";
 
 function Overview() {
+  const[user, setUser] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedUser, setEditedUser] = useState(null);
+  const [alert, setAlert] = useState({ show: false, message: "", severity: "" });
   const [stocks, setStocks] = useState([]);
   const [notifications, setNotifications] = useState([]);
   const [userId, setUserId] = useState([]); // Dynamic userId
   const { session } = useContext(AuthContext);
+  const userEmail = session?.user?.email;
 
   console.log('userId', userId);
 
@@ -45,6 +51,116 @@ function Overview() {
 
     if (userdata) {
       setUserId(userdata);
+    }
+  };
+
+  const fetchUser = async (userMail) => {
+    try {
+      const { data, error } = await supabase
+        .from("users")
+        .select("*")
+        .eq("email", userMail)
+        .single();
+
+      if (error) throw error;
+
+      if (data) {
+        console.log("User data:", data);
+        setUser(data);
+        setEditedUser(data);
+        return data;
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (userEmail) {
+      fetchUser(userEmail);
+    }
+  }, [userEmail]);
+
+  const handleEdit = () => {
+    setIsEditing(true);
+    // Set editedUser with raw values, no defaults
+    setEditedUser({
+      ...user,
+      username: user?.username || "",
+      mobile_number: user?.mobile_number || "",
+      country: user?.country || "",
+      email: user?.email || userEmail
+    });
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+    setEditedUser(user);
+  };
+
+  const handleSave = async () => {
+    try {
+      // Only update fields that are not empty
+      const updateData = {};
+      if (editedUser.username) updateData.username = editedUser.username;
+      if (editedUser.mobile_number) updateData.mobile_number = editedUser.mobile_number;
+      if (editedUser.country) updateData.country = editedUser.country;
+
+      const { data, error } = await supabase
+        .from("users")
+        .update(updateData)
+        .eq("email", userEmail)
+        .select();
+
+      if (error) throw error;
+
+      setUser({ ...user, ...updateData });
+      setIsEditing(false);
+      setAlert({
+        show: true,
+        message: "Profile updated successfully!",
+        severity: "success"
+      });
+
+      setTimeout(() => {
+        setAlert({ show: false, message: "", severity: "" });
+      }, 3000);
+
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      setAlert({
+        show: true,
+        message: "Error updating profile. Please try again.",
+        severity: "error"
+      });
+    }
+  };
+
+  const handleChange = (field) => (event) => {
+    console.log("Changing field:", field, "to value:", event.target.value);
+    setEditedUser(prev => ({
+      ...prev,
+      [field]: event.target.value
+    }));
+  };
+
+  const getProfileInfo = () => {
+    if (isEditing) {
+      // When editing, use raw values with no defaults
+      return {
+        fullName: editedUser?.username || "",
+        mobile: editedUser?.mobile_number || "",
+        email: editedUser?.email || userEmail,
+        location: editedUser?.country || ""
+      };
+    } else {
+      // When displaying, use defaults for empty values
+      return {
+        fullName: user?.username || "Not provided",
+        mobile: user?.mobile_number || "Not provided",
+        email: user?.email || userEmail || "Not provided",
+        location: user?.country || "Not provided"
+      };
     }
   };
 
@@ -88,8 +204,8 @@ function Overview() {
         <>
           <Header username={userId?.username && userId?.username} email={userId?.email} />
           <SoftBox mt={5} mb={3}>
-              {/* Welcome Component */}
-              {/* <Grid
+            {/* Welcome Component */}
+            {/* <Grid
                 item
                 xs={12}
                 sx={{
@@ -98,11 +214,16 @@ function Overview() {
               >
                 <Welcome username={userId?.username} email={userId?.email} />
               </Grid> */}
+              {alert.show && (
+          <Alert severity={alert.severity} sx={{ mb: 2 }}>
+            {alert.message}
+          </Alert>
+        )}
 
-              {/* Remaining Components: CarInformations and ProfileInfoCard */}
-              <Grid container item xs={12} spacing={3}>
-                {/* CarInformations Component */}
-                {/* <Grid
+            {/* Remaining Components: CarInformations and ProfileInfoCard */}
+            <Grid container item xs={12} spacing={3}>
+              {/* CarInformations Component */}
+              {/* <Grid
                   item
                   xs={12}
                   md={6} // Takes half width on medium screens and above
@@ -113,26 +234,27 @@ function Overview() {
                   <CarInformations userdata={userId?.username} />
                 </Grid> */}
 
-                {/* ProfileInfoCard Component */}
-                <Grid
-                  item
-                  xl={12} // Takes half width on medium screens and above
-                  sx={{
-                    minHeight: "300px", // Adjust height as needed
+              {/* ProfileInfoCard Component */}
+              <Grid
+                item
+                xl={12} // Takes half width on medium screens and above
+                sx={{
+                  minHeight: "300px", // Adjust height as needed
+                }}
+              >
+                <ProfileInfoCard
+                  title={isEditing ? "edit profile information" : "profile information"}
+                  info={getProfileInfo()}
+                  action={{
+                    tooltip: isEditing ? "Save Changes" : "Edit Profile",
+                    onClick: isEditing ? handleSave : handleEdit
                   }}
-                >
-                  <ProfileInfoCard
-                    title="profile information"
-                    description={`Hi, I’m ${userId?.username}, Decisions: If you can’t decide, the answer is no. If two equally difficult paths, choose the one more painful in the short term (pain avoidance is creating an illusion of equality).`}
-                    info={{
-                      fullName: `${userId?.username}`,
-                      mobile: "(44) 123 1234 123",
-                      email: `${userId?.email}`,
-                      location: "United States",
-                    }}
-                  />
-                </Grid>
+                  isEditing={isEditing}
+                  onChange={handleChange}
+                  onCancel={handleCancel}
+                />
               </Grid>
+            </Grid>
           </SoftBox>
           <Grid container spacing={3} mb="30px">
             <Grid item xs={12}>
@@ -143,7 +265,7 @@ function Overview() {
                   flexDirection: { xs: "column", lg: "row" },
                   p: 3,
                   borderRadius: "12px",
-                  background : '#E9E4E4'
+                  background: '#E9E4E4'
                 }}
               >
                 {/* Platform Settings Section */}
@@ -159,13 +281,13 @@ function Overview() {
                     borderRadius: "12px",
                     maxHeight: "520px",
                     overflowY: "auto",
-                    color : '#67748e'
+                    color: '#67748e'
                   }}
                 >
                   <SoftBox p={3}>
                     <SoftTypography
                       variant="lg"
-                      
+
                       fontWeight="bold"
                       mb={3}
                       sx={{ fontSize: "18px" }} // Reduced font size
@@ -218,7 +340,7 @@ function Overview() {
                           <SoftBox mb={1}>
                             <SoftTypography
                               variant="h6"
-                              
+
                               fontWeight="bold"
                               sx={{ fontSize: "16px", textTransform: "none" }} // Reduced font size
                             >
