@@ -24,11 +24,8 @@ const ForgotPassword = () => {
         e.preventDefault(); 
 
         const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-            // emailRedirectTo: 'http://localhost:3000/authentication/reset-password',
-        
-            emailRedirectTo: 'https://trade-risk-insight.vercel.app/authentication/reset-password' 
+            emailRedirectTo: 'http://localhost:3000/authentication/reset-password' 
           });
-          
           
     
         if (error) {

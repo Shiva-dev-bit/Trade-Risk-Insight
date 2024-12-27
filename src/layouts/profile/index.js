@@ -159,16 +159,17 @@ function Overview() {
                     borderRadius: "12px",
                     maxHeight: "520px",
                     overflowY: "auto",
-                    color : '#67748e'
+                    color : '#67748e',
+                    fontFamily: '"Roboto","Helvetica","Arial","sans-serif"'
                   }}
                 >
                   <SoftBox p={3}>
                     <SoftTypography
                       variant="lg"
-                      
+                      color="text"
                       fontWeight="bold"
                       mb={3}
-                      sx={{ fontSize: "18px" }} // Reduced font size
+                      sx={{ fontSize: "18px" ,fontFamily: '"Roboto","Helvetica","Arial","sans-serif"' }} // Reduced font size
                     >
                       Notifications History
                     </SoftTypography>
@@ -184,6 +185,7 @@ function Overview() {
                             "&:hover": {
                               backgroundColor: "#e0e0e0", // Lighter gray hover effect
                             },
+                            fontFamily: '"Roboto","Helvetica","Arial","sans-serif"'
                           }}
                         >
                           {/* Notification Type and Stock Exchange */}
@@ -193,21 +195,21 @@ function Overview() {
                                 variant="button"
                                 color="error"
                                 mr={1}
-                                sx={{ fontSize: "14px", textTransform: "none" }} // Reduced font size and removed capitalization
+                                sx={{ fontSize: "14px", textTransform: "none" , fontFamily: '"Roboto","Helvetica","Arial","sans-serif"' }} // Reduced font size and removed capitalization
                               >
                                 {notification.notification_type}
                               </SoftTypography>
                               <SoftTypography
                                 variant="button"
-                                color="textSecondary"
-                                sx={{ fontSize: "14px", textTransform: "none" }} // Reduced font size and removed capitalization
+                                color="text"
+                                sx={{ fontSize: "14px", textTransform: "none" , fontFamily: '"Roboto","Helvetica","Arial","sans-serif"' }} // Reduced font size and removed capitalization
                               >
                                 • {notification.exchange}
                               </SoftTypography>
                             </SoftBox>
                             <SoftTypography
                               variant="caption"
-                              color="textSecondary"
+                              color="text"
                               sx={{ fontSize: "12px", textTransform: "none" }} // Smaller font size for the date
                             >
                               {new Date(notification.created_at).toLocaleDateString()}
@@ -218,7 +220,6 @@ function Overview() {
                           <SoftBox mb={1}>
                             <SoftTypography
                               variant="h6"
-                              
                               fontWeight="bold"
                               sx={{ fontSize: "16px", textTransform: "none" }} // Reduced font size
                             >
@@ -228,9 +229,9 @@ function Overview() {
 
                           {/* Notification Message */}
                           <SoftTypography
-                            variant="button"
-                            color="textSecondary"
-                            sx={{ fontSize: "14px", textTransform: "none" }} // Reduced font size
+                            // variant="button"
+                            color="text"
+                            sx={{ fontSize: "14px", textTransform: "none" , fontFamily: '"Roboto","Helvetica","Arial","sans-serif"'}} // Reduced font size
                           >
                             {notification.notification_message}
                           </SoftTypography>

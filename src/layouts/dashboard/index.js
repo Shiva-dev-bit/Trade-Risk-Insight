@@ -98,7 +98,9 @@ function Dashboard() {
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState(null);
 
-  
+  console.log('stocksData', stocksData);
+
+
   const [StatisticsData, setStatisticsData] = useState({
     statistics: {
       valuations_metrics: {
@@ -111,40 +113,40 @@ function Dashboard() {
       },
     }
   });
-  
+
   console.log('StatisticsData', StatisticsData);
-  
+
   const [indicators, setIndicators] = useState({
     "symbol": "NSEI",
     "exchange": "NSE",
     "current_price": 736.099976,
     "signals": {
-        "macd": {
-            "datetime": "2024-12-24",
-            "macd": -22.41159,
-            "macd_signal": -18.16149,
-            "signal": "SELL"
-        },
-        "vwap": {
-            "datetime": "2024-12-24",
-            "vwap": 734.63332,
-            "current_price": 736.099976,
-            "signal": "SELL"
-        },
-        "sma": {
-            "datetime": "2024-12-24",
-            "sma": 777.9825,
-            "current_price": 736.099976,
-            "signal": "SELL"
-        },
-        "long_sma": {
-            "datetime": "2024-12-24",
-            "sma": 954.72425,
-            "current_price": 736.099976,
-            "signal": "SELL"
-        }
+      "macd": {
+        "datetime": "2024-12-24",
+        "macd": -22.41159,
+        "macd_signal": -18.16149,
+        "signal": "SELL"
+      },
+      "vwap": {
+        "datetime": "2024-12-24",
+        "vwap": 734.63332,
+        "current_price": 736.099976,
+        "signal": "SELL"
+      },
+      "sma": {
+        "datetime": "2024-12-24",
+        "sma": 777.9825,
+        "current_price": 736.099976,
+        "signal": "SELL"
+      },
+      "long_sma": {
+        "datetime": "2024-12-24",
+        "sma": 954.72425,
+        "current_price": 736.099976,
+        "signal": "SELL"
+      }
     }
-}
+  }
   )
 
 
@@ -158,7 +160,7 @@ function Dashboard() {
   useEffect(() => {
     if (!indicators) return;
 
-    console.log('indicators',indicators);
+    console.log('indicators', indicators);
 
     let barChartData = [{
       name: indicators?.symbol,
@@ -644,37 +646,12 @@ function Dashboard() {
             <Grid item xs={12} md={6} xl={3.7}>
               <MiniStatisticsCard
                 title={{
-                  text: stocksData?.company_name?.length > 40 
-                  ? stocksData?.company_name.slice(0, 30) + '...' 
-                  : stocksData?.company_name,
-                  sx: {
-                    margin: "0px",
-                    fontFamily: "Roboto, Helvetica, Arial, sans-serif",
-                    fontSize: "0.875rem",
-                    fontWeight: "700",
-                    lineHeight: "1.5",
-                    letterSpacing: "0.02857em",
-                    opacity: "1",
-                    textTransform: "capitalize",
-                    verticalAlign: "unset",
-                    textDecoration: "none",
-                    color: "rgb(103, 116, 142)",
-                  }
+                  text: stocksData?.company_name?.length > 40
+                    ? stocksData?.company_name.slice(0, 30) + '...'
+                    : stocksData?.company_name,
                 }}
                 count={
-                  <span style={{
-                    marginRight: "5px",
-                      fontSize: "1rem",
-                      lineHeight: "1.375",
-                      fontFamily: "Roboto, Helvetica, Arial, sans-serif",
-                      letterSpacing: "0em",
-                      opacity: "1",
-                      textTransform: "none",
-                      verticalAlign: "unset",
-                      textDecoration: "none",
-                      color: "rgb(52, 71, 103)",
-                      fontWeight: "700"
-                  }}>
+                  <span >
                     {priceData?.New_price?.toFixed(2)}
                   </span>
                 }
@@ -699,34 +676,10 @@ function Dashboard() {
               <MiniStatisticsCard
                 title={{
                   text: "Currency & Exchange",
-                  sx: {
-                    margin: "0px",
-                    fontFamily: "Roboto, Helvetica, Arial, sans-serif",
-                    fontSize: "0.875rem",
-                    fontWeight: "700",
-                    lineHeight: "1.5",
-                    letterSpacing: "0.02857em",
-                    opacity: "1",
-                    textTransform: "capitalize",
-                    verticalAlign: "unset",
-                    textDecoration: "none",
-                    color: "rgb(103, 116, 142)",
-                  }
                 }}
                 count={
-                  <span style={{
-                    marginRight: "5px",
-                      fontSize: "1rem",
-                      lineHeight: "1.375",
-                      fontFamily: "Roboto, Helvetica, Arial, sans-serif",
-                      letterSpacing: "0em",
-                      opacity: "1",
-                      textTransform: "none",
-                      verticalAlign: "unset",
-                      textDecoration: "none",
-                      color: "rgb(52, 71, 103)",
-                      fontWeight: "700"
-                  }}>
+                  <span
+                  >
                     {`${stocksData?.currency} / ${stocksData?.exchange}`}
                   </span>
                 }
@@ -742,34 +695,10 @@ function Dashboard() {
               <MiniStatisticsCard
                 title={{
                   text: "Symbol & Country",
-                  sx: {
-                    margin: "0px",
-                    fontFamily: "Roboto, Helvetica, Arial, sans-serif",
-                    fontSize: "0.875rem",
-                    fontWeight: "700",
-                    lineHeight: "1.5",
-                    letterSpacing: "0.02857em",
-                    opacity: "1",
-                    textTransform: "capitalize",
-                    verticalAlign: "unset",
-                    textDecoration: "none",
-                    color: "rgb(103, 116, 142)",
-                  }
                 }}
                 count={
-                  <span style={{
-                    marginRight: "5px",
-                      fontSize: "1rem",
-                      lineHeight: "1.375",
-                      fontFamily: "Roboto, Helvetica, Arial, sans-serif",
-                      letterSpacing: "0em",
-                      opacity: "1",
-                      textTransform: "none",
-                      verticalAlign: "unset",
-                      textDecoration: "none",
-                      color: "rgb(52, 71, 103)",
-                      fontWeight: "700"
-                  }}>
+                  <span
+                  >
                     {`${stocksData?.symbol}, ${stocksData?.country}`}
                   </span>
                 }
@@ -785,35 +714,17 @@ function Dashboard() {
               <MiniStatisticsCard
                 title={{
                   text: "52 Week High & Low",
-                  sx: {
-                    margin: "0px",
-                    fontFamily: "Roboto, Helvetica, Arial, sans-serif",
-                    fontSize: "0.875rem",
-                    fontWeight: "700",
-                    lineHeight: "1.5",
-                    letterSpacing: "0.02857em",
-                    opacity: "1",
-                    textTransform: "capitalize",
-                    verticalAlign: "unset",
-                    textDecoration: "none",
-                    color: "rgb(103, 116, 142)",
-                  }
                 }}
                 count={
-                  <span style={{
-                    marginRight: "5px",
-                      fontSize: "1rem",
-                      lineHeight: "1.375",
-                      fontFamily: "Roboto, Helvetica, Arial, sans-serif",
-                      letterSpacing: "0em",
-                      opacity: "1",
-                      textTransform: "none",
-                      verticalAlign: "unset",
-                      textDecoration: "none",
-                      color: "rgb(52, 71, 103)",
-                      fontWeight: "700"
-                  }}>
-                    {'-'}
+                  <span
+                    style={{
+                      fontSize: { xs: '1rem', sm: '1.5rem', md: '2rem', lg: '0.5rem' }, // Font size breakpoints
+                    }}
+                  >
+                    {(stocksData?.fifty_two_week?.high) && (stocksData?.fifty_two_week?.low) &&
+                    `${(Number(stocksData?.fifty_two_week?.high) || 0).toFixed(2)} & 
+                    ${(Number(stocksData?.fifty_two_week?.low) || 0).toFixed(2)}`
+                    }
                   </span>
                 }
                 icon={{
@@ -823,15 +734,15 @@ function Dashboard() {
               />
             </Grid>
           </Grid>
-                    <span style={{
-                      fontSize: "0.7rem",
-                      fontWeight: 500,
-                      color: "gray",
-                      display: "block",
-                      marginLeft : '10px'
-                    }}>
-                      {`As on ${moment(stocksData?.last_updated).format("DD MMM, YYYY | HH:mm")}`}
-                    </span>
+          <span style={{
+            fontSize: "0.7rem",
+            fontWeight: 500,
+            color: "gray",
+            display: "block",
+            marginLeft: '10px'
+          }}>
+            {`As on ${moment(stocksData?.last_updated).format("DD MMM, YYYY | HH:mm")}`}
+          </span>
         </SoftBox>
         <SoftBox mb={3}>
           <Grid container spacing={3}>
@@ -843,7 +754,7 @@ function Dashboard() {
         <SoftBox mb={3}>
           <Grid container spacing={3}>
             <Grid item xs={12} lg={12}>
-              <Card sx={{ height: "100%", padding: "16px", color : 'rgb(103, 116, 142)'}}>
+              <Card sx={{ height: "100%", padding: "16px", color: 'rgb(103, 116, 142)' }}>
                 <SoftTypography color="gray" variant="lg" mb="2px" gutterBottom fontWeight="bold">
                   Technical Indicators
                 </SoftTypography>
@@ -853,7 +764,7 @@ function Dashboard() {
                     sx={{
                       borderRadius: "20px",
                       backgroundColor: "rgba(0, 0, 0, 0.05)",
-                      color : '#000' // Light gray transparent background
+                      color: '#000' // Light gray transparent background
                     }}
                   >
                     <ReportsBarChart
@@ -874,8 +785,8 @@ function Dashboard() {
                           Forward P/E
                         </SoftTypography>
                       </Stack>
-                      <SoftTypography color="black" variant="xxs" fontWeight="bold" mb="8px">
-                        {(StatisticsData?.statistics?.valuations_metrics?.forward_pe?? 0).toFixed(3)}
+                      <SoftTypography color="dark" variant="xxs" fontWeight="bold" mb="8px">
+                        {(StatisticsData?.statistics?.valuations_metrics?.forward_pe ?? 0).toFixed(3)}
                       </SoftTypography>
                       <SoftProgress value={(StatisticsData?.statistics?.valuations_metrics?.forward_pe ?? 0).toFixed(3)} color="info" sx={{ background: "#2D2E5F" }} />
                     </Grid>
@@ -886,7 +797,7 @@ function Dashboard() {
                           Price/Sales (P/S)
                         </SoftTypography>
                       </Stack>
-                      <SoftTypography color="black" variant="xxs" fontWeight="bold" mb="8px">
+                      <SoftTypography color="dark" variant="xxs" fontWeight="bold" mb="8px">
                         {(StatisticsData?.statistics?.valuations_metrics?.price_to_sales_ttm ?? 0).toFixed(3)}
                       </SoftTypography>
                       <SoftProgress value={(StatisticsData?.statistics?.valuations_metrics?.price_to_sales_ttm ?? 0).toFixed(3)} color="info" sx={{ background: "#2D2E5F" }} />
@@ -898,7 +809,7 @@ function Dashboard() {
                           Enterprise Value / EBITDA
                         </SoftTypography>
                       </Stack>
-                      <SoftTypography color="black" variant="xxs" fontWeight="bold" mb="8px">
+                      <SoftTypography color="dark" variant="xxs" fontWeight="bold" mb="8px">
                         {(StatisticsData?.statistics?.valuations_metrics?.enterprise_to_ebitda ?? 0).toFixed(3)}
                       </SoftTypography>
                       <SoftProgress value={(StatisticsData?.statistics?.valuations_metrics?.enterprise_to_ebitda ?? 0).toFixed(3)} color="info" sx={{ background: "#2D2E5F" }} />
@@ -910,7 +821,7 @@ function Dashboard() {
                           Forward Annual Dividend Rate
                         </SoftTypography>
                       </Stack>
-                      <SoftTypography color="black" variant="xxs" fontWeight="bold" mb="8px">
+                      <SoftTypography color="dark" variant="xxs" fontWeight="bold" mb="8px">
                         {(StatisticsData?.statistics?.dividends_and_splits?.forward_annual_dividend_yield ?? 0).toFixed(3)}
                       </SoftTypography>
                       <SoftProgress value={(StatisticsData?.statistics?.dividends_and_splits?.forward_annual_dividend_yield ?? 0).toFixed(3)} color="info" sx={{ background: "#2D2E5F" }} />

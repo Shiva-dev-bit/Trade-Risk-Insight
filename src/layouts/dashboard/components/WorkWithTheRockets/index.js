@@ -51,13 +51,13 @@ function WorkWithTheRockets() {
       sx={{
         height: "100%",
         padding: "16px",
-        color : 'rgb(103, 116, 142)'
+        color : 'rgb(103, 116, 142)',
       }}
     >
       <SoftBox sx={{ width: "100%" }}>
         <SoftBox sx={{ width: "100%" , display : 'flex' }}>
-          <SoftTypography variant="h5"  fontWeight="bold" sx={{textAlign : 'center'}}>
-            <span style={{ fontSize: "medium" }}>{data?.title || "Safety Score"}</span>
+          <SoftTypography variant="h5"  fontWeight="bold" sx={{textAlign : 'center' , fontSize : '16px'}}>
+            {data?.title || "Safety Score"}
           </SoftTypography>
         </SoftBox>
         <SoftBox
@@ -103,11 +103,11 @@ function WorkWithTheRockets() {
                 justifyContent="center"
                 alignItems="center"
               >
-                <SoftTypography color="black" variant="button" mb="4px">
+                <SoftTypography color="dark" variant="button" mb="4px">
                   Safety
                 </SoftTypography>
                 <SoftTypography
-                  color="black"
+                  color="text"
                   variant="d5"
                   fontWeight="bold"
                   mb="4px"
@@ -119,7 +119,7 @@ function WorkWithTheRockets() {
                 >
                   {data?.safety_score || "0"}
                 </SoftTypography>
-                <SoftTypography color="black" variant="button">
+                <SoftTypography color="dark" variant="button">
                   Total Score
                 </SoftTypography>
               </SoftBox>
@@ -146,7 +146,7 @@ function WorkWithTheRockets() {
               }}
             >
               <SoftTypography
-                color="black"
+                color="dark"
                 variant="button"
                 fontWeight="regular"
                 mb="5px"
@@ -166,7 +166,7 @@ function WorkWithTheRockets() {
               }}
             >
               <SoftTypography
-                color="black"
+                color="dark"
                 variant="button"
                 fontWeight="regular"
                 mb="5px"

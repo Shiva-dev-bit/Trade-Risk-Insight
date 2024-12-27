@@ -45,7 +45,19 @@ const MiniStatisticsCard = ({ title, count, percentage, icon, direction = "right
               {title && (
                 <SoftTypography
                   className="text-sm font-medium text-black opacity-90"
-                  style={title.sx}
+                  style= {{
+                    margin: "0px",
+                    fontFamily: "Roboto, Helvetica, Arial, sans-serif",
+                    fontSize: "0.875rem",
+                    fontWeight: "700",
+                    lineHeight: "1.5",
+                    letterSpacing: "0.02857em",
+                    opacity: "1",
+                    textTransform: "capitalize",
+                    verticalAlign: "unset",
+                    textDecoration: "none",
+                    color: "rgb(103, 116, 142)",
+                  }}
                 >
                   {title.text}
                 </SoftTypography>
@@ -53,7 +65,20 @@ const MiniStatisticsCard = ({ title, count, percentage, icon, direction = "right
               
               <div className="flex flex-row gap-2">
                 {count && (
-                  <span className="text-lg font-bold text-black">
+                  <span className="text-lg font-bold text-black"
+                  style={{
+                    marginRight: "5px",
+                      lineHeight: "1.375",
+                      fontSize: "1rem",
+                      fontFamily: "Roboto, Helvetica, Arial, sans-serif",
+                      letterSpacing: "0em",
+                      opacity: "1",
+                      textTransform: "none",
+                      verticalAlign: "unset",
+                      textDecoration: "none",
+                      color: "rgb(52, 71, 103)",
+                      fontWeight: "600"
+                  }}>
                     {count}
                   </span>
                 )}
