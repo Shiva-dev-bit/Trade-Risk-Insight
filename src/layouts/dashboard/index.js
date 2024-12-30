@@ -29,7 +29,7 @@ import MiniStatisticsCard from "examples/Cards/StatisticsCards/MiniStatisticsCar
 import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
 import GradientLineChart from "examples/Charts/LineCharts/GradientLineChart";
 
-import { DollarSign, Users, Award, BarChart } from 'lucide-react';
+import { DollarSign, Users, Award, BarChart, LucideArrowDownUp } from 'lucide-react';
 
 
 // RiskCompass AI React base styles
@@ -44,7 +44,6 @@ import OrderOverview from "layouts/dashboard/components/OrderOverview";
 // Data
 import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
 import gradientLineChartData from "layouts/dashboard/data/gradientLineChartData";
-import { FaCaretDown, FaCaretUp, FaMoneyBillWave } from "react-icons/fa";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "context/Authcontext";
@@ -55,6 +54,12 @@ import { Card, Stack } from "@mui/material";
 import SoftProgress from "components/SoftProgress";
 import WelcomeMark from "./components/WelcomeMark";
 import CompanyDescription from "./components/CompanySummary";
+
+
+import { FaCaretDown, FaCaretUp, FaMoneyBillWave, FaBalanceScaleLeft } from "react-icons/fa";
+import { LiaFileInvoiceDollarSolid } from "react-icons/lia";
+import { FaMagnifyingGlassChart, FaArrowUpWideShort, FaSort } from "react-icons/fa6";
+import { IoGlobe } from "react-icons/io5";
 
 function Dashboard() {
   const { size } = typography;
@@ -71,7 +76,6 @@ function Dashboard() {
   const [stocksPercent, setStocksPercent] = useState([]);
   const [symbols_data, setSymbols_data] = useState([])
 
-  console.log('websocketStocks', websocketStocks);
 
   const initialStockData = {
     "symbol": "NSEI",
@@ -94,13 +98,11 @@ function Dashboard() {
     "last_updated": "2024-12-10T10:25:18.239145"
   };
 
-  const [stocksData, setStocksData] = useState(stockData?.stockData || initialStockData)
+  const [stocksData, setStocksData] = useState(null)
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState(null);
 
-  console.log('stocksData', stocksData);
-
-
+  
   const [StatisticsData, setStatisticsData] = useState({
     statistics: {
       valuations_metrics: {
@@ -114,7 +116,6 @@ function Dashboard() {
     }
   });
 
-  console.log('StatisticsData', StatisticsData);
 
   const [indicators, setIndicators] = useState({
     "symbol": "NSEI",
@@ -254,11 +255,10 @@ function Dashboard() {
 
   const fetchStatistics = async () => {
     try {
-      const response = await axios(`https://rcapidev.neosme.co:2053/statistics/${stockData?.stockData?.symbol}/${stocksData?.exchange}`);
+      const response = await axios(`https://rcapidev.neosme.co:2053/statistics/${'NSEI' || stockData?.stockData?.symbol}/${'NSE' || stocksData?.exchange}`);
       const data = response.data;
 
       if (data) {
-        console.log('staticsticsdata', data);
         setStatisticsData(data);
       } else {
         console.log('No data available');
@@ -267,12 +267,13 @@ function Dashboard() {
       console.log('Error fetching statistics:', error);
     }
   }
-
+  
   const fetchIndicators = async () => {
     try {
-      const response = await axios(`https://rcapidev.neosme.co:2053/technical-analysis/${stocksData?.symbol}/${stocksData?.exchange}`);
+      const response = await axios(`https://rcapidev.neosme.co:2053/technical-analysis/${'NSEI' || stocksData?.symbol}/${'NSE' || stocksData?.exchange}`);
       const data = response.data;
       if (data) {
+        console.log('staticsticsdata', data);
         setIndicators(data);
       } else {
         console.log('No data available');
@@ -286,13 +287,15 @@ function Dashboard() {
   useEffect(() => {
     if (!stockData?.stockData || stockData.stockData.length === 0) {
       setStocksData(initialStockData);
-    } else {
-      fetchStatistics();
-      fetchIndicators();
+    } else{
       setStocksData(stockData.stockData);
     }
+
+      fetchStatistics();
+      fetchIndicators();
+
     navigate(`/dashboard/${stocksData?.symbol}`);
-  }, [stockData, stocksData?.symbol, stocksData?.exchange]);
+  }, [stockData, stockData?.stockData?.symbol, stockData?.stockData?.exchange]);
 
 
   var today = new Date();
@@ -307,8 +310,8 @@ function Dashboard() {
     try {
       const { data, error } = await supabase.from("price")
         .select("*")
-        .eq("symbol", `${stockData?.stockData?.symbol}`)
-        .eq("exchange", `${stockData?.stockData?.exchange}`)
+        .eq("symbol", `${stocksData?.symbol}`)
+        .eq("exchange", `${stocksData?.exchange}`)
         .order("trading_date", { ascending: false }) // Sort by 'trading_date' in descending order
         .limit(1);
       // .eq("trading_date",today)
@@ -322,40 +325,34 @@ function Dashboard() {
     }
   };
 
-  const fetchDailyStock = async () => {
-    console.log('Today', today);
+  // const fetchDailyStock = async () => {
 
-    try {
-      const { data, error } = await supabase
-        .from("stock_daily_summary")
-        .select("*")
-        .eq("symbol", `${stockData?.stockData?.symbol}`)
-        .eq("exchange", `${stockData?.stockData?.exchange}`)
-        .order("trading_date", { ascending: false }) // Sort by 'trading_date' in descending order
-        .limit(1);
+  //   try {
+  //     const { data, error } = await supabase
+  //       .from("stock_daily_summary")
+  //       .select("*")
+  //       .eq("symbol", `${stockData?.stockData?.symbol}`)
+  //       .eq("exchange", `${stockData?.stockData?.exchange}`)
+  //       .order("trading_date", { ascending: false }) // Sort by 'trading_date' in descending order
+  //       .limit(1);
 
-      if (error) throw error;
-      if (data) setStocksPercent(data);
-    } catch (error) {
-      console.log("Error fetching stocks:", error);
-    }
-  };
+  //     if (error) throw error;
+  //     if (data) setStocksPercent(data);
+  //   } catch (error) {
+  //     console.log("Error fetching stocks:", error);
+  //   }
+  // };
 
 
   const fetchStockSymbols = useCallback(async () => {
     try {
       const { data, error } = await supabase.from("stocks")
         .select("symbol, exchange")
-        .eq("symbol", stockData.stockData.symbol)
-        .eq("exchange", stockData.stockData.exchange)
-        .single(); // Use .single() if you expect only one result
+        .eq("symbol", stocksData?.symbol)
+        .eq("exchange", stocksData?.exchange)
 
-      if (error) {
-        setSymbols_data([]);
-        return;
-      }
       if (data) {
-        setSymbols_data([data]); // Wrap in an array to maintain consistency
+        setSymbols_data(data); // Wrap in an array to maintain consistency
       } else {
         setSymbols_data([]); // Ensure empty array if no data
       }
@@ -363,7 +360,7 @@ function Dashboard() {
       console.error("Error fetching stocks:", error);
       setSymbols_data([]);
     }
-  }, [stockData?.stockData?.symbol, stockData?.stockData?.exchange]);
+  }, [stocksData?.symbol, stocksData?.exchange]);
 
   useEffect(() => {
     // Call fetchStockSymbols directly in the useEffect
@@ -408,11 +405,11 @@ function Dashboard() {
   }
 
   useEffect(() => {
-    if (!stockData?.stockData?.symbol || !stockData?.stockData?.exchange) return;
     // Determine data source and update price
 
     if (websocketStocks?.symbol === stockData?.stockData?.symbol &&
-      websocketStocks?.exchange === stockData?.stockData?.exchange
+      websocketStocks?.exchange === stockData?.stockData?.exchange && 
+      stockData?.stockData?.symbol !== undefined
     ) {
 
       const isPositiveChange = websocketStocks?.percent_change > 0;
@@ -434,7 +431,6 @@ function Dashboard() {
         datetime: websocketStocks?.datetime
       });
     } else if (supabaseStocks.length > 0) {
-      console.log('supabaseStocks', supabaseStocks);
       const New_price = supabaseStocks[0]?.price;
       const previous_close = stocksData?.previous_close;
 
@@ -542,29 +538,28 @@ function Dashboard() {
 
 
   useEffect(() => {
-
-    if (!stockData?.stockData?.symbol || !stockData?.stockData?.exchange) return;
-
+    
+    // if (!stockData?.stockData?.symbol || !stockData?.stockData?.exchange) return;
+    
     // Clear previous data when changing stocks
     setWebsocketStocks(null);
     setSupabaseStocks([]);
-
-    if (symbols_data.length) {
+    
+    if (symbols_data.length > 0) {
       // For Indian stocks
       fetchStockData();
-      fetchDailyStock();
+      // fetchDailyStock();
 
       const channel_1 = supabase
         .channel("price-channel")
         .on("postgres_changes", { event: "*", schema: "public", table: "price" }, (payload) => {
           const { eventType, new: newStock } = payload;
 
-          if (newStock.symbol === stockData?.stockData?.symbol) {
+          if (newStock.symbol === stocksData?.symbol) {
             setSupabaseStocks(() => {
               switch (eventType) {
                 case "INSERT":
                 case "UPDATE":
-                  console.log("Realtime Update", newStock);
                   return [newStock];
                 case "DELETE":
                   return [];
@@ -625,13 +620,15 @@ function Dashboard() {
   const getIcon = (title) => {
     switch (title) {
       case "Currency & Exchange":
-        return <DollarSign size={22} className="text-black" />;
+        return <DollarSign size={22}  />;
       case "MIC Code & Country":
-        return <Users size={22} className="text-black" />;
+        return <IoGlobe size={22}  />;
       case "Type of Stock":
-        return <Award size={22} className="text-black" />;
+        return <Award size={22}  />;
+      case "High & Low":
+        return <LucideArrowDownUp size={22} />;
       default:
-        return <BarChart size={22} className="text-black" />;
+        return <BarChart size={22} />;
     }
   };
 
@@ -780,51 +777,181 @@ function Dashboard() {
                   </SoftBox>
                   <Grid container spacing="5px">
                     <Grid item xs={6} md={6} lg={3}>
-                      <Stack direction="row" spacing={{ sm: "8px", xl: "1px", xxl: "8px" }} mb="6px">
+                      <Stack
+                        direction="row"
+                        alignItems="center"
+                        spacing={{ sm: "8px", xl: "1px", xxl: "8px" }}
+                        mb="6px"
+                      >
+                        <FaArrowUpWideShort
+                          style={{
+                            padding: "5px",
+                            display: "flex",
+                            WebkitBoxPack: "center",
+                            justifyContent: "center",
+                            WebkitBoxAlign: "center",
+                            alignItems: "center",
+                            opacity: 1,
+                            fontSize: "30px",
+                            background:
+                              "linear-gradient(310deg, rgb(33, 82, 255), rgb(33, 212, 253))",
+                            color: "rgb(255, 255, 255)",
+                            borderRadius: "0.5rem",
+                            boxShadow:
+                              "rgba(20, 20, 20, 0.12) 0rem 0.25rem 0.375rem -0.0625rem, rgba(20, 20, 20, 0.07) 0rem 0.125rem 0.25rem -0.0625rem",
+                              marginRight : '5px'
+                          }}
+                        />
                         <SoftTypography color="text" variant="button" fontSize="xxs">
                           Forward P/E
                         </SoftTypography>
                       </Stack>
                       <SoftTypography color="dark" variant="xxs" fontWeight="bold" mb="8px">
-                        {(StatisticsData?.statistics?.valuations_metrics?.forward_pe ?? 0).toFixed(3)}
+                        {(StatisticsData?.statistics?.valuations_metrics?.forward_pe ?? 0).toFixed(
+                          3
+                        )}
                       </SoftTypography>
-                      <SoftProgress value={(StatisticsData?.statistics?.valuations_metrics?.forward_pe ?? 0).toFixed(3)} color="info" sx={{ background: "#2D2E5F" }} />
+                      <SoftProgress
+                        value={(
+                          StatisticsData?.statistics?.valuations_metrics?.forward_pe ?? 0
+                        ).toFixed(3)}
+                        color="info"
+                        sx={{ background: "#2D2E5F" }}
+                      />
                     </Grid>
 
-                    <Grid item xs={6} md={6} lg={3}>
-                      <Stack direction="row" spacing={{ sm: "8px", xl: "1px", xxl: "8px" }} mb="6px">
+                    <Grid item xs={6} md={6} lg={2.5}>
+                      <Stack
+                        direction="row"
+                        alignItems="center"
+                        spacing={{ sm: "8px", xl: "1px", xxl: "8px" }}
+                        mb="6px"
+                      >
+                        <FaMagnifyingGlassChart style={{
+                            padding: "5px",
+                            display: "flex",
+                            WebkitBoxPack: "center",
+                            justifyContent: "center",
+                            WebkitBoxAlign: "center",
+                            alignItems: "center",
+                            opacity: 1,
+                            fontSize: "30px",
+                            background:
+                              "linear-gradient(310deg, rgb(33, 82, 255), rgb(33, 212, 253))",
+                            color: "rgb(255, 255, 255)",
+                            borderRadius: "0.5rem",
+                            boxShadow:
+                              "rgba(20, 20, 20, 0.12) 0rem 0.25rem 0.375rem -0.0625rem, rgba(20, 20, 20, 0.07) 0rem 0.125rem 0.25rem -0.0625rem",
+                              marginRight : '5px'
+                          }} />
                         <SoftTypography color="text" variant="button" fontSize="xxs">
                           Price/Sales (P/S)
                         </SoftTypography>
                       </Stack>
                       <SoftTypography color="dark" variant="xxs" fontWeight="bold" mb="8px">
-                        {(StatisticsData?.statistics?.valuations_metrics?.price_to_sales_ttm ?? 0).toFixed(3)}
+                        {(
+                          StatisticsData?.statistics?.valuations_metrics?.price_to_sales_ttm ?? 0
+                        ).toFixed(3)}
                       </SoftTypography>
-                      <SoftProgress value={(StatisticsData?.statistics?.valuations_metrics?.price_to_sales_ttm ?? 0).toFixed(3)} color="info" sx={{ background: "#2D2E5F" }} />
+                      <SoftProgress
+                        value={(
+                          StatisticsData?.statistics?.valuations_metrics?.price_to_sales_ttm ?? 0
+                        ).toFixed(3)}
+                        color="info"
+                        sx={{ background: "#2D2E5F" }}
+                      />
                     </Grid>
 
                     <Grid item xs={6} md={6} lg={3}>
-                      <Stack direction="row" spacing={{ sm: "8px", xl: "1px", xxl: "8px" }} mb="6px">
+                      <Stack
+                        direction="row"
+                        alignItems="center"
+                        spacing={{ sm: "8px", xl: "1px", xxl: "8px" }}
+                        mb="6px"
+                      >
+                        <FaBalanceScaleLeft style={{
+                            padding: "5px",
+                            display: "flex",
+                            WebkitBoxPack: "center",
+                            justifyContent: "center",
+                            WebkitBoxAlign: "center",
+                            alignItems: "center",
+                            opacity: 1,
+                            fontSize: "30px",
+                            background:
+                              "linear-gradient(310deg, rgb(33, 82, 255), rgb(33, 212, 253))",
+                            color: "rgb(255, 255, 255)",
+                            borderRadius: "0.5rem",
+                            boxShadow:
+                              "rgba(20, 20, 20, 0.12) 0rem 0.25rem 0.375rem -0.0625rem, rgba(20, 20, 20, 0.07) 0rem 0.125rem 0.25rem -0.0625rem",
+                              marginRight : '5px'
+                          }} />
                         <SoftTypography color="text" variant="button" fontSize="xxs">
                           Enterprise Value / EBITDA
                         </SoftTypography>
                       </Stack>
-                      <SoftTypography color="dark" variant="xxs" fontWeight="bold" mb="8px">
-                        {(StatisticsData?.statistics?.valuations_metrics?.enterprise_to_ebitda ?? 0).toFixed(3)}
+                      <SoftTypography
+                        color="dark"
+                        alignItems="center"
+                        variant="xxs"
+                        fontWeight="bold"
+                        mb="8px"
+                      >
+                        {(
+                          StatisticsData?.statistics?.valuations_metrics?.enterprise_to_ebitda ?? 0
+                        ).toFixed(3)}
                       </SoftTypography>
-                      <SoftProgress value={(StatisticsData?.statistics?.valuations_metrics?.enterprise_to_ebitda ?? 0).toFixed(3)} color="info" sx={{ background: "#2D2E5F" }} />
+                      <SoftProgress
+                        value={(
+                          StatisticsData?.statistics?.valuations_metrics?.enterprise_to_ebitda ?? 0
+                        ).toFixed(3)}
+                        color="info"
+                        sx={{ background: "#2D2E5F" }}
+                      />
                     </Grid>
 
-                    <Grid item xs={6} md={6} lg={3}>
-                      <Stack direction="row" spacing={{ sm: "8px", xl: "1px", xxl: "8px" }} mb="6px">
-                        <SoftTypography color="text" variant="button" fontSize="xxs">
+                    <Grid item xs={6} md={6} lg={3.5}>
+                      <Stack
+                        direction="row"
+                        alignItems="center"
+                        spacing={{ sm: "8px", xl: "1px", xxl: "8px" }}
+                        mb="6px"
+                      >
+                        <LiaFileInvoiceDollarSolid style={{
+                            padding: "5px",
+                            display: "flex",
+                            WebkitBoxPack: "center",
+                            justifyContent: "center",
+                            WebkitBoxAlign: "center",
+                            alignItems: "center",
+                            opacity: 1,
+                            fontSize: "30px",
+                            background:
+                              "linear-gradient(310deg, rgb(33, 82, 255), rgb(33, 212, 253))",
+                            color: "rgb(255, 255, 255)",
+                            borderRadius: "0.5rem",
+                            boxShadow:
+                              "rgba(20, 20, 20, 0.12) 0rem 0.25rem 0.375rem -0.0625rem, rgba(20, 20, 20, 0.07) 0rem 0.125rem 0.25rem -0.0625rem",
+                              marginRight : '5px'
+                          }} />
+                        <SoftTypography color="text" variant="button" fontSize="xxs" >
                           Forward Annual Dividend Rate
                         </SoftTypography>
                       </Stack>
                       <SoftTypography color="dark" variant="xxs" fontWeight="bold" mb="8px">
-                        {(StatisticsData?.statistics?.dividends_and_splits?.forward_annual_dividend_yield ?? 0).toFixed(3)}
+                        {(
+                          StatisticsData?.statistics?.dividends_and_splits
+                            ?.forward_annual_dividend_yield ?? 0
+                        ).toFixed(3)}
                       </SoftTypography>
-                      <SoftProgress value={(StatisticsData?.statistics?.dividends_and_splits?.forward_annual_dividend_yield ?? 0).toFixed(3)} color="info" sx={{ background: "#2D2E5F" }} />
+                      <SoftProgress
+                        value={(
+                          StatisticsData?.statistics?.dividends_and_splits
+                            ?.forward_annual_dividend_yield ?? 0
+                        ).toFixed(3)}
+                        color="info"
+                        sx={{ background: "#2D2E5F" }}
+                      />
                     </Grid>
                   </Grid>
 

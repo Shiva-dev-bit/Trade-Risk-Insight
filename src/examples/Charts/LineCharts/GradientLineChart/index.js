@@ -132,6 +132,8 @@ function GradientLineChart({ newprice, selectedStock }) {
   const updateChartWithNewPrice = (currentData, newPrice, timezone) => {
     if (!currentData?.[0]?.data || !newPrice?.close) return currentData;
 
+    console.log('newPricenewPrice',newPrice);
+
     const currentTime = moment().tz(timezone);
     const currentMinute = currentTime.startOf('minute');
     const currentMinuteStr = currentMinute.format('YYYY-MM-DD HH:mm');
@@ -148,6 +150,8 @@ function GradientLineChart({ newprice, selectedStock }) {
           x: moment(lastMinuteRef.current, 'YYYY-MM-DD HH:mm').valueOf(),
           y: averagePrice
         };
+
+        console.log('updatedData',updatedData);
 
         // Only add if we don't already have data for this minute
         if (!updatedData[0].data.some(point =>
@@ -651,7 +655,7 @@ function GradientLineChart({ newprice, selectedStock }) {
               key={`${stockDetails.selectedSymbol}-${timePeriod}-${stockDetails.selectedExchange}`}
               series={chartData}
               options={chartOptions}
-              type="line"
+              // type="line"
               height="100%"
               width="100%"
             />

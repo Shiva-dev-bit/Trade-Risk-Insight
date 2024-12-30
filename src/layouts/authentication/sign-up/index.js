@@ -275,6 +275,7 @@ function SignUp() {
                   border: "1px solid #d2d6da",
                   borderRadius: "0.5rem",
                   fontSize: "0.875rem",
+                  color:"#344767"
                 }}
               >
                 <option value="">Select your country</option>
@@ -304,37 +305,42 @@ function SignUp() {
               <SoftTypography
                 variant="button"
                 fontWeight="regular"
-                sx={{ cursor: "pointer", userSelect: "none" }}
+                color="dark"
+                sx={{ cursor: "pointer", userSelect: "none", textTransform: "none" }}
               >
-                I agree to the
+               &nbsp;&nbsp;I agree to the&nbsp;
               </SoftTypography>
               <SoftTypography
                 component={Link}
                 to="/terms-and-conditions" // route for Terms And Conditions
                 variant="button"
                 fontWeight="bold"
-                sx={{ ml: 1 }}
+                textGradient
+          
+                sx={{ ml: 1,textTransform: "none",marginLeft:"0px" }}
               >
                 Terms & Conditions
               </SoftTypography>
               <SoftTypography
                 variant="button"
                 fontWeight="regular"
-                sx={{ ml: 1 }}
+                color="dark"
+                sx={{ ml: 1, textTransform: "none", marginLeft:"5px" }}
               >
                 and
               </SoftTypography>
               
             </SoftBox>
-            <SoftBox display="flex" alignItems="center" mb={2} justifyContent="start">
+            <SoftBox display="flex" alignItems="center" mb={2} justifyContent="center">
             <SoftTypography
                 component={Link}
                 to="/privacy-policy" // route for Privacy policy
                 variant="button"
                 fontWeight="bold"
-                sx={{ ml: 1 }}
+                textGradient
+                sx={{ ml: 1,textTransform: "none" }}
               >
-                Privacy policy
+                Privacy Policy
               </SoftTypography>
             </SoftBox>
 
@@ -353,7 +359,7 @@ function SignUp() {
 
             {/* Redirect to Sign In */}
             <SoftBox mt={3} textAlign="center">
-              <SoftTypography variant="button" color="text" fontWeight="regular">
+              <SoftTypography variant="button" color="text" fontWeight="regular" sx={{ textTransform: "none" }}>
                 Already have an account?&nbsp;
                 <SoftTypography
                   component={Link}
@@ -362,6 +368,7 @@ function SignUp() {
                   color="dark"
                   fontWeight="bold"
                   textGradient
+                  sx={{ textTransform: "none" }}
                 >
                   Sign in
                 </SoftTypography>

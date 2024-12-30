@@ -59,12 +59,12 @@ function Projects() {
           </SoftTypography>
 
           {/* Microsoft Privacy Statement Link */}
-          <SoftTypography color="#b4b4b4" variant="sm" style={{ fontSize: "11px", marginLeft: "16px" }}>
+          <SoftTypography variant="sm" style={{ fontSize: "11px", marginLeft: "8px" }}>
             <a
               href="https://privacy.microsoft.com/en-us/privacystatement"
               target="_blank"
               rel="noreferrer"
-              style={{ color: "#b4b4b4", textDecoration: "underline" }}
+              style={{ color: "deepskyblue", textDecoration: "underline" }}
             >
               By Microsoft
             </a>
@@ -100,6 +100,7 @@ function Projects() {
             "&::-webkit-scrollbar": {
               width: "6px",
               height: "6px",
+              color: "deepskyblue"
             },
             "&::-webkit-scrollbar-track": {
               backgroundColor: "transparent",
@@ -119,7 +120,6 @@ function Projects() {
 
       {/* Privacy Statement - Bottom Left */}
       <SoftTypography
-        color="black"
         variant="sm"
         style={{
           fontSize: "11px",
@@ -132,7 +132,7 @@ function Projects() {
           href="https://privacy.microsoft.com/en-us/privacystatement"
           target="_blank"
           rel="noreferrer"
-          style={{ color: "black", textDecoration: "underline" }}
+          style={{ color: "deepskyblue", textDecoration: "underline"}}
         >
           *Privacy Statement
         </a>

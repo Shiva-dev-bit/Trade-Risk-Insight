@@ -56,8 +56,8 @@ function WorkWithTheRockets() {
     >
       <SoftBox sx={{ width: "100%" }}>
         <SoftBox sx={{ width: "100%" , display : 'flex' }}>
-          <SoftTypography variant="h5"  fontWeight="bold" sx={{textAlign : 'center' , fontSize : '16px'}}>
-            {data?.title || "Safety Score"}
+          <SoftTypography variant="h5"  fontWeight="bold" sx={{textAlign : 'center' , fontSize: '19px'}}>
+            {"Safety Score"}
           </SoftTypography>
         </SoftBox>
         <SoftBox
@@ -132,7 +132,7 @@ function WorkWithTheRockets() {
             flexDirection={{ xs: "column", md: "row" }} // Responsive direction
             justifyContent="center"
             alignItems="center"
-            gap="24px"
+            gap="15px"
             width="100%"
           >
             {/* Analyzed Metrics Box */}
@@ -143,6 +143,8 @@ function WorkWithTheRockets() {
               flexDirection="column"
               sx={{
                 borderRadius: "20px",
+                backgroundColor: 'rgba(192, 191, 191, 0.5)',
+                padding : '10px'
               }}
             >
               <SoftTypography
@@ -163,6 +165,8 @@ function WorkWithTheRockets() {
               flexDirection="column"
               sx={{
                 borderRadius: "20px",
+                backgroundColor: 'rgba(192, 191, 191, 0.5)',
+                padding : '10px',
               }}
             >
               <SoftTypography

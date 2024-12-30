@@ -319,7 +319,7 @@ function Overview() {
                                 mr={1}
                                 sx={{ fontSize: "14px", textTransform: "none" , fontFamily: '"Roboto","Helvetica","Arial","sans-serif"' }} // Reduced font size and removed capitalization
                               >
-                                {notification.notification_type}
+                                {notification.notification_alert_name}
                               </SoftTypography>
                               <SoftTypography
                                 variant="button"

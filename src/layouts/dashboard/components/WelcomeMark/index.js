@@ -130,7 +130,7 @@ const WelcomeMark = ({ stocksData }) => {
         <SoftBox>
           <Grid container spacing={3} width={'100%'} margin={0}>
             <Grid xs={12} >
-              <SoftTypography  variant="h5" fontWeight="bold" mb="12px" color="text" sx={{ fontSize : '16px'}} >
+              <SoftTypography  variant="h5" fontWeight="bold" mb="12px" color="text" sx={{ fontSize : '19px'}} >
                 Company Description:
               </SoftTypography>
               <SoftTypography color="text" sx={{ fontSize : '16px'}} variant="h6" fontWeight="regular">
