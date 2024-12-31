@@ -82,7 +82,7 @@ function Header({ username, email }) {
             >
               <SoftTypography
                 variant="lg"
-                color="black"
+                color="dark"
                 fontWeight="bold"
                 sx={{
                   fontSize: "18px",

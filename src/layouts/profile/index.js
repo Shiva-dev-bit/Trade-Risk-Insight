@@ -202,8 +202,8 @@ function Overview() {
     <DashboardLayout>
       {userId ? (
         <>
-          <Header username={userId?.username && userId?.username} email={userId?.email} />
-          <SoftBox mt={5} mb={3}>
+          <Header username={userId?.username && userId?.username } email={userId?.email} />
+          <SoftBox mt={5} mb={3} style={{marginTop:"24px"}}>
             {/* Welcome Component */}
             {/* <Grid
                 item
@@ -265,11 +265,15 @@ function Overview() {
                   flexDirection: { xs: "column", lg: "row" },
                   p: 3,
                   borderRadius: "12px",
-                  background: '#E9E4E4'
+                  background: '#fff'
                 }}
               >
                 {/* Platform Settings Section */}
-                <SoftBox flex={1}>
+                <SoftBox flex={1}
+                sx={{
+                  borderRadius:"5px",
+                  border: "2px solid #ddd"
+                }}>
                   <PlatformSettings />
                 </SoftBox>
 
@@ -278,7 +282,8 @@ function Overview() {
                   flex={1}
                   sx={{
                     backgroundColor: "#fff", // Light gray background
-                    borderRadius: "12px",
+                    borderRadius:"5px",
+                  border: "2px solid #ddd",
                     maxHeight: "520px",
                     overflowY: "auto",
                     color : '#67748e',
@@ -319,7 +324,7 @@ function Overview() {
                                 mr={1}
                                 sx={{ fontSize: "14px", textTransform: "none" , fontFamily: '"Roboto","Helvetica","Arial","sans-serif"' }} // Reduced font size and removed capitalization
                               >
-                                {notification.notification_alert_name}
+                                 {notification.notification_alert_name}
                               </SoftTypography>
                               <SoftTypography
                                 variant="button"

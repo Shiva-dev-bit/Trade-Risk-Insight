@@ -28,7 +28,7 @@ export default function data() {
       const response = await axios.post(
         api,
         {
-          stock_name: stockData?.company_name || "stock news",
+          stock_name: stockData?.company_name || "NIFTY 50",
         },
         {
           headers: { "Content-Type": "application/json" }, // Explicit header

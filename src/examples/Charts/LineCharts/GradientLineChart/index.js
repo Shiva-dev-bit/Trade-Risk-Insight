@@ -64,8 +64,8 @@ function GradientLineChart({ newprice, selectedStock }) {
   const isDashboardRoute = location.pathname === '/dashboard';
 
   const [stockDetails, setStockDetails] = useState({
-    selectedSymbol: selectedStock?.symbol || stockData?.stockData?.symbol,
-    selectedExchange: selectedStock?.exchange || stockData?.stockData?.exchange,
+    selectedSymbol: '',
+    selectedExchange: '',
     selectedStocksHigh: parseFloat(stockData?.stockData?.high),
     selectedStocksLow: parseFloat(stockData?.stockData?.low),
     selectedStocksChange: stockData?.stockData?.percent_change,
@@ -73,8 +73,8 @@ function GradientLineChart({ newprice, selectedStock }) {
 
   useEffect(() => {
     setStockDetails({
-      selectedSymbol: selectedStock?.symbol || stockData?.stockData?.symbol,
-      selectedExchange: selectedStock?.exchange || stockData?.stockData?.exchange,
+      selectedSymbol: selectedStock?.symbol || stockData?.stockData?.symbol || 'NSEI',
+      selectedExchange: selectedStock?.exchange || stockData?.stockData?.exchange || 'NSE',
     });
   }, [selectedStock, stockData?.stockData?.symbol, stockData?.stockData?.exchange]);
 

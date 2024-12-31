@@ -278,7 +278,7 @@ function Messages({ stocks, fetchUserStocks }) {
             overflow: "hidden" // Prevent card overflow
           }}>
             <SoftBox display="flex" justifyContent="space-between" alignItems="center" mb="22px">
-              <SoftTypography variant="lg" color="text.primary" fontWeight="bold" sx={{ color: '#000' }}> {/* Set color to pure black */}
+              <SoftTypography variant="lg" color="dark" fontWeight="bold"> {/* Set color to pure black */}
                 Stock List
               </SoftTypography>
             </SoftBox>
