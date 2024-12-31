@@ -27,12 +27,12 @@ import TwitterIcon from "@mui/icons-material/Twitter";
 import FacebookIcon from "@mui/icons-material/Facebook";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
-import SoftButton from "components/SoftButton";
+import SoftBox from "/src/components/SoftBox/index.js";
+import SoftTypography from "/src/components/SoftTypography/index.js";
+import SoftButton from "/src/components/SoftButton/index.js";
 
 // Custom styles for the Configurator
-import ConfiguratorRoot from "examples/Configurator/ConfiguratorRoot";
+import ConfiguratorRoot from "./ConfiguratorRoot";
 
 // RiskCompass AI React context
 import {
@@ -41,7 +41,7 @@ import {
   setTransparentSidenav,
   setFixedNavbar,
   setSidenavColor,
-} from "context";
+} from "/src/context";
 
 function Configurator() {
   const [controller, dispatch] = useSoftUIController();

@@ -36,28 +36,28 @@ Coded by www.creative-tim.com
 */
 
 // RiskCompass AI React layouts
-import Dashboard from "layouts/dashboard";
-import Tables from "layouts/tables";
-import Billing from "layouts/billing";
-import VirtualReality from "layouts/virtual-reality";
-import RTL from "layouts/rtl";
-import Profile from "layouts/profile";
-import SignIn from "layouts/authentication/sign-in";
-import SignUp from "layouts/authentication/sign-up";
-import TermsAndConditions from "layouts/authentication/terms-and-conditions";
+import Dashboard from "/src/layouts/dashboard";
+import Tables from "/src/layouts/tables";
+import Billing from "/src/layouts/billing";
+import VirtualReality from "/src/layouts/virtual-reality";
+import RTL from "/src/layouts/rtl";
+import Profile from "/src/layouts/profile";
+import SignIn from "/src/layouts/authentication/sign-in";
+import SignUp from "/src/layouts/authentication/sign-up";
+import TermsAndConditions from "/src/layouts/authentication/terms-and-conditions";
 
 // RiskCompass AI React icons
-import Shop from "examples/Icons/Shop";
-import Office from "examples/Icons/Office";
-import Settings from "examples/Icons/Settings";
-import Document from "examples/Icons/Document";
-import SpaceShip from "examples/Icons/SpaceShip";
-import CustomerSupport from "examples/Icons/CustomerSupport";
-import CreditCard from "examples/Icons/CreditCard";
-import Cube from "examples/Icons/Cube";
-import ForgotPassword from "layouts/authentication/forget-password";
-import ResetPassword from "layouts/authentication/reset-password";
-import PrivacyPolicy from "layouts/authentication/privacyPolicy";
+import Shop from "/src/examples/Icons/Shop";
+import Office from "/src/examples/Icons/Office";
+import Settings from "/src/examples/Icons/Settings";
+import Document from "/src/examples/Icons/Document";
+import SpaceShip from "/src/examples/Icons/SpaceShip";
+import CustomerSupport from "/src/examples/Icons/CustomerSupport";
+import CreditCard from "/src/examples/Icons/CreditCard";
+import Cube from "/src/examples/Icons/Cube";
+import ForgotPassword from "/src/layouts/authentication/forget-password";
+import ResetPassword from "/src/layouts/authentication/reset-password";
+import PrivacyPolicy from "/src/layouts/authentication/privacyPolicy";
 
 const routes = [
   

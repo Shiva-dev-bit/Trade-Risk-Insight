@@ -20,10 +20,10 @@ import Icon from "@mui/material/Icon";
 import Tooltip from "@mui/material/Tooltip";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
-import { AuthContext } from "context/Authcontext";
-import { supabase } from "lib/supabase";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
+import { AuthContext } from "/src/context/Authcontext";
+import { supabase } from "/src/lib/supabase";
 import PropTypes from "prop-types";
 import React, { useContext, useEffect, useState } from "react";
 

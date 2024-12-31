@@ -17,8 +17,8 @@ Coded by www.creative-tim.com
 import Divider from "@mui/material/Divider";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
 
 function Separator() {
   return (

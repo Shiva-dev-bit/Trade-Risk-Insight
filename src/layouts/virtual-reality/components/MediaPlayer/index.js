@@ -19,12 +19,12 @@ import Icon from "@mui/material/Icon";
 import Tooltip from "@mui/material/Tooltip";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
-import SoftButton from "components/SoftButton";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
+import SoftButton from "/src/components/SoftButton";
 
 // Images
-import curved1 from "assets/images/curved-images/curved1.jpg";
+import curved1 from "/src/assets/images/curved-images/curved1.jpg";
 
 function MediaPlayer() {
   const mediaPlayerButtonStyles = ({ functions: { pxToRem } }) => ({

@@ -22,10 +22,10 @@ import { useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
+import SoftBox from "/src/components/SoftBox/index.js";
 
 // RiskCompass AI React context
-import { useSoftUIController, setLayout } from "context";
+import { useSoftUIController, setLayout } from "/src/context/index.js";
 
 function DashboardLayout({ children }) {
   const [controller, dispatch] = useSoftUIController();

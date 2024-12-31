@@ -22,8 +22,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { Card, Typography, Box, Switch, Tooltip, Button, Snackbar } from '@mui/material';
 // UI Risk LENS AI Dashboard React components
 import { MenuItem, Select } from "@mui/material";
-import { supabase } from "lib/supabase";
-import { AuthContext } from "context/Authcontext";
+import { supabase } from "/src/lib/supabase";
+import { AuthContext } from "/src/context/Authcontext";
 
 
 function PlatformSettings() {

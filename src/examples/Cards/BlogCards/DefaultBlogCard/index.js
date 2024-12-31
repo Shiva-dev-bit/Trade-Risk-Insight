@@ -24,9 +24,9 @@ import Card from "@mui/material/Card";
 import MuiLink from "@mui/material/Link";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
-import SoftAvatar from "components/SoftAvatar";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
+import SoftAvatar from "/src/components/SoftAvatar";
 
 function DefaultBlogCard({ image, category, title, description, author, action }) {
   return (

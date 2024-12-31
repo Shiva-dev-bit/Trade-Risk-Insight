@@ -19,7 +19,7 @@ import { forwardRef } from "react";
 import PropTypes from "prop-types";
 
 // Custom styles for the SoftBadge
-import SoftBadgeRoot from "components/SoftBadge/SoftBadgeRoot";
+import SoftBadgeRoot from "/src/components/SoftBadge/SoftBadgeRoot";
 
 const SoftBadge = forwardRef(
   ({ color, variant, size, circular, indicator, border, container, children, ...rest }, ref) => (

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import SoftBox from 'components/SoftBox';
-import SoftTypography from 'components/SoftTypography';
-import SoftInput from 'components/SoftInput';
-import SoftButton from 'components/SoftButton';
-import CoverLayout from "layouts/authentication/components/CoverLayout";
-import { supabase } from 'lib/supabase';
+import SoftBox from '/src/components/SoftBox';
+import SoftTypography from '/src/components/SoftTypography';
+import SoftInput from '/src/components/SoftInput';
+import SoftButton from '/src/components/SoftButton';
+import CoverLayout from "/src/layouts/authentication/components/CoverLayout";
+import { supabase } from '/src/lib/supabase';
 import { useHistory } from 'react-router-dom';
-import curved9 from "assets/images/curved-images/curved-6.jpg";
+import curved9 from "/src/assets/images/curved-images/curved-6.jpg";
 
 
 const ForgotPassword = () => {

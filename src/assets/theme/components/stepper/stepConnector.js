@@ -14,8 +14,8 @@ Coded by www.creative-tim.com
 */
 
 // RiskCompass AI React base styles
-import borders from "assets/theme/base/borders";
-import colors from "assets/theme/base/colors";
+import borders from "/src/assets/theme/base/borders";
+import colors from "/src/assets/theme/base/colors";
 
 const { dark } = colors;
 const { borderWidth, borderColor } = borders;

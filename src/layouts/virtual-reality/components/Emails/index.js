@@ -19,20 +19,20 @@ import Grid from "@mui/material/Grid";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import { Box } from "@mui/material";
-import burceMars from "assets/images/image.png";
-import breakpoints from "assets/theme/base/breakpoints";
-// import SoftAvatar from "components/SoftAvatar";
-// import SoftBox from "components/SoftBox";
-// import SoftTypography from "components/SoftTypography";
+import burceMars from "/src/assets/images/image.png";
+import breakpoints from "/src/assets/theme/base/breakpoints";
+// import SoftAvatar from "/src/components/SoftAvatar";
+// import SoftBox from "/src/components/SoftBox";
+// import SoftTypography from "/src/components/SoftTypography";
 import { IoCube, IoDocument, IoBuild } from "react-icons/io5";
 import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
-import SoftAvatar from "components/SoftAvatar";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
+import SoftAvatar from "/src/components/SoftAvatar";
 import PropTypes from "prop-types";
 
 function Emails({ username, email, stocks }) {

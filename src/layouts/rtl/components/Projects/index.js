@@ -22,14 +22,14 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
 
 // RiskCompass AI Materail-UI example components
-import Table from "examples/Tables/Table";
+import Table from "/src/examples/Tables/Table";
 
 // Data
-import data from "layouts/rtl/components/Projects/data";
+import data from "/src/layouts/rtl/components/Projects/data";
 
 function Projects() {
   const { columns, rows } = data();

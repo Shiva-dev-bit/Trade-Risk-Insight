@@ -14,7 +14,7 @@ Coded by www.creative-tim.com
 */
 
 // Images
-import vrBg from "assets/images/vr-bg.jpg";
+import vrBg from "/src/assets/images/vr-bg.jpg";
 
 function baseLayout({ functions, breakpoints }) {
   const { pxToRem } = functions;

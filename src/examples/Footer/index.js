@@ -21,11 +21,11 @@ import Link from "@mui/material/Link";
 import Icon from "@mui/material/Icon";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
 
 // RiskCompass AI React base styles
-import typography from "assets/theme/base/typography";
+import typography from "/src/assets/theme/base/typography";
 
 function Footer({ company, links }) {
   // const { href, name } = company;

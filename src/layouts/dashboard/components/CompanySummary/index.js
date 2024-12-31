@@ -3,7 +3,7 @@ import { Card, CardContent, Box, Button, Typography, Link } from "@mui/material"
 import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
 import { ReactTyped } from "react-typed";
 import axios from "axios";
-import { AuthContext } from "context/Authcontext";
+import { AuthContext } from "/src/context/Authcontext";
 import './style.css'
 
 const CompanyDescription = () => {

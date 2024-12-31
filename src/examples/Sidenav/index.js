@@ -28,20 +28,20 @@ import Link from "@mui/material/Link";
 import Icon from "@mui/material/Icon";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
-import SoftButton from "components/SoftButton";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
+import SoftButton from "/src/components/SoftButton";
 
 // RiskCompass AI React examples
-import SidenavCollapse from "examples/Sidenav/SidenavCollapse";
-import SidenavCard from "examples/Sidenav/SidenavCard";
+import SidenavCollapse from "/src/examples/Sidenav/SidenavCollapse";
+import SidenavCard from "/src/examples/Sidenav/SidenavCard";
 
 // Custom styles for the Sidenav
-import SidenavRoot from "examples/Sidenav/SidenavRoot";
-import sidenavLogoLabel from "examples/Sidenav/styles/sidenav";
+import SidenavRoot from "/src/examples/Sidenav/SidenavRoot";
+import sidenavLogoLabel from "/src/examples/Sidenav/styles/sidenav";
 
 // RiskCompass AI React context
-import { useSoftUIController, setMiniSidenav } from "context";
+import { useSoftUIController, setMiniSidenav } from "/src/context";
 
 function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const [controller, dispatch] = useSoftUIController();

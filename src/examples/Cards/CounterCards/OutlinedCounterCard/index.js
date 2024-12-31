@@ -20,12 +20,12 @@ import CountUp from "react-countup";
 import PropTypes from "prop-types";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
 
 // RiskCompass AI React base styles
-import colors from "assets/theme/base/colors";
-import borders from "assets/theme/base/borders";
+import colors from "/src/assets/theme/base/colors";
+import borders from "/src/assets/theme/base/borders";
 
 function OutlinedCounterCard({ color, count, title, prefix, suffix }) {
   const { secondary } = colors;

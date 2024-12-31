@@ -19,7 +19,7 @@ import { forwardRef } from "react";
 import PropTypes from "prop-types";
 
 // Custom styles for SoftBox
-import SoftBoxRoot from "components/SoftBox/SoftBoxRoot";
+import SoftBoxRoot from "./SoftBoxRoot";
 
 const SoftBox = forwardRef(
   ({ variant, bgColor, color, opacity, borderRadius, shadow, ...rest }, ref) => (

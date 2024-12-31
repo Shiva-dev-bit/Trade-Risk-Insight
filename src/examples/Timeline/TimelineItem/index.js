@@ -20,15 +20,15 @@ import PropTypes from "prop-types";
 import Icon from "@mui/material/Icon";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
-import SoftBadge from "components/SoftBadge";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
+import SoftBadge from "/src/components/SoftBadge";
 
 // Timeline context
-import { useTimeline } from "examples/Timeline/context";
+import { useTimeline } from "/src/examples/Timeline/context";
 
 // Custom styles for the TimelineItem
-import { timelineItem, timelineItemIcon } from "examples/Timeline/TimelineItem/styles";
+import { timelineItem, timelineItemIcon } from "/src/examples/Timeline/TimelineItem/styles";
 
 function TimelineItem({ color, icon, title, dateTime, description, badges, lastItem }) {
   const isDark = useTimeline();

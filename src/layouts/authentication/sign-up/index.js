@@ -23,20 +23,20 @@ import Card from "@mui/material/Card";
 import Checkbox from "@mui/material/Checkbox";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
-import SoftInput from "components/SoftInput";
-import SoftButton from "components/SoftButton";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
+import SoftInput from "/src/components/SoftInput";
+import SoftButton from "/src/components/SoftButton";
 
 // Authentication layout components
-import BasicLayout from "layouts/authentication/components/BasicLayout";
-import Socials from "layouts/authentication/components/Socials";
-import Separator from "layouts/authentication/components/Separator";
+import BasicLayout from "/src/layouts/authentication/components/BasicLayout";
+import Socials from "/src/layouts/authentication/components/Socials";
+import Separator from "/src/layouts/authentication/components/Separator";
 
 // Images
-import curved6 from "assets/images/curved-images/curved14.jpg";
-import { supabase } from "lib/supabase";
-import TermsAndConditions from "layouts/authentication/terms-and-conditions";
+import curved6 from "/src/assets/images/curved-images/curved14.jpg";
+import { supabase } from "/src/lib/supabase";
+import TermsAndConditions from "/src/layouts/authentication/terms-and-conditions";
 
 function SignUp() {
   const [signUp, setSignUp] = useState({

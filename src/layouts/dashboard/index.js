@@ -18,41 +18,41 @@ import Grid from "@mui/material/Grid";
 import Icon from "@mui/material/Icon";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
 
 // RiskCompass AI React examples
-import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import Footer from "examples/Footer";
-import MiniStatisticsCard from "examples/Cards/StatisticsCards/MiniStatisticsCard";
-import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
-import GradientLineChart from "examples/Charts/LineCharts/GradientLineChart";
+import DashboardLayout from "/src/examples/LayoutContainers/DashboardLayout";
+import DashboardNavbar from "/src/examples/Navbars/DashboardNavbar";
+import Footer from "/src/examples/Footer";
+import MiniStatisticsCard from "/src/examples/Cards/StatisticsCards/MiniStatisticsCard";
+import ReportsBarChart from "/src/examples/Charts/BarCharts/ReportsBarChart";
+import GradientLineChart from "/src/examples/Charts/LineCharts/GradientLineChart";
 
 import { DollarSign, Users, Award, BarChart } from 'lucide-react';
 
 
 // RiskCompass AI React base styles
-import typography from "assets/theme/base/typography";
+import typography from "/src/assets/theme/base/typography";
 
 // Dashboard layout components
-import BuildByDevelopers from "layouts/dashboard/components/BuildByDevelopers";
-import WorkWithTheRockets from "layouts/dashboard/components/WorkWithTheRockets";
-import Projects from "layouts/dashboard/components/Projects";
-import OrderOverview from "layouts/dashboard/components/OrderOverview";
+import BuildByDevelopers from "/src/layouts/dashboard/components/BuildByDevelopers";
+import WorkWithTheRockets from "/src/layouts/dashboard/components/WorkWithTheRockets";
+import Projects from "/src/layouts/dashboard/components/Projects";
+import OrderOverview from "/src/layouts/dashboard/components/OrderOverview";
 
 // Data
-import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
-import gradientLineChartData from "layouts/dashboard/data/gradientLineChartData";
+import reportsBarChartData from "/src/layouts/dashboard/data/reportsBarChartData";
+import gradientLineChartData from "/src/layouts/dashboard/data/gradientLineChartData";
 import { FaCaretDown, FaCaretUp, FaMoneyBillWave } from "react-icons/fa";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "context/Authcontext";
-import { supabase } from "lib/supabase";
+import { AuthContext } from "/src/context/Authcontext";
+import { supabase } from "/src/lib/supabase";
 import axios from "axios";
 import moment from "moment-timezone";
 import { Card, Stack } from "@mui/material";
-import SoftProgress from "components/SoftProgress";
+import SoftProgress from "/src/components/SoftProgress";
 import WelcomeMark from "./components/WelcomeMark";
 import CompanyDescription from "./components/CompanySummary";
 

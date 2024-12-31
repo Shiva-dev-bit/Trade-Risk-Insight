@@ -1,7 +1,7 @@
 import { Card, Icon, Typography } from "@mui/material";
-import welcome from "assets/images/curved-images/white-curved.jpeg";
-import SoftTypography from "components/SoftTypography/index";
-import SoftBox from "components/SoftBox/index";
+import welcome from "/src/assets/images/curved-images/white-curved.jpeg";
+import SoftTypography from "/src/components/SoftTypography/index";
+import SoftBox from "/src/components/SoftBox/index";
 import PropTypes from "prop-types";
 
 const Welcome = ({ username, email }) => {

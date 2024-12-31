@@ -24,15 +24,15 @@ import CssBaseline from "@mui/material/CssBaseline";
 import Icon from "@mui/material/Icon";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
+import SoftBox from "./components/SoftBox";
 
 // RiskCompass AI React examples
-import Sidenav from "examples/Sidenav";
-import Configurator from "examples/Configurator";
+import Sidenav from "./examples/Sidenav";
+import Configurator from "./examples/Configurator";
 
 // RiskCompass AI React themes
-import theme from "assets/theme";
-import themeRTL from "assets/theme/theme-rtl";
+import theme from "./assets/theme";
+import themeRTL from "./assets/theme/theme-rtl";
 
 // RTL plugins
 import rtlPlugin from "stylis-plugin-rtl";
@@ -40,19 +40,19 @@ import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 
 // RiskCompass AI React routes
-import routes from "routes";
+import routes from "./routes";
 
 // RiskCompass AI React contexts
-import { useSoftUIController, setMiniSidenav, setOpenConfigurator } from "context";
+import { useSoftUIController, setMiniSidenav, setOpenConfigurator } from "./context";
 
 // Images
-import brand from "assets/images/logo-ct.png";
+import brand from "./assets/images/logo-ct.png";
 import { Snackbar, SnackbarContent, Switch } from "@mui/material";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import { supabase } from "lib/supabase";
-import { useStockContext } from "context/StockContext";
-import { AuthContext } from "context/Authcontext";
+import DashboardNavbar from "./examples/Navbars/DashboardNavbar";
+import DashboardLayout from "./examples/LayoutContainers/DashboardLayout";
+import { supabase } from "./lib/supabase";
+import { useStockContext } from "./context/StockContext";
+import { AuthContext } from "./context/Authcontext";
 
 export default function App() {
   const [controller, dispatch] = useSoftUIController();

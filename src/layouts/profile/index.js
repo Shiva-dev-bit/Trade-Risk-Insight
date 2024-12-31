@@ -3,21 +3,21 @@ import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 
 // UI Risk LENS AI Dashboard React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
-import ProfileInfoCard from "examples/Cards/InfoCards/ProfileInfoCard";
-import DefaultProjectCard from "examples/Cards/ProjectCards/DefaultProjectCard";
-import Footer from "examples/Footer";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
+import ProfileInfoCard from "/src/examples/Cards/InfoCards/ProfileInfoCard";
+import DefaultProjectCard from "/src/examples/Cards/ProjectCards/DefaultProjectCard";
+import Footer from "/src/examples/Footer";
 // UI Risk LENS AI Dashboard React example components
-import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
+import DashboardLayout from "/src/examples/LayoutContainers/DashboardLayout";
 // Overview page components
-import Header from "layouts/profile/components/Header";
-import PlatformSettings from "layouts/profile/components/PlatformSettings";
+import Header from "/src/layouts/profile/components/Header";
+import PlatformSettings from "/src/layouts/profile/components/PlatformSettings";
 import Welcome from "../profile/components/Welcome/index";
 import CarInformations from "./components/CarInformations";
-import { supabase } from "lib/supabase";
+import { supabase } from "/src/lib/supabase";
 import React, { useContext, useEffect, useState } from "react";
-import { AuthContext } from "context/Authcontext";
+import { AuthContext } from "/src/context/Authcontext";
 import { Box, Button, Divider } from "@mui/material";
 import { Link } from "react-router-dom";
 import { Alert } from "@mui/material";

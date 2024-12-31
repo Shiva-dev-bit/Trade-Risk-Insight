@@ -26,12 +26,12 @@ import { StockProvider } from "context/StockContext";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <BrowserRouter>
-    <SoftUIControllerProvider>
-      <AuthProvider>
-        <StockProvider>
+    <AuthProvider>
+      <StockProvider>
+        <SoftUIControllerProvider>
           <App />
-        </StockProvider>
-      </AuthProvider>
-    </SoftUIControllerProvider>
+        </SoftUIControllerProvider>
+      </StockProvider>
+    </AuthProvider>
   </BrowserRouter>
 );

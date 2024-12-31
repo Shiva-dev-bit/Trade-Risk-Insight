@@ -8,14 +8,14 @@
 
 Coded by www.creative-tim.com
 
- =========================================================
+=========================================================
 
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
 // RiskCompass AI React base styles
-import colors from "assets/theme/base/colors";
-import typography from "assets/theme/base/typography";
+import colors from "/src/assets/theme/base/colors";  // Changed from borders.js to colors.js
+import typography from "/src/assets/theme/base/typography";  // Changed from borders.js to typography.js
 
 const { grey } = colors;
 const { size } = typography;
@@ -27,7 +27,7 @@ const breadcrumbs = {
     },
 
     separator: {
-      fontSize: size.sm,
+      fontSize: size.sm,  // Added .sm since it's likely a size variant
       color: grey[600],
     },
   },

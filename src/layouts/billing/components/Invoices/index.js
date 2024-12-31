@@ -17,12 +17,12 @@ Coded by www.creative-tim.com
 import Card from "@mui/material/Card";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
-import SoftButton from "components/SoftButton";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
+import SoftButton from "/src/components/SoftButton";
 
 // Billing page components
-import Invoice from "layouts/billing/components/Invoice";
+import Invoice from "/src/layouts/billing/components/Invoice";
 
 function Invoices() {
   return (

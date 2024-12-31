@@ -23,11 +23,11 @@ import MenuItem from "@mui/material/MenuItem";
 import Icon from "@mui/material/Icon";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
+import SoftBox from "/src/components/SoftBox/index.js";
+import SoftTypography from "/src/components/SoftTypography/index.js";
 
 // custom styles for the NotificationItem
-import { menuItem, menuImage } from "examples/Items/NotificationItem/styles";
+import { menuItem, menuImage } from "/src/examples/Items/NotificationItem/styles";
 
 const NotificationItem = forwardRef(({ color, image, title, date, ...rest }, ref) => (
   <MenuItem {...rest} ref={ref} sx={(theme) => menuItem(theme)}>

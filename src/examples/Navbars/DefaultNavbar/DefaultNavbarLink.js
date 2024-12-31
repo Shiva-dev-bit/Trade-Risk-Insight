@@ -23,8 +23,8 @@ import PropTypes from "prop-types";
 import Icon from "@mui/material/Icon";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
 
 function DefaultNavbarLink({ icon, name, route, light }) {
   return (

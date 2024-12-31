@@ -17,11 +17,11 @@ Coded by www.creative-tim.com
 import Card from "@mui/material/Card";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
 
 // Billing page components
-import Bill from "layouts/billing/components/Bill";
+import Bill from "/src/layouts/billing/components/Bill";
 
 function BillingInformation() {
   return (

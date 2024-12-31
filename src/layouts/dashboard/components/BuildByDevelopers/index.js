@@ -19,16 +19,16 @@ import Grid from "@mui/material/Grid";
 import Icon from "@mui/material/Icon";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
 
 // Images
-import wavesWhite from "assets/images/shapes/waves-white.svg";
-import rocketWhite from "assets/images/illustrations/rocket-white.png";
+import wavesWhite from "/src/assets/images/shapes/waves-white.svg";
+import rocketWhite from "/src/assets/images/illustrations/rocket-white.png";
 import { CircularProgress } from "@mui/material";
 import { FaArrowsAltV } from "react-icons/fa";
 import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "context/Authcontext";
+import { AuthContext } from "/src/context/Authcontext";
 import axios from "axios";
 import { BiUpArrowAlt, BiDownArrowAlt, BiSolidUpArrowAlt } from 'react-icons/bi';
 

@@ -14,8 +14,8 @@ Coded by www.creative-tim.com
 */
 
 // RiskCompass AI React components
-import SoftButton from "components/SoftButton";
-import SoftBox from "components/SoftBox";
+import SoftButton from "/src/components/SoftButton";
+import SoftBox from "/src/components/SoftBox";
 
 function Socials() {
   return (

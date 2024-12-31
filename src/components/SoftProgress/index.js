@@ -19,10 +19,10 @@ import { forwardRef } from "react";
 import PropTypes from "prop-types";
 
 // RiskCompass AI React components
-import SoftTypography from "components/SoftTypography";
+import SoftTypography from "/src/components/SoftTypography";
 
 // Custom styles for SoftProgress
-import SoftProgressRoot from "components/SoftProgress/SoftProgressRoot";
+import SoftProgressRoot from "/src/components/SoftProgress/SoftProgressRoot";
 
 const SoftProgress = forwardRef(({ variant, color, value, label, ...rest }, ref) => (
   <>

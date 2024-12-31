@@ -24,8 +24,8 @@ import { Breadcrumbs as MuiBreadcrumbs } from "@mui/material";
 import Icon from "@mui/material/Icon";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
+import SoftBox from "/src/components/SoftBox/index.js";
+import SoftTypography from "/src/components/SoftTypography/index.js";
 
 function Breadcrumbs({ icon, title, route, light }) {
   const routes = route.slice(0, -1);

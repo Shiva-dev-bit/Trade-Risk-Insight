@@ -24,7 +24,7 @@ import ListItemText from "@mui/material/ListItemText";
 import Icon from "@mui/material/Icon";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
+import SoftBox from "/src/components/SoftBox";
 
 // Custom styles for the SidenavCollapse
 import {
@@ -32,10 +32,10 @@ import {
   collapseIconBox,
   collapseIcon,
   collapseText,
-} from "examples/Sidenav/styles/sidenavCollapse";
+} from "/src/examples/Sidenav/styles/sidenavCollapse";
 
 // RiskCompass AI React context
-import { useSoftUIController } from "context";
+import { useSoftUIController } from "/src/context";
 
 function SidenavCollapse({ color, icon, name, children, active, noCollapse, open, ...rest }) {
   const [controller] = useSoftUIController();

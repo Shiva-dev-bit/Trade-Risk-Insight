@@ -17,16 +17,16 @@ Coded by www.creative-tim.com
 import Icon from "@mui/material/Icon";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
 
 // RiskCompass AI React examples
 import React, { useContext, useEffect, useState } from "react";
 import { Card, Box, Divider } from "@mui/material";
 import { FaArrowAltCircleUp, FaArrowCircleUp, FaArrowDown, FaArrowsAltH, FaArrowUp, FaCoins, FaShoppingCart } from "react-icons/fa";
 import { FaPiggyBank } from "react-icons/fa";
-import TimelineItem from "examples/Timeline/TimelineItem";
-import { AuthContext } from "context/Authcontext";
+import TimelineItem from "/src/examples/Timeline/TimelineItem";
+import { AuthContext } from "/src/context/Authcontext";
 import axios from "axios";
 
 const OrdersOverview = () => {

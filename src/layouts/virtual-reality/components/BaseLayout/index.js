@@ -22,29 +22,29 @@ import { useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
+import SoftBox from "/src/components/SoftBox";
 
 // RiskCompass AI React examples
-import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import Footer from "examples/Footer";
-import Sidenav from "examples/Sidenav";
+import DashboardLayout from "/src/examples/LayoutContainers/DashboardLayout";
+import DashboardNavbar from "/src/examples/Navbars/DashboardNavbar";
+import Footer from "/src/examples/Footer";
+import Sidenav from "/src/examples/Sidenav";
 
 // RiskCompass AI React context
-import { useSoftUIController, setMiniSidenav, setLayout, setTransparentSidenav } from "context";
+import { useSoftUIController, setMiniSidenav, setLayout, setTransparentSidenav } from "/src/context";
 
 // RiskCompass AI React routes
-import routes from "routes";
+import routes from "/src/routes";
 
 // Custom styles for the BaseLayout
 import {
   baseLayout,
   baseLayoutBackground,
   baseLayoutContent,
-} from "layouts/virtual-reality/components/BaseLayout/styles";
+} from "/src/layouts/virtual-reality/components/BaseLayout/styles";
 
 // Images
-import brand from "assets/images/logo-ct.png";
+import brand from "/src/assets/images/logo-ct.png";
 
 function BaseLayout({ children }) {
   const [controller, dispatch] = useSoftUIController();

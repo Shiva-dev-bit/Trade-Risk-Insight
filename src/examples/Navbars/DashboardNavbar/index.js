@@ -9,13 +9,13 @@ import Menu from "@mui/material/Menu";
 import Icon from "@mui/material/Icon";
 
 // UI Risk LENS AI Dashboard React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
-import SoftInput from "components/SoftInput";
+import SoftBox from "/src/components/SoftBox/index.js";
+import SoftTypography from "/src/components/SoftTypography/index.js";
+import SoftInput from "/src/components/SoftInput/index.js";
 
 // UI Risk LENS AI Dashboard React example components
-import Breadcrumbs from "examples/Breadcrumbs";
-import NotificationItem from "examples/Items/NotificationItem";
+import Breadcrumbs from "/src/examples/Breadcrumbs";
+import NotificationItem from "/src/examples/Items/NotificationItem/index.js";
 
 // Custom styles for DashboardNavbar
 import {
@@ -24,7 +24,7 @@ import {
   navbarRow,
   navbarIconButton,
   navbarMobileMenu,
-} from "examples/Navbars/DashboardNavbar/styles";
+} from "/src/examples/Navbars/DashboardNavbar/styles";
 
 // UI Risk LENS AI Dashboard React context
 import {
@@ -32,11 +32,11 @@ import {
   setTransparentNavbar,
   setMiniSidenav,
   setOpenConfigurator,
-} from "context";
+} from "/src/context/index.js";
 
 // Images
-import team2 from "assets/images/team-2.jpg";
-import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
+import team2 from "/src/assets/images/team-2.jpg";
+import logoSpotify from "/src/assets/images/small-logos/logo-spotify.svg";
 import {
   Badge,
   Box,
@@ -51,11 +51,11 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { supabase } from "lib/supabase";
+import { supabase } from "/src/lib/supabase";
 import { BsCheckLg, BsChevronDown } from "react-icons/bs";
 import StockPrice from "./StockPrice";
 import { Add, Logout } from "@mui/icons-material";
-import { AuthContext } from "context/Authcontext";
+import { AuthContext } from "/src/context/Authcontext";
 import axios from "axios";
 import './loader.css';
 import moment from "moment-timezone";

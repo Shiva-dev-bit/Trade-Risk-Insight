@@ -22,19 +22,19 @@ import { Link } from "react-router-dom";
 import Switch from "@mui/material/Switch";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
-import SoftInput from "components/SoftInput";
-import SoftButton from "components/SoftButton";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
+import SoftInput from "/src/components/SoftInput";
+import SoftButton from "/src/components/SoftButton";
 
 // Authentication layout components
-import CoverLayout from "layouts/authentication/components/CoverLayout";
+import CoverLayout from "/src/layouts/authentication/components/CoverLayout";
 
 // Images
-import curved9 from "assets/images/curved-images/curved-6.jpg";
+import curved9 from "/src/assets/images/curved-images/curved-6.jpg";
 import { CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "lib/supabase";
+import { supabase } from "/src/lib/supabase";
 
 
 function SignIn() {

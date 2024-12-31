@@ -1,3 +1,4 @@
+'use client';
 /**
 =========================================================
 * RiskCompass AI React - v4.0.1
@@ -85,6 +86,7 @@ function SoftUIControllerProvider({ children }) {
 // RiskCompass AI React custom hook for using context
 function useSoftUIController() {
   const context = useContext(SoftUI);
+  console.log("context",context);
 
   if (!context) {
     throw new Error("useSoftUIController should be used inside the SoftUIControllerProvider.");

@@ -14,7 +14,7 @@ Coded by www.creative-tim.com
 */
 
 // RiskCompass AI React Base Styles
-import colors from "assets/theme/base/colors";
+import colors from "/src/assets/theme/base/colors";
 
 const { transparent } = colors;
 

@@ -20,15 +20,15 @@ import Icon from "@mui/material/Icon";
 import Link from "@mui/material/Link";
 
 // RiskCompass AI React components
-import SoftButton from "components/SoftButton";
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
+import SoftButton from "/src/components/SoftButton";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
 
 // Custom styles for the SidenavCard
-import { card, cardContent, cardIconBox, cardIcon } from "examples/Sidenav/styles/sidenavCard";
+import { card, cardContent, cardIconBox, cardIcon } from "/src/examples/Sidenav/styles/sidenavCard";
 
 // RiskCompass AI React context
-import { useSoftUIController } from "context";
+import { useSoftUIController } from "/src/context";
 
 function SidenavCard() {
   const [controller] = useSoftUIController();

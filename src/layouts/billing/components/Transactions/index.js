@@ -19,11 +19,11 @@ import Card from "@mui/material/Card";
 import Icon from "@mui/material/Icon";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
 
 // Billing page components
-import Transaction from "layouts/billing/components/Transaction";
+import Transaction from "/src/layouts/billing/components/Transaction";
 
 function Transactions() {
   return (

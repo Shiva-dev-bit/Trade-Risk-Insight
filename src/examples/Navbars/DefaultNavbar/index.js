@@ -26,16 +26,16 @@ import Container from "@mui/material/Container";
 import Icon from "@mui/material/Icon";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
-import SoftButton from "components/SoftButton";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
+import SoftButton from "/src/components/SoftButton";
 
 // RiskCompass AI React examples
-import DefaultNavbarLink from "examples/Navbars/DefaultNavbar/DefaultNavbarLink";
-import DefaultNavbarMobile from "examples/Navbars/DefaultNavbar/DefaultNavbarMobile";
+import DefaultNavbarLink from "/src/examples/Navbars/DefaultNavbar/DefaultNavbarLink";
+import DefaultNavbarMobile from "/src/examples/Navbars/DefaultNavbar/DefaultNavbarMobile";
 
 // RiskCompass AI React base styles
-import breakpoints from "assets/theme/base/breakpoints";
+import breakpoints from "/src/assets/theme/base/breakpoints";
 
 function DefaultNavbar({ transparent, light, action }) {
   const [mobileNavbar, setMobileNavbar] = useState(false);

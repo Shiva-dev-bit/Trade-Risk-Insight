@@ -17,24 +17,24 @@ Coded by www.creative-tim.com
 import Tooltip from "@mui/material/Tooltip";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
-import SoftAvatar from "components/SoftAvatar";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
+import SoftAvatar from "/src/components/SoftAvatar";
 
 // Images
-import team1 from "assets/images/team-1.jpg";
-import team2 from "assets/images/team-2.jpg";
-import team3 from "assets/images/team-3.jpg";
-import team4 from "assets/images/team-4.jpg";
+import team1 from "/src/assets/images/team-1.jpg";
+import team2 from "/src/assets/images/team-2.jpg";
+import team3 from "/src/assets/images/team-3.jpg";
+import team4 from "/src/assets/images/team-4.jpg";
 
 import { MdDelete } from "react-icons/md";
 import { Box, Button, Card, Grid, Modal, Snackbar, SnackbarContent, Typography } from "@mui/material";
-import { supabase } from "lib/supabase";
+import { supabase } from "/src/lib/supabase";
 import { useEffect, useState } from "react";
-import Table from "examples/Tables/Table";
-// import SoftTypography from "components/SoftTypography";
-// import SoftBox from "components/SoftBox";
-import GradientLineChart from "examples/Charts/LineCharts/GradientLineChart";
+import Table from "/src/examples/Tables/Table";
+// import SoftTypography from "/src/components/SoftTypography";
+// import SoftBox from "/src/components/SoftBox";
+import GradientLineChart from "/src/examples/Charts/LineCharts/GradientLineChart";
 import PropTypes from "prop-types";
 import TodoCard from "../TodoCard";
 

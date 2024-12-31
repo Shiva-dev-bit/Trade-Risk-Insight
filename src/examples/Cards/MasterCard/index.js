@@ -21,12 +21,12 @@ import Card from "@mui/material/Card";
 import Icon from "@mui/material/Icon";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
 
 // Images
-import curved14 from "assets/images/curved-images/curved14.jpg";
-import masterCardLogo from "assets/images/logos/mastercard.png";
+import curved14 from "/src/assets/images/curved-images/curved14.jpg";
+import masterCardLogo from "/src/assets/images/logos/mastercard.png";
 
 function MasterCard({ color, number, holder, expires }) {
   const numbers = [...`${number}`];

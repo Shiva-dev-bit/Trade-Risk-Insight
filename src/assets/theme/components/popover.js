@@ -14,12 +14,12 @@ Coded by www.creative-tim.com
 */
 
 // RiskCompass AI React helper functions
-import pxToRem from "assets/theme/functions/pxToRem";
+import pxToRem from "/src/assets/theme/functions/pxToRem";
 
 // RiskCompass AI React base styles
-import colors from "assets/theme/base/colors";
-import boxShadows from "assets/theme/base/boxShadows";
-import borders from "assets/theme/base/borders";
+import colors from "/src/assets/theme/base/colors";
+import boxShadows from "/src/assets/theme/base/boxShadows";
+import borders from "/src/assets/theme/base/borders";
 
 const { transparent } = colors;
 const { lg } = boxShadows;

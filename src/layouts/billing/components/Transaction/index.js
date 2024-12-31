@@ -20,9 +20,9 @@ import PropTypes from "prop-types";
 import Icon from "@mui/material/Icon";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
-import SoftButton from "components/SoftButton";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
+import SoftButton from "/src/components/SoftButton";
 
 function Transaction({ color, icon, name, description, value }) {
   return (

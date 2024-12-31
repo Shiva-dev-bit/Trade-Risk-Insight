@@ -20,15 +20,15 @@ import PropTypes from "prop-types";
 import Grid from "@mui/material/Grid";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
 
 // RiskCompass AI React examples
-import DefaultNavbar from "examples/Navbars/DefaultNavbar";
-import PageLayout from "examples/LayoutContainers/PageLayout";
+import DefaultNavbar from "/src/examples/Navbars/DefaultNavbar";
+import PageLayout from "/src/examples/LayoutContainers/PageLayout";
 
 // Authentication layout components
-import Footer from "layouts/authentication/components/Footer";
+import Footer from "/src/layouts/authentication/components/Footer";
 
 function CoverLayout({ color, header, title, description, image, top, children }) {
   return (

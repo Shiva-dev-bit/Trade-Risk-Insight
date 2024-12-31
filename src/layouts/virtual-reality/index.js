@@ -19,36 +19,36 @@ import Tooltip from "@mui/material/Tooltip";
 import Icon from "@mui/material/Icon";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftAvatar from "components/SoftAvatar";
-import SoftTypography from "components/SoftTypography";
-import SoftButton from "components/SoftButton";
+import SoftBox from "/src/components/SoftBox";
+import SoftAvatar from "/src/components/SoftAvatar";
+import SoftTypography from "/src/components/SoftTypography";
+import SoftButton from "/src/components/SoftButton";
 
 // RiskCompass AI React base styles
-import typography from "assets/theme/base/typography";
+import typography from "/src/assets/theme/base/typography";
 
 // VR dashboards components
-import BaseLayout from "layouts/virtual-reality/components/BaseLayout";
+import BaseLayout from "/src/layouts/virtual-reality/components/BaseLayout";
 
 // VRInfo dashboards components
-import TodoList from "layouts/virtual-reality/components/TodoList";
-import TodoCard from "layouts/virtual-reality/components/TodoCard";
-import Emails from "layouts/virtual-reality/components/Emails";
-import MediaPlayer from "layouts/virtual-reality/components/MediaPlayer";
-import Messages from "layouts/virtual-reality/components/Messages";
+import TodoList from "/src/layouts/virtual-reality/components/TodoList";
+import TodoCard from "/src/layouts/virtual-reality/components/TodoCard";
+import Emails from "/src/layouts/virtual-reality/components/Emails";
+import MediaPlayer from "/src/layouts/virtual-reality/components/MediaPlayer";
+import Messages from "/src/layouts/virtual-reality/components/Messages";
 
 // Images
-import team1 from "assets/images/team-1.jpg";
-import sunCloud from "assets/images/small-logos/icon-sun-cloud.png";
+import team1 from "/src/assets/images/team-1.jpg";
+import sunCloud from "/src/assets/images/small-logos/icon-sun-cloud.png";
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
 // import { Link } from "react-router-dom";
 import { Link } from "react-router-dom";
 // import { Button } from '@mui/material';
-import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import { supabase } from "lib/supabase";
+import DashboardLayout from "/src/examples/LayoutContainers/DashboardLayout";
+import { supabase } from "/src/lib/supabase";
 import React, { useContext, useEffect, useState } from "react";
-import { AuthContext } from "context/Authcontext";
-import Footer from "examples/Footer";
+import { AuthContext } from "/src/context/Authcontext";
+import Footer from "/src/examples/Footer";
 import axios from "axios";
 
 function VRInfo() {

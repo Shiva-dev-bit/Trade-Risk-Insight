@@ -22,7 +22,7 @@ import PropTypes from "prop-types";
 import Fade from "@mui/material/Fade";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
+import SoftBox from "/src/components/SoftBox";
 
 // Custom styles for the SoftAlert
 import SoftAlertRoot from "components/SoftAlert/SoftAlertRoot";

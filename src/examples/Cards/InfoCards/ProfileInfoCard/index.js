@@ -28,12 +28,12 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
 
 // RiskCompass AI React base styles
-import colors from "assets/theme/base/colors";
-import typography from "assets/theme/base/typography";
+import colors from "/src/assets/theme/base/colors";
+import typography from "/src/assets/theme/base/typography";
 
 function ProfileInfoCard({ title, info, action, isEditing, onChange, onCancel }) {
   // Updated fields mapping to match database fields

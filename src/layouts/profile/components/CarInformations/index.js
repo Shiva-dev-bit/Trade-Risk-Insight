@@ -1,8 +1,8 @@
 import { Card, Stack, Grid } from "@mui/material";
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
 
-import colors from "assets/theme/base/colors";
+import colors from "/src/assets/theme/base/colors";
 import PropTypes from "prop-types";
 
 const CarInformations = ({ userdata }) => {

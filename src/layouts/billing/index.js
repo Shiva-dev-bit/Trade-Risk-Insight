@@ -17,22 +17,22 @@ Coded by www.creative-tim.com
 import Grid from "@mui/material/Grid";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
+import SoftBox from "/src/components/SoftBox";
 
 // RiskCompass AI React components
-import MasterCard from "examples/Cards/MasterCard";
-import DefaultInfoCard from "examples/Cards/InfoCards/DefaultInfoCard";
+import MasterCard from "/src/examples/Cards/MasterCard";
+import DefaultInfoCard from "/src/examples/Cards/InfoCards/DefaultInfoCard";
 
 // RiskCompass AI React examples
-import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import Footer from "examples/Footer";
+import DashboardLayout from "/src/examples/LayoutContainers/DashboardLayout";
+import DashboardNavbar from "/src/examples/Navbars/DashboardNavbar";
+import Footer from "/src/examples/Footer";
 
 // Billing page components
-import PaymentMethod from "layouts/billing/components/PaymentMethod";
-import Invoices from "layouts/billing/components/Invoices";
-import BillingInformation from "layouts/billing/components/BillingInformation";
-import Transactions from "layouts/billing/components/Transactions";
+import PaymentMethod from "/src/layouts/billing/components/PaymentMethod";
+import Invoices from "/src/layouts/billing/components/Invoices";
+import BillingInformation from "/src/layouts/billing/components/BillingInformation";
+import Transactions from "/src/layouts/billing/components/Transactions";
 
 function Billing() {
   return (

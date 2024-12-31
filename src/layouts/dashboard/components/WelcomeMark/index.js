@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Card, Divider, IconButton, Button, Grid, Modal, Fade, Backdrop, Box, Typography } from "@mui/material";
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
-import { supabase } from "lib/supabase";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
+import { supabase } from "/src/lib/supabase";
 // import gif from "assets/images/cardimgfree.png";
 import CloseIcon from '@mui/icons-material/Close';
 import  axios  from "axios";

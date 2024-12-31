@@ -14,10 +14,10 @@ Coded by www.creative-tim.com
 */
 
 // RiskCompass AI React base styles
-import breakpoints from "assets/theme/base/breakpoints";
+import breakpoints from "/src/assets/theme/base/breakpoints";
 
 // RiskCompass AI React helper functions
-import pxToRem from "assets/theme/functions/pxToRem";
+import pxToRem from "/src/assets/theme/functions/pxToRem";
 
 const {
   values: { sm, md, lg, xl, xxl },

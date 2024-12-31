@@ -17,18 +17,18 @@ Coded by www.creative-tim.com
 import Card from "@mui/material/Card";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
 
 // RiskCompass AI React examples
-import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import Footer from "examples/Footer";
-import Table from "examples/Tables/Table";
+import DashboardLayout from "/src/examples/LayoutContainers/DashboardLayout";
+import DashboardNavbar from "/src/examples/Navbars/DashboardNavbar";
+import Footer from "/src/examples/Footer";
+import Table from "/src/examples/Tables/Table";
 
 // Data
-import authorsTableData from "layouts/tables/data/authorsTableData";
-import projectsTableData from "layouts/tables/data/projectsTableData";
+import authorsTableData from "/src/layouts/tables/data/authorsTableData";
+import projectsTableData from "/src/layouts/tables/data/projectsTableData";
 
 function Tables() {
   const { columns, rows } = authorsTableData;

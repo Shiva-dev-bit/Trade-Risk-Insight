@@ -15,14 +15,14 @@ Coded by www.creative-tim.com
 
 import React, { useEffect, useState } from "react";
 import { Card, Stack, Typography } from "@mui/material";
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
-import colors from "assets/theme/base/colors";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
+import colors from "/src/assets/theme/base/colors";
 import { FaEllipsisH } from "react-icons/fa";
-import linearGradient from "assets/theme/functions/linearGradient";
+import linearGradient from "/src/assets/theme/functions/linearGradient";
 import CircularProgress from "@mui/material/CircularProgress";
 import axios from "axios";
-import { AuthContext } from "context/Authcontext";
+import { AuthContext } from "/src/context/Authcontext";
 import { useContext } from "react";
 
 function WorkWithTheRockets() {

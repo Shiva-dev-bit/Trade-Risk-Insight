@@ -23,10 +23,10 @@ import PropTypes from "prop-types";
 import Card from "@mui/material/Card";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
-import SoftAvatar from "components/SoftAvatar";
-import SoftButton from "components/SoftButton";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
+import SoftAvatar from "/src/components/SoftAvatar";
+import SoftButton from "/src/components/SoftButton";
 
 function ProfilesList({ title, profiles }) {
   const renderProfiles = profiles.map(({ image, name, description, action }) => (

@@ -24,10 +24,10 @@ import Card from "@mui/material/Card";
 import Icon from "@mui/material/Icon";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
-import SoftBadge from "components/SoftBadge";
-import SoftButton from "components/SoftButton";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
+import SoftBadge from "/src/components/SoftBadge";
+import SoftButton from "/src/components/SoftButton";
 
 function DefaultPricingCard({ badge, price, specifications, action }) {
   const renderSpecifications = specifications.map(({ label, includes }) => (

@@ -14,10 +14,10 @@ Coded by www.creative-tim.com
 */
 
 // RiskCompass AI React base styles
-import borders from "assets/theme/base/borders";
+import borders from "/src/assets/theme/base/borders";
 
 // RiskCompass AI React helper functions
-import pxToRem from "assets/theme/functions/pxToRem";
+import pxToRem from "/src/assets/theme/functions/pxToRem";
 
 const { borderRadius } = borders;
 

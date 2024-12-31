@@ -2,22 +2,22 @@
 import Tooltip from "@mui/material/Tooltip";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
-import SoftAvatar from "components/SoftAvatar";
-import SoftProgress from "components/SoftProgress";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
+import SoftAvatar from "/src/components/SoftAvatar";
+import SoftProgress from "/src/components/SoftProgress";
 
 // Images
-import logoXD from "assets/images/small-logos/logo-xd.svg";
-import logoAtlassian from "assets/images/small-logos/logo-atlassian.svg";
-import logoSlack from "assets/images/small-logos/logo-slack.svg";
-import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
-import logoJira from "assets/images/small-logos/logo-jira.svg";
-import logoInvesion from "assets/images/small-logos/logo-invision.svg";
-import team1 from "assets/images/team-1.jpg";
-import team2 from "assets/images/team-2.jpg";
-import team3 from "assets/images/team-3.jpg";
-import team4 from "assets/images/team-4.jpg";
+import logoXD from "/src/assets/images/small-logos/logo-xd.svg";
+import logoAtlassian from "/src/assets/images/small-logos/logo-atlassian.svg";
+import logoSlack from "/src/assets/images/small-logos/logo-slack.svg";
+import logoSpotify from "/src/assets/images/small-logos/logo-spotify.svg";
+import logoJira from "/src/assets/images/small-logos/logo-jira.svg";
+import logoInvesion from "/src/assets/images/small-logos/logo-invision.svg";
+import team1 from "/src/assets/images/team-1.jpg";
+import team2 from "/src/assets/images/team-2.jpg";
+import team3 from "/src/assets/images/team-3.jpg";
+import team4 from "/src/assets/images/team-4.jpg";
 
 export default function data() {
   const avatars = (members) =>

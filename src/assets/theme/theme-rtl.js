@@ -1,80 +1,65 @@
-/**
-=========================================================
-* RiskCompass AI React - v4.0.1
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/soft-ui-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 // @mui material components
 import { createTheme } from "@mui/material/styles";
 
 // RiskCompass AI React base styles
-import colors from "assets/theme/base/colors";
-import breakpoints from "assets/theme/base/breakpoints";
-import typography from "assets/theme/base/typography";
-import boxShadows from "assets/theme/base/boxShadows";
-import borders from "assets/theme/base/borders";
-import globals from "assets/theme/base/globals";
+import colors from "/src/assets/theme/base/colors.js";
+import breakpoints from "/src/assets/theme/base/breakpoints.js";
+import typography from "/src/assets/theme/base/typography.js";
+import boxShadows from "/src/assets/theme/base/boxShadows.js";
+import borders from "/src/assets/theme/base/borders.js";
+import globals from "/src/assets/theme/base/globals.js";
 
 // RiskCompass AI React helper functions
-import boxShadow from "assets/theme/functions/boxShadow";
-import hexToRgb from "assets/theme/functions/hexToRgb";
-import linearGradient from "assets/theme/functions/linearGradient";
-import pxToRem from "assets/theme/functions/pxToRem";
-import rgba from "assets/theme/functions/rgba";
+import boxShadow from "/src/assets/theme/functions/boxShadow.js";
+import hexToRgb from "/src/assets/theme/functions/hexToRgb.js";
+import linearGradient from "/src/assets/theme/functions/linearGradient.js";
+import pxToRem from "/src/assets/theme/functions/pxToRem.js";
+import rgba from "/src/assets/theme/functions/rgba.js";
 
 // RiskCompass AI React components base styles for @mui material components
-import sidenav from "assets/theme/components/sidenav";
-import list from "assets/theme/components/list";
-import listItem from "assets/theme/components/list/listItem";
-import listItemText from "assets/theme/components/list/listItemText";
-import card from "assets/theme/components/card";
-import cardMedia from "assets/theme/components/card/cardMedia";
-import cardContent from "assets/theme/components/card/cardContent";
-import button from "assets/theme/components/button";
-import iconButton from "assets/theme/components/iconButton";
-import inputBase from "assets/theme/components/form/inputBase";
-import menu from "assets/theme/components/menu";
-import menuItem from "assets/theme/components/menu/menuItem";
-import switchButton from "assets/theme/components/form/switchButton";
-import divider from "assets/theme/components/divider";
-import tableContainer from "assets/theme/components/table/tableContainer";
-import tableHead from "assets/theme/components/table/tableHead";
-import tableCell from "assets/theme/components/table/tableCell";
-import linearProgress from "assets/theme/components/linearProgress";
-import breadcrumbs from "assets/theme/components/breadcrumbs";
-import slider from "assets/theme/components/slider";
-import avatar from "assets/theme/components/avatar";
-import tooltip from "assets/theme/components/tooltip";
-import appBar from "assets/theme/components/appBar";
-import tabs from "assets/theme/components/tabs";
-import tab from "assets/theme/components/tabs/tab";
-import stepper from "assets/theme/components/stepper";
-import step from "assets/theme/components/stepper/step";
-import stepConnector from "assets/theme/components/stepper/stepConnector";
-import stepLabel from "assets/theme/components/stepper/stepLabel";
-import stepIcon from "assets/theme/components/stepper/stepIcon";
-import select from "assets/theme/components/form/select";
-import formControlLabel from "assets/theme/components/form/formControlLabel";
-import formLabel from "assets/theme/components/form/formLabel";
-import checkbox from "assets/theme/components/form/checkbox";
-import radio from "assets/theme/components/form/radio";
-import autocomplete from "assets/theme/components/form/autocomplete";
-import input from "assets/theme/components/form/input";
-import container from "assets/theme/components/container";
-import popover from "assets/theme/components/popover";
-import buttonBase from "assets/theme/components/buttonBase";
-import icon from "assets/theme/components/icon";
-import svgIcon from "assets/theme/components/svgIcon";
-import link from "assets/theme/components/link";
+import sidenav from "/src/assets/theme/components/sidenav.js";
+import list from "/src/assets/theme/components/list/index.js";
+import listItem from "/src/assets/theme/components/list/listItem.js";
+import listItemText from "/src/assets/theme/components/list/listItemText.js";
+import card from "/src/assets/theme/components/card/index.js";
+import cardMedia from "/src/assets/theme/components/card/cardMedia.js";
+import cardContent from "/src/assets/theme/components/card/cardContent.js";
+import button from "/src/assets/theme/components/button/index.js";
+import iconButton from "/src/assets/theme/components/iconButton.js";
+import inputBase from "/src/assets/theme/components/form/inputBase.js";
+import menu from "/src/assets/theme/components/menu/index.js";
+import menuItem from "/src/assets/theme/components/menu/menuItem.js";
+import switchButton from "/src/assets/theme/components/form/switchButton.js";
+import divider from "/src/assets/theme/components/divider.js";
+import tableContainer from "/src/assets/theme/components/table/tableContainer.js";
+import tableHead from "/src/assets/theme/components/table/tableHead.js";
+import tableCell from "/src/assets/theme/components/table/tableCell.js";
+import linearProgress from "/src/assets/theme/components/linearProgress.js";
+import breadcrumbs from "/src/assets/theme/components/breadcrumbs.js";
+import slider from "/src/assets/theme/components/slider.js";
+import avatar from "/src/assets/theme/components/avatar.js";
+import tooltip from "/src/assets/theme/components/tooltip.js";
+import appBar from "/src/assets/theme/components/appBar.js";
+import tabs from "/src/assets/theme/components/tabs/index.js";
+import tab from "/src/assets/theme/components/tabs/tab.js";
+import stepper from "/src/assets/theme/components/stepper/index.js";
+import step from "/src/assets/theme/components/stepper/step.js";
+import stepConnector from "/src/assets/theme/components/stepper/stepConnector.js";
+import stepLabel from "/src/assets/theme/components/stepper/stepLabel.js";
+import stepIcon from "/src/assets/theme/components/stepper/stepIcon.js";
+import select from "/src/assets/theme/components/form/select.js";
+import formControlLabel from "/src/assets/theme/components/form/formControlLabel.js";
+import formLabel from "/src/assets/theme/components/form/formLabel.js";
+import checkbox from "/src/assets/theme/components/form/checkbox.js";
+import radio from "/src/assets/theme/components/form/radio.js";
+import autocomplete from "/src/assets/theme/components/form/autocomplete.js";
+import input from "/src/assets/theme/components/form/input.js";
+import container from "/src/assets/theme/components/container.js";
+import popover from "/src/assets/theme/components/popover.js";
+import buttonBase from "/src/assets/theme/components/buttonBase.js";
+import icon from "/src/assets/theme/components/icon.js";
+import svgIcon from "/src/assets/theme/components/svgIcon.js";
+import link from "/src/assets/theme/components/link.js";
 
 export default createTheme({
   direction: "rtl",

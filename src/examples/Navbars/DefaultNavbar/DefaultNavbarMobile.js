@@ -21,10 +21,10 @@ import Menu from "@mui/material/Menu";
 // import Grid from "@mui/material/Grid";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
+import SoftBox from "/src/components/SoftBox";
 
 // RiskCompass AI React examples
-import DefaultNavbarLink from "examples/Navbars/DefaultNavbar/DefaultNavbarLink";
+import DefaultNavbarLink from "/src/examples/Navbars/DefaultNavbar/DefaultNavbarLink";
 
 function DefaultNavbarMobile({ open, close }) {
   const { width } = open && open.getBoundingClientRect();

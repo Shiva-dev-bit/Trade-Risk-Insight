@@ -19,8 +19,8 @@ import PropTypes from "prop-types";
 // @mui material components
 import React from 'react';
 import { Card, Grid, Icon } from '@mui/material';
-import SoftBox from 'components/SoftBox';
-import SoftTypography from 'components/SoftTypography';
+import SoftBox from '/src/components/SoftBox';
+import SoftTypography from '/src/components/SoftTypography';
 
 
 const MiniStatisticsCard = ({ title, count, percentage, icon, direction = "right" }) => {

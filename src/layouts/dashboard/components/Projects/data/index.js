@@ -2,15 +2,15 @@
 import Tooltip from "@mui/material/Tooltip";
 
 // UI Risk LENS AI Dashboard React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
-import SoftAvatar from "components/SoftAvatar";
-import SoftProgress from "components/SoftProgress";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
+import SoftAvatar from "/src/components/SoftAvatar";
+import SoftProgress from "/src/components/SoftProgress";
 
 // Images
 import { useContext, useEffect, useState } from "react";
 import  axios  from "axios";
-import { AuthContext } from "context/Authcontext";
+import { AuthContext } from "/src/context/Authcontext";
 import { format } from "date-fns";
 
 export default function data() {

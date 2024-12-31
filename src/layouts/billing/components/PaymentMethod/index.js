@@ -20,16 +20,16 @@ import Icon from "@mui/material/Icon";
 import Tooltip from "@mui/material/Tooltip";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
-import SoftButton from "components/SoftButton";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
+import SoftButton from "/src/components/SoftButton";
 
 // RiskCompass AI React base styles
-import borders from "assets/theme/base/borders";
+import borders from "/src/assets/theme/base/borders";
 
 // Images
-import masterCardLogo from "assets/images/logos/mastercard.png";
-import visaLogo from "assets/images/logos/visa.png";
+import masterCardLogo from "/src/assets/images/logos/mastercard.png";
+import visaLogo from "/src/assets/images/logos/visa.png";
 
 function PaymentMethod() {
   const { borderWidth, borderColor } = borders;

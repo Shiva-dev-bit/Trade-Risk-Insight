@@ -4,9 +4,9 @@
 import Card from "@mui/material/Card";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftButton from "components/SoftButton";
-import SoftTypography from "components/SoftTypography";
+import SoftBox from "/src/components/SoftBox";
+import SoftButton from "/src/components/SoftButton";
+import SoftTypography from "/src/components/SoftTypography";
 import { Link } from "react-router-dom";
 
 

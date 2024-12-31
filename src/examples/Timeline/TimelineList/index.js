@@ -20,11 +20,11 @@ import PropTypes from "prop-types";
 import Card from "@mui/material/Card";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
 
 // Timeline context
-import { TimelineProvider } from "examples/Timeline/context";
+import { TimelineProvider } from "/src/examples/Timeline/context";
 
 function TimelineList({ title, dark, children }) {
   return (

@@ -23,16 +23,16 @@ import MenuItem from "@mui/material/MenuItem";
 import { BsCheckCircleFill } from "react-icons/bs";
 
 // UI Risk LENS AI Dashboard React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
 
 // UI Risk LENS AI Dashboard Materail-UI example components
-import Table from "examples/Tables/Table";
+import Table from "/src/examples/Tables/Table";
 
 // Data
-import data from "layouts/dashboard/components/Projects/data";
+import data from "/src/layouts/dashboard/components/Projects/data";
 import { Box } from "@mui/material";
-import { AuthContext } from "context/Authcontext";
+import { AuthContext } from "/src/context/Authcontext";
 
 
 function Projects() {

@@ -14,11 +14,11 @@ Coded by www.creative-tim.com
 */
 
 // RiskCompass AI React Base Styles
-import typography from "assets/theme/base/typography";
-import borders from "assets/theme/base/borders";
+import typography from "/src/assets/theme/base/typography";
+import borders from "/src/assets/theme/base/borders";
 
 // RiskCompass AI React Helper Functions
-import pxToRem from "assets/theme/functions/pxToRem";
+import pxToRem from "/src/assets/theme/functions/pxToRem";
 
 const { fontWeightBold, size } = typography;
 const { borderRadius } = borders;

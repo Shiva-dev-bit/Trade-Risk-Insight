@@ -5,19 +5,19 @@ import Grid from "@mui/material/Grid";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 // Images
-import burceMars from "assets/images/image.png";
+import burceMars from "/src/assets/images/image.png";
 // UI Risk LENS AI Dashboard React base styles
-import breakpoints from "assets/theme/base/breakpoints";
-import SoftAvatar from "components/SoftAvatar";
+import breakpoints from "/src/assets/theme/base/breakpoints";
+import SoftAvatar from "/src/components/SoftAvatar";
 // UI Risk LENS AI Dashboard React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
 // UI Risk LENS AI Dashboard React icons
 import { IoCube } from "react-icons/io5";
 import { IoDocument } from "react-icons/io5";
 import { IoBuild } from "react-icons/io5";
 // UI Risk LENS AI Dashboard React example components
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import DashboardNavbar from "/src/examples/Navbars/DashboardNavbar";
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 

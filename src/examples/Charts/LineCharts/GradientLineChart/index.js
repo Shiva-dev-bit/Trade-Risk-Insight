@@ -25,20 +25,20 @@ import { Line } from "react-chartjs-2";
 import Card from "@mui/material/Card";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
 
 // RiskCompass AI React helper functions
-import gradientChartLine from "assets/theme/functions/gradientChartLine";
+import gradientChartLine from "/src/assets/theme/functions/gradientChartLine";
 
 // GradientLineChart configurations
-import configs from "examples/Charts/LineCharts/GradientLineChart/configs";
+import configs from "/src/examples/Charts/LineCharts/GradientLineChart/configs";
 
 // RiskCompass AI React base styles
-import colors from "assets/theme/base/colors";
+import colors from "/src/assets/theme/base/colors";
 import { Box, CardContent, Paper, Typography } from "@mui/material";
 import { FaCaretDown, FaCaretUp } from "react-icons/fa";
-import { AuthContext } from "context/Authcontext";
+import { AuthContext } from "/src/context/Authcontext";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import moment from "moment-timezone";

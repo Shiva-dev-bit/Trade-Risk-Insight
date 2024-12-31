@@ -19,32 +19,32 @@ import Grid from "@mui/material/Grid";
 import Icon from "@mui/material/Icon";
 
 // RiskCompass AI React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
+import SoftBox from "/src/components/SoftBox";
+import SoftTypography from "/src/components/SoftTypography";
 
 // RiskCompass AI React examples
-import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import Footer from "examples/Footer";
-import MiniStatisticsCard from "examples/Cards/StatisticsCards/MiniStatisticsCard";
-import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
-import GradientLineChart from "examples/Charts/LineCharts/GradientLineChart";
+import DashboardLayout from "/src/examples/LayoutContainers/DashboardLayout";
+import DashboardNavbar from "/src/examples/Navbars/DashboardNavbar";
+import Footer from "/src/examples/Footer";
+import MiniStatisticsCard from "/src/examples/Cards/StatisticsCards/MiniStatisticsCard";
+import ReportsBarChart from "/src/examples/Charts/BarCharts/ReportsBarChart";
+import GradientLineChart from "/src/examples/Charts/LineCharts/GradientLineChart";
 
 // RiskCompass AI React base styles
-import typography from "assets/theme/base/typography";
+import typography from "/src/assets/theme/base/typography";
 
 // RTL layout components
-import BuildByDevelopers from "layouts/rtl/components/BuildByDevelopers";
-import WorkWithTheRockets from "layouts/rtl/components/WorkWithTheRockets";
-import Projects from "layouts/rtl/components/Projects";
-import OrderOverview from "layouts/rtl/components/OrderOverview";
+import BuildByDevelopers from "/src/layouts/rtl/components/BuildByDevelopers";
+import WorkWithTheRockets from "/src/layouts/rtl/components/WorkWithTheRockets";
+import Projects from "/src/layouts/rtl/components/Projects";
+import OrderOverview from "/src/layouts/rtl/components/OrderOverview";
 
 // Data
-import reportsBarChartData from "layouts/rtl/data/reportsBarChartData";
-import gradientLineChartData from "layouts/rtl/data/gradientLineChartData";
+import reportsBarChartData from "/src/layouts/rtl/data/reportsBarChartData";
+import gradientLineChartData from "/src/layouts/rtl/data/gradientLineChartData";
 
 // RiskCompass AI React contexts
-import { useSoftUIController, setDirection } from "context";
+import { useSoftUIController, setDirection } from "/src/context";
 
 function RTL() {
   const [, dispatch] = useSoftUIController();
