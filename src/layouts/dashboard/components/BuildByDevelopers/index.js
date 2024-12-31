@@ -74,6 +74,7 @@ function BuildByDevelopers() {
           textAlign="center"
           mb={2}
           sx={{ fontSize: '19px' }}
+          color="text"
         >
           Volatility Score {stockData?.stockData?.symbol}
         </SoftTypography>

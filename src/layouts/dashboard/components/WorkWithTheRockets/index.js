@@ -56,7 +56,7 @@ function WorkWithTheRockets() {
     >
       <SoftBox sx={{ width: "100%" }}>
         <SoftBox sx={{ width: "100%" , display : 'flex' }}>
-          <SoftTypography variant="h5"  fontWeight="bold" sx={{textAlign : 'center' , fontSize: '19px'}}>
+          <SoftTypography variant="h5"  fontWeight="bold" color="text" sx={{textAlign : 'center' , fontSize: '19px'}}>
             {"Safety Score"}
           </SoftTypography>
         </SoftBox>

@@ -255,7 +255,7 @@ function Dashboard() {
 
   const fetchStatistics = async () => {
     try {
-      const response = await axios(`https://rcapidev.neosme.co:2053/statistics/${'NSEI' || stockData?.stockData?.symbol}/${'NSE' || stocksData?.exchange}`);
+      const response = await axios(`https://rcapidev.neosme.co:2053/statistics/${'NSEI' || stockData?.stockData?.symbol}/${'NSE' || stocksData?.stockData?.exchange}`);
       const data = response.data;
 
       if (data) {
@@ -771,7 +771,7 @@ function Dashboard() {
                   </SoftBox>
 
                   <SoftBox mb="10px">
-                    <SoftTypography variant="sm" fontWeight="bold">
+                    <SoftTypography variant="sm" fontWeight="bold" color="gray">
                       Financials
                     </SoftTypography>
                   </SoftBox>
