@@ -531,7 +531,7 @@ function GradientLineChart({ newprice, selectedStock }) {
         color: 'rgb(103, 116, 142)',
       }}
     >
-      <SoftTypography variant="lg" mb="10px" gutterBottom fontWeight="bold" color="gray">
+      <SoftTypography variant="lg" mb="10px" gutterBottom fontWeight="bold" color="text">
         Stock Price Overview
       </SoftTypography>
       <CardContent sx={{ padding: '0px', paddingBottom: '0px' }}>

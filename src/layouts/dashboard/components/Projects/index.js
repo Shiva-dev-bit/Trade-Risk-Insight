@@ -54,7 +54,7 @@ function Projects() {
       <SoftBox display="flex" justifyContent="space-between" alignItems="center" mb="32px">
         <SoftBox mb="auto">
           {/* Top Stock Market News */}
-          <SoftTypography  variant="lg" mb="6px" gutterBottom fontWeight="bold" color="gray">
+          <SoftTypography  variant="lg" mb="6px" gutterBottom fontWeight="bold" color="text">
             Top Stock Market News
           </SoftTypography>
 
@@ -72,7 +72,7 @@ function Projects() {
         </SoftBox>
 
         <SoftBox>
-          <SoftTypography variant="lg" mb="6px" gutterBottom style={{ fontSize: "12px" }}fontWeight="bold" color="gray">
+          <SoftTypography variant="lg" mb="6px" gutterBottom style={{ fontSize: "12px" }}fontWeight="bold" color="text">
             {stockData?.company_name}
           </SoftTypography>
         </SoftBox>

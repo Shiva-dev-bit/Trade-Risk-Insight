@@ -771,7 +771,7 @@ function Dashboard() {
                   </SoftBox>
 
                   <SoftBox mb="10px">
-                    <SoftTypography variant="sm" fontWeight="bold" color="gray">
+                    <SoftTypography variant="sm" fontWeight="bold" color="text">
                       Financials
                     </SoftTypography>
                   </SoftBox>

@@ -100,7 +100,7 @@ const OrdersOverview = () => {
   return (
     <Card className="h-100" style={{ padding: '14px' , color : 'rgb(103, 116, 142)' , height : '100%' }}>
       <SoftBox mb="16px" display="flex" justifyContent="space-between">
-        <SoftTypography variant="lg" fontWeight="bold" mb="5px" color="gray">
+        <SoftTypography variant="lg" fontWeight="bold" mb="5px" color="text">
           Quarterly Results
         </SoftTypography>
         <SoftTypography
@@ -108,7 +108,7 @@ const OrdersOverview = () => {
           fontWeight="bold"
           mb="5px"
           sx={{ fontSize: "14px" }}
-          color="gray"
+          color="text"
         >
           {stockData?.symbol}
         </SoftTypography>
