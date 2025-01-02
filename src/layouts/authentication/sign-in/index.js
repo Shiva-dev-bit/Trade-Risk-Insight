@@ -139,7 +139,7 @@ function SignIn() {
         {/* Email Input */}
         <SoftBox mb={2}>
           <SoftBox mb={1} ml={0.5}>
-            <SoftTypography component="label" variant="caption" fontWeight="bold">
+            <SoftTypography component="label" variant="caption" fontWeight="bold" color="dark">
               Email
             </SoftTypography>
           </SoftBox>
@@ -156,7 +156,7 @@ function SignIn() {
         {/* Password Input */}
         <SoftBox mb={2}>
           <SoftBox mb={1} ml={0.5}>
-            <SoftTypography component="label" variant="caption" fontWeight="bold">
+            <SoftTypography component="label" variant="caption" fontWeight="bold" color="dark">
               Password
             </SoftTypography>
           </SoftBox>
@@ -176,19 +176,20 @@ function SignIn() {
           <SoftTypography
             variant="button"
             fontWeight="regular"
+            color="dark"
             onClick={handleSetRememberMe}
-            sx={{ cursor: "pointer", userSelect: "none" }}
+            sx={{ cursor: "pointer", userSelect: "none", textTransform:"none"}}
           >
             &nbsp;&nbsp;Remember me
           </SoftTypography>
         </SoftBox>
-        <SoftTypography
+        <SoftTypography 
           component={Link}
           to="/authentication/forget-password"
           variant="button"
           color="info"
           fontWeight="medium"
-          sx={{ cursor: "pointer", display: "block", marginBottom: "10px" }}
+          sx={{ cursor: "pointer", display: "block", marginBottom: "10px", textTransform:"none", textAlign:"center" }}
         >
           Forgot Password?
         </SoftTypography>
@@ -208,7 +209,7 @@ function SignIn() {
   
         {/* Sign-Up Redirect */}
         <SoftBox mt={3} textAlign="center">
-          <SoftTypography variant="button" color="text" fontWeight="regular">
+          <SoftTypography variant="button" color="text" fontWeight="regular" textTransform="none">
             Don&apos;t have an account?{" "}
             <SoftTypography
               component={Link}
@@ -216,6 +217,7 @@ function SignIn() {
               variant="button"
               color="info"
               fontWeight="medium"
+               textTransform="none"
               textGradient
             >
               Sign up

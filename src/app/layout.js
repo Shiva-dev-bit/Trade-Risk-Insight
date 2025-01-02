@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import '/styles/global.css'
 
 export const metadata = {
   title: 'RiskCompass AI Next.js',
@@ -31,6 +32,8 @@ export default function RootLayout({ children }) {
           data-site="YOUR_DOMAIN_HERE"
           src="https://api.nepcha.com/js/nepcha-analytics.js"
         />
+        
+        
       </head>
       <body>
         <div id="root">{children}</div>

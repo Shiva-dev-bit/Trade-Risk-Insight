@@ -64,8 +64,8 @@ function GradientLineChart({ newprice, selectedStock }) {
   const isDashboardRoute = location.pathname === '/dashboard';
 
   const [stockDetails, setStockDetails] = useState({
-    selectedSymbol: selectedStock?.symbol || stockData?.stockData?.symbol,
-    selectedExchange: selectedStock?.exchange || stockData?.stockData?.exchange,
+    selectedSymbol: '',
+    selectedExchange: '',
     selectedStocksHigh: parseFloat(stockData?.stockData?.high),
     selectedStocksLow: parseFloat(stockData?.stockData?.low),
     selectedStocksChange: stockData?.stockData?.percent_change,
@@ -73,8 +73,8 @@ function GradientLineChart({ newprice, selectedStock }) {
 
   useEffect(() => {
     setStockDetails({
-      selectedSymbol: selectedStock?.symbol || stockData?.stockData?.symbol,
-      selectedExchange: selectedStock?.exchange || stockData?.stockData?.exchange,
+      selectedSymbol: selectedStock?.symbol || stockData?.stockData?.symbol || 'NSEI',
+      selectedExchange: selectedStock?.exchange || stockData?.stockData?.exchange || 'NSE',
     });
   }, [selectedStock, stockData?.stockData?.symbol, stockData?.stockData?.exchange]);
 
@@ -132,6 +132,8 @@ function GradientLineChart({ newprice, selectedStock }) {
   const updateChartWithNewPrice = (currentData, newPrice, timezone) => {
     if (!currentData?.[0]?.data || !newPrice?.close) return currentData;
 
+    console.log('newPricenewPrice',newPrice);
+
     const currentTime = moment().tz(timezone);
     const currentMinute = currentTime.startOf('minute');
     const currentMinuteStr = currentMinute.format('YYYY-MM-DD HH:mm');
@@ -148,6 +150,8 @@ function GradientLineChart({ newprice, selectedStock }) {
           x: moment(lastMinuteRef.current, 'YYYY-MM-DD HH:mm').valueOf(),
           y: averagePrice
         };
+
+        console.log('updatedData',updatedData);
 
         // Only add if we don't already have data for this minute
         if (!updatedData[0].data.some(point =>
@@ -382,12 +386,22 @@ function GradientLineChart({ newprice, selectedStock }) {
 
       const data = response.data;
       const processedValues = data.values;
-      setGraphApi(processedValues);
+      const targetDate = processedValues[0]?.datetime.split(' ')[0]; // Extract the target date
+
+      const filteredValues = processedValues.filter((ele) => {
+        const elementDate = ele.datetime.split(' ')[0]; // Extract the date portion
+        return elementDate === targetDate; // Compare the dates
+      });
+
+      console.log('processedValues', processedValues);
+      console.log('processedValues', filteredValues);
+
+      setGraphApi(filteredValues);
 
 
       const formattedData = [{
         name: "Price",
-        data: processedValues.map((item) => ({
+        data: filteredValues.map((item) => ({
           x: moment.tz(item.datetime, data.meta.exchange_timezone).valueOf(),
           y: parseFloat(item.close),
         })),
@@ -415,10 +429,10 @@ function GradientLineChart({ newprice, selectedStock }) {
           type: "datetime",
           labels: {
             style: {
-              colors: "#FFFFFF",
+              colors: "#000",
               fontSize: "12px",
             },
-            formatter: getDateTimeFormatter('1w', data.meta.exchange_timezone),
+            formatter: getDateTimeFormatter('1d', data.meta.exchange_timezone),
           },
           tooltip: {
             enabled: false,
@@ -427,7 +441,7 @@ function GradientLineChart({ newprice, selectedStock }) {
         yaxis: {
           labels: {
             style: {
-              colors: "#FFFFFF",
+              colors: "#000",
               fontSize: "12px",
             },
             formatter: (value) => `${currencySymbol}${value.toFixed(2)}`,
@@ -437,7 +451,7 @@ function GradientLineChart({ newprice, selectedStock }) {
         tooltip: {
           theme: "dark",
           x: {
-            formatter: getTooltipFormatter('1w', data.meta.exchange_timezone),
+            formatter: getTooltipFormatter('1d', data.meta.exchange_timezone),
           },
           y: {
             formatter: (value) => `${currencySymbol}${value.toFixed(2)}`,
@@ -517,12 +531,12 @@ function GradientLineChart({ newprice, selectedStock }) {
         color: 'rgb(103, 116, 142)',
       }}
     >
-        <SoftTypography  variant="lg" mb="10px" gutterBottom fontWeight="bold">
-          Stock Price Overview
-        </SoftTypography>
-      <CardContent sx={{padding : '0px' , paddingBottom : '0px'}}>
+      <SoftTypography variant="lg" mb="10px" gutterBottom fontWeight="bold" color="text">
+        Stock Price Overview
+      </SoftTypography>
+      <CardContent sx={{ padding: '0px', paddingBottom: '0px' }}>
         {/* Title */}
-  
+
         {/* Header Section */}
         <Box
           sx={{
@@ -557,7 +571,7 @@ function GradientLineChart({ newprice, selectedStock }) {
                 </Typography>
               </div>
             )}
-  
+
             {/* Low */}
             {graphApi?.length > 0 && (
               <div style={{ textAlign: 'center' }}>
@@ -572,7 +586,7 @@ function GradientLineChart({ newprice, selectedStock }) {
                 </Typography>
               </div>
             )}
-  
+
             {/* Returns */}
             {graphApi?.length > 0 && (
               <div style={{ textAlign: 'center' }}>
@@ -598,7 +612,7 @@ function GradientLineChart({ newprice, selectedStock }) {
               </div>
             )}
           </Box>
-  
+
           {/* Time Period Buttons */}
           <Box
             sx={{
@@ -625,7 +639,7 @@ function GradientLineChart({ newprice, selectedStock }) {
             ))}
           </Box>
         </Box>
-  
+
         {/* Chart Section */}
         <div
           style={{
@@ -636,16 +650,16 @@ function GradientLineChart({ newprice, selectedStock }) {
           ref={chartContainerRef}
         >
           {/* {chartData[0]?.data?.length > 0 && ( */}
-            <Suspense fallback={<div>Loading chart...</div>}>
-              <ReactApexChart
-                key={`${stockDetails.selectedSymbol}-${timePeriod}-${stockDetails.selectedExchange}`}
-                series={chartData}
-                options={chartOptions}
-                type="line"
-                height="100%"
-                width="100%"
-              />
-            </Suspense>
+          <Suspense fallback={<div>Loading chart...</div>}>
+            <ReactApexChart
+              key={`${stockDetails.selectedSymbol}-${timePeriod}-${stockDetails.selectedExchange}`}
+              series={chartData}
+              options={chartOptions}
+              // type="line"
+              height="100%"
+              width="100%"
+            />
+          </Suspense>
           {/* )} */}
         </div>
       </CardContent>
@@ -671,3 +685,4 @@ GradientLineChart.propTypes = {
 };
 
 export default GradientLineChart;
+

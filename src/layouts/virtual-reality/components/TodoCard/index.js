@@ -133,7 +133,7 @@ function TodoCard({selectedStock}) {
                         textTransform: "none",
                       }}
                     >
-                      <span style={{ color: '#f44335' }}>{notification.notification_type}</span>
+                      <span style={{ color: '#f44335' }}>{notification.notification_alert_name}</span>
                       <span style={{ color: '#67748e', marginLeft: '4px' }}>{`(${notification.exchange})`}</span>
                     </SoftTypography>
                   </SoftBox>
@@ -197,3 +197,4 @@ TodoCard.propTypes = {
 };
 
 export default TodoCard;
+

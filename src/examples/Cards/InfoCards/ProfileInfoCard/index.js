@@ -46,7 +46,7 @@ function ProfileInfoCard({ title, info, action, isEditing, onChange, onCancel })
 
   const renderItems = Object.entries(fields).map(([fieldName, { label, key }]) => (
     <SoftBox key={fieldName} display="flex" flexDirection="column" py={1} pr={2}>
-      <SoftTypography variant="button" fontWeight="bold" textTransform="capitalize">
+      <SoftTypography  color="text" variant="button" fontWeight="bold" textTransform="capitalize">
         {label}
       </SoftTypography>
       {isEditing ? (
@@ -64,7 +64,7 @@ function ProfileInfoCard({ title, info, action, isEditing, onChange, onCancel })
           }}
         />
       ) : (
-        <SoftTypography variant="button" fontWeight="regular" color="text">
+        <SoftTypography variant="button" fontWeight="regular" color="dark">
           {info[fieldName]}
         </SoftTypography>
       )}
@@ -74,7 +74,7 @@ function ProfileInfoCard({ title, info, action, isEditing, onChange, onCancel })
   return (
     <Card sx={{ height: "100%" }}>
       <SoftBox display="flex" justifyContent="space-between" alignItems="center" pt={2} px={2}>
-        <SoftTypography variant="h6" fontWeight="medium" textTransform="capitalize">
+        <SoftTypography variant="lg" color="text" fontWeight="medium" textTransform="capitalize">
           {title}
         </SoftTypography>
         {!isEditing && (
@@ -104,17 +104,17 @@ function ProfileInfoCard({ title, info, action, isEditing, onChange, onCancel })
           <SoftBox display="flex" justifyContent="flex-end" gap={2} mt={2}>
             <Button 
               variant="contained" 
-              color="dark" 
+              color="primary" 
               onClick={onCancel}
-              sx={{ textTransform: 'capitalize' }}
+              sx={{ textTransform: 'capitalize', color:"#fff" }}
             >
               Cancel
             </Button>
             <Button 
               variant="contained" 
-              color="dark" 
+              color="primary" 
               onClick={action.onClick}
-              sx={{ textTransform: 'capitalize' }}
+              sx={{ textTransform: 'capitalize',color:"#fff" }}
             >
               Save Changes
             </Button>

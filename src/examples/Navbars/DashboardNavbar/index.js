@@ -1,6 +1,6 @@
 import "./loader.css";
-import { useState, useEffect, useContext } from "react";
-import { useLocation, Link } from "react-router-dom";
+import { useState, useEffect, useContext, use } from "react";
+import { useLocation, Link, useNavigate, useParams } from "react-router-dom";
 import PropTypes from "prop-types";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -66,11 +66,15 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
   const [controller, dispatch] = useSoftUIController();
   const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator } = controller;
   const [openMenu, setOpenMenu] = useState(false);
-  const route = useLocation().pathname.split("/").slice(1);
+  const route = useLocation().pathname.split("/").slice(1, 2); // Keeps only 'dashboard', 'profile', 'portfolio', etc.
   const [user, setUser] = useState([]); // To store fetched user data
   const [notifications, setNotifications] = useState([]); // To store notifications
   const { session } = useContext(AuthContext); // Session context
   const userEmail = session?.user?.email; // Get user email from session
+  // const { symbol } = useParams();
+  const symbol = useLocation().pathname.split("/").slice(2,3)
+
+
 
   // Fetch user data from Supabase based on email
   const fetchUser = async (userMail) => {
@@ -456,6 +460,11 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
     }
   };
 
+
+  useEffect(() => {
+    console.log('urlsymbol', symbol)
+    fetchSearchData(symbol[0])
+  }, [symbol]);
 
   // On component mount, fetch user location and set default filters
   useEffect(() => {
@@ -914,7 +923,7 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
                     >
                       account_circle
                     </Icon>
-                    <SoftTypography variant="button" fontWeight="medium" color={"black"}>
+                    <SoftTypography variant="button" fontWeight="medium" color={"dark"}>
                       {user[0]?.username}
                     </SoftTypography>
                   </IconButton>
@@ -948,11 +957,11 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
 
               <IconButton
                 size="small"
-                color="inherit"
+                color="dark"
                 sx={navbarIconButton}
                 onClick={handleConfiguratorOpen}
               >
-                <Icon>settings</Icon>
+                <Icon color={"dark"}>settings</Icon>
               </IconButton>
 
               <IconButton
@@ -1003,3 +1012,4 @@ DashboardNavbar.propTypes = {
 };
 
 export default DashboardNavbar;
+

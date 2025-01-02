@@ -44,7 +44,7 @@ const CompanyDescription = () => {
     }
   }, [stockData?.symbol, stockData?.exchange, stockData?.company_name]);
 
-  const initialText = summary.split(" ").slice(0, 40).join(" "); // First two lines (approx)
+  const initialText = summary; // First two lines (approx)
   const remainingText = summary.slice(initialText.length);
 
   const toggleExpand = () => {
@@ -65,7 +65,7 @@ const CompanyDescription = () => {
         color: "rgb(103, 116, 142)"
       }}
     >
-      <CardContent sx={{ padding: '10px'}}>
+      <CardContent sx={{ padding: '15px'}}>
         <Box sx={{ display: 'flex', gap: 1 }}>
           {/* AI Icon and Text Content Container */}
           <Box>
@@ -97,7 +97,7 @@ const CompanyDescription = () => {
           </Box>
         </Box>
         {/* Read More / Read Less Button */}
-        {isInitialTypingComplete && remainingText && (
+        {/* {isInitialTypingComplete && remainingText && (
           <Box style={{ marginLeft : '10px'}}>
             <Button
               variant="text"
@@ -113,14 +113,14 @@ const CompanyDescription = () => {
               {isExpanded ? "Read Less" : "Read More"}
             </Button>
           </Box>
-        )}
+        )} */}
         {/* terms and conditions */}
       </CardContent>
       {isInitialTypingComplete && (
       <Box
       sx={{
         position: "absolute",
-        bottom: "0",
+        bottom: "-20px",
         right: "0",
         paddingRight: "30px",
         paddingBottom: "15px",

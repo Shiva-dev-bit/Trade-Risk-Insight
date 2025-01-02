@@ -1,0 +1,9 @@
+body {
+    /* background-color: #f0f0f0; */
+    background-image: url('/worldimg.png');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    margin: 0;
+    font-family: 'Roboto, sans-serif';
+  }

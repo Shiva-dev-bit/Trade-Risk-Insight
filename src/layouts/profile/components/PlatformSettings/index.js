@@ -160,12 +160,14 @@ function PlatformSettings() {
         color: "#67748e", // Black text
         overflowY: "auto",
         fontFamily: '"Roboto","Helvetica","Arial","sans-serif"', // Set font family
+        boxShadow:"none"
       }}
     >
       <Box mb="26px">
         <Typography
-          variant="h6"
+          variant="lg"
           fontWeight="bold"
+          color="text"
           sx={{
             color: "#67748e",
             fontFamily: '"Roboto","Helvetica","Arial","sans-serif"', // Ensure consistent font family
@@ -243,18 +245,8 @@ function PlatformSettings() {
           </Box>
         ))}
       </Box>
-      <Box mt={4} display={"flex"}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleSave}
-          sx={{
-            fontFamily: '"Roboto","Helvetica","Arial","sans-serif"', // Add font family to Button
-          }}
-        >
-          Save Settings
-        </Button>
-        {successMessage && (
+      <Box mt={4} display={"flex"}  justifyContent={"flex-end"}>
+      {successMessage && (
           <Typography
             mt={2}
             ml={2}
@@ -263,11 +255,25 @@ function PlatformSettings() {
             fontSize={"12px"}
             sx={{
               fontFamily: '"Roboto","Helvetica","Arial","sans-serif"', // Add font family
+              marginRight:"10px"
             }}
           >
             {successMessage}
           </Typography>
         )}
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleSave}
+          sx={{
+            fontFamily: '"Roboto","Helvetica","Arial","sans-serif"', // Add font family to Button
+            color:"#fff",
+            textTransform: 'capitalize',          
+          }}
+        >
+          Save Settings
+        </Button>
+        
       </Box>
     </Card>
 

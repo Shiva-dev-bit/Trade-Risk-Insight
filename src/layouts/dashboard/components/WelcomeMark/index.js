@@ -123,36 +123,36 @@ const WelcomeMark = ({ stocksData }) => {
     //   boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)"
     width : '100%',
     margin : 0,
-    color : 'rgb(103, 116, 142)'
+    color : 'rgb(103, 116, 142)',
     })}
     >
       <SoftBox height="100%" display="flex" flexDirection="column" justifyContent="space-between">
         <SoftBox>
           <Grid container spacing={3} width={'100%'} margin={0}>
             <Grid xs={12} >
-              <SoftTypography  variant="button" fontWeight="bold" mb="12px" >
+              <SoftTypography  variant="h5" fontWeight="bold" mb="12px" color="text" sx={{ fontSize : '19px'}} >
                 Company Description:
               </SoftTypography>
-              <SoftTypography color="black" variant="h6" fontWeight="regular">
+              <SoftTypography color="text" sx={{ fontSize : '16px'}} variant="h6" fontWeight="regular">
                 {getShortDescription(companyData?.companyDescription)}
               </SoftTypography>
             </Grid>
   
             {/* Grid layout for company details */}
             <Grid  xs={12} sm={6} md={6}>
-              <SoftTypography color="black" variant="button" fontWeight="bold" mb="6px">
+              <SoftTypography color="text" sx={{ fontSize : '16px'}} variant="h5" fontWeight="bold" mb="6px">
                 CEO:
               </SoftTypography>
-              <SoftTypography color="black" variant="h6" fontWeight="regular" mb="8px">
+              <SoftTypography color="text" sx={{ fontSize : '16px'}} variant="h6" fontWeight="regular" mb="8px">
                 {companyData?.CEO}
               </SoftTypography>
             </Grid>
   
             <Grid xs={12} sm={6} md={6}>
-              <SoftTypography color="black" variant="button" fontWeight="bold" mb="6px">
+              <SoftTypography color="text" sx={{ fontSize : '16px'}} variant="h5" fontWeight="bold" mb="6px">
                 Website:
               </SoftTypography>
-              <SoftTypography color="black" variant="h6" fontWeight="regular" mb="8px">
+              <SoftTypography color="text" sx={{ fontSize : '16px'}} variant="h6" fontWeight="regular" mb="8px">
                 <a href={`${companyData?.website}`} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>
                   {companyData?.website}
                 </a>
@@ -160,19 +160,19 @@ const WelcomeMark = ({ stocksData }) => {
             </Grid>
   
             <Grid xs={12} sm={6} md={6}>
-              <SoftTypography color="black" variant="button" fontWeight="bold" mb="6px">
+              <SoftTypography color="text" sx={{ fontSize : '16px'}} variant="h5" fontWeight="bold" mb="6px">
                 Industry:
               </SoftTypography>
-              <SoftTypography color="black" variant="h6" fontWeight="regular" mb="8px">
+              <SoftTypography color="text" sx={{ fontSize : '16px'}} variant="h6" fontWeight="regular" mb="8px">
                 {companyData?.industry}
               </SoftTypography>
             </Grid>
   
             <Grid xs={12} sm={6} md={6}>
-              <SoftTypography color="black" variant="button" fontWeight="bold" mb="6px">
+              <SoftTypography color="text" sx={{ fontSize : '16px'}} variant="h5" fontWeight="bold" mb="6px">
                 Country:
               </SoftTypography>
-              <SoftTypography color="black" variant="h6" fontWeight="regular" mb="8px">
+              <SoftTypography color="text" sx={{ fontSize : '16px'}} variant="h6" fontWeight="regular" mb="8px">
                 {companyData?.country}
               </SoftTypography>
             </Grid>
@@ -183,7 +183,8 @@ const WelcomeMark = ({ stocksData }) => {
                   variant="button"
                   fontWeight="bold"
                   onClick={toggleModal}
-                  sx={{ cursor: 'pointer', textDecoration: 'underline', color: 'blue' }}
+                  color="dark"
+                  sx={{ cursor: 'pointer', textDecoration: 'underline', color: 'deepskyblue', textTransform:"none", position:'absolute',right:'20px',bottom:"20px" }}
                 >
                   Read More
                 </SoftTypography>
@@ -216,11 +217,11 @@ const WelcomeMark = ({ stocksData }) => {
   
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={6}>
-                      <SoftTypography id="transition-modal-title" variant="h6" component="h2" color="black">
+                      <SoftTypography id="transition-modal-title" variant="h6" component="h2" color="dark">
                         Company Description
                       </SoftTypography>
   
-                      <SoftTypography color="black" variant="h6" fontWeight="regular" mt={2} sx={{ textAlign: 'justify' }}>
+                      <SoftTypography color="text" sx={{ fontSize : '16px' , textAlign: 'justify'}} variant="h6" fontWeight="regular" mt={2}>
                         {companyData?.companyDescription?.length > 1000
                           ? companyData?.companyDescription?.substring(0, 1000) + '....'
                           : companyData?.companyDescription}
@@ -230,50 +231,50 @@ const WelcomeMark = ({ stocksData }) => {
                     {/* Right side - Company Details */}
                     <Grid item xs={12} md={6} container spacing={2}>
                       <Grid item xs={12} sm={6}>
-                        <SoftTypography color="black" variant="button" fontWeight="bold" mb="6px">
+                        <SoftTypography color="dark" variant="button" fontWeight="bold" mb="6px">
                           CEO:
                         </SoftTypography>
-                        <SoftTypography color="black" variant="h6" fontWeight="regular" mb="8px">
+                        <SoftTypography color="text" sx={{ fontSize : '16px'}} variant="h6" fontWeight="regular" mb="8px">
                           {companyData?.CEO}
                         </SoftTypography>
                       </Grid>
   
                       {/* Number of Employees */}
                       <Grid item xs={12} sm={6}>
-                        <SoftTypography color="black" variant="button" fontWeight="regular" mb="6px">
+                        <SoftTypography color="dark" variant="button" fontWeight="regular" mb="6px">
                           <strong>Number of Employees:</strong>
                         </SoftTypography>
-                        <SoftTypography color="black" variant="h6" fontWeight="regular" mb="8px">
+                        <SoftTypography color="text" sx={{ fontSize : '16px'}} variant="h6" fontWeight="regular" mb="8px">
                           {companyData?.numberOfEmployees}
                         </SoftTypography>
                       </Grid>
 
                       {/* Address */}
                       <Grid item xs={12} sm={6}>
-                        <SoftTypography color="black" variant="button" fontWeight="regular" mb="6px">
+                        <SoftTypography color="dark" variant="button" fontWeight="regular" mb="6px">
                           <strong>Address:</strong>
                         </SoftTypography>
-                        <SoftTypography color="black" variant="h6" fontWeight="regular" mb="8px">
+                        <SoftTypography color="text" sx={{ fontSize : '16px'}} variant="h6" fontWeight="regular" mb="8px">
                           {companyData?.address} {companyData?.address2}
                         </SoftTypography>
                       </Grid>
 
                       {/* Phone */}
                       <Grid item xs={12} sm={6}>
-                        <SoftTypography color="black" variant="button" fontWeight="regular" mb="6px">
+                        <SoftTypography color="dark" variant="button" fontWeight="regular" mb="6px">
                           <strong>Phone:</strong>
                         </SoftTypography>
-                        <SoftTypography color="black" variant="h6" fontWeight="regular" mb="8px">
+                        <SoftTypography color="text" sx={{ fontSize : '16px'}} variant="h6" fontWeight="regular" mb="8px">
                           {companyData?.phone}
                         </SoftTypography>
                       </Grid>
 
                       {/* Website */}
                       <Grid item xs={12} sm={6}>
-                        <SoftTypography color="black" variant="button" fontWeight="regular" mb="6px">
+                        <SoftTypography color="dark" variant="button" fontWeight="regular" mb="6px">
                           <strong>Website:</strong>
                         </SoftTypography>
-                        <SoftTypography color="black" variant="h6" fontWeight="regular" mb="8px">
+                        <SoftTypography color="text" sx={{ fontSize : '16px'}} variant="h6" fontWeight="regular" mb="8px">
                           <a
                             href={companyData?.website} 
                             target="_blank"
@@ -288,50 +289,50 @@ const WelcomeMark = ({ stocksData }) => {
 
                       {/* Instrument Type */}
                       <Grid item xs={12} sm={6}>
-                        <SoftTypography color="black" variant="button" fontWeight="regular" mb="6px">
+                        <SoftTypography color="dark" variant="button" fontWeight="regular" mb="6px">
                           <strong>Instrument Type:</strong>
                         </SoftTypography>
-                        <SoftTypography color="black" variant="h6" fontWeight="regular" mb="8px">
+                        <SoftTypography color="text" sx={{ fontSize : '16px'}} variant="h6" fontWeight="regular" mb="8px">
                           {companyData?.instrumentType}
                         </SoftTypography>
                       </Grid>
 
                       {/* Sector */}
                       <Grid item xs={12} sm={6}>
-                        <SoftTypography color="black" variant="button" fontWeight="regular" mb="6px">
+                        <SoftTypography color="dark" variant="button" fontWeight="regular" mb="6px">
                           <strong>Sector:</strong>
                         </SoftTypography>
-                        <SoftTypography color="black" variant="h6" fontWeight="regular" mb="8px">
+                        <SoftTypography color="text" sx={{ fontSize : '16px'}} variant="h6" fontWeight="regular" mb="8px">
                           {companyData?.sector}
                         </SoftTypography>
                       </Grid>
 
                       {/* Industry */}
                       <Grid item xs={12} sm={6}>
-                        <SoftTypography color="black" variant="button" fontWeight="regular" mb="6px">
+                        <SoftTypography color="dark" variant="button" fontWeight="regular" mb="6px">
                           <strong>Industry:</strong>
                         </SoftTypography>
-                        <SoftTypography color="black" variant="h6" fontWeight="regular" mb="8px">
+                        <SoftTypography color="text" sx={{ fontSize : '16px'}} variant="h6" fontWeight="regular" mb="8px">
                           {companyData?.industry}
                         </SoftTypography>
                       </Grid>
 
                       {/* Country */}
                       <Grid item xs={12} sm={6}>
-                        <SoftTypography color="black" variant="button" fontWeight="regular" mb="6px">
+                        <SoftTypography color="dark" variant="button" fontWeight="regular" mb="6px">
                           <strong>Country:</strong>
                         </SoftTypography>
-                        <SoftTypography color="black" variant="h6" fontWeight="regular" mb="8px">
+                        <SoftTypography color="text" sx={{ fontSize : '16px'}} variant="h6" fontWeight="regular" mb="8px">
                           {companyData?.country}
                         </SoftTypography>
                       </Grid>
 
                       {/* MIC Code */}
                       <Grid item xs={12} sm={6}>
-                        <SoftTypography color="black" variant="button" fontWeight="regular" mb="6px">
+                        <SoftTypography color="dark" variant="button" fontWeight="regular" mb="6px">
                           <strong>MIC Code:</strong>
                         </SoftTypography>
-                        <SoftTypography color="black" variant="h6" fontWeight="regular" mb="8px">
+                        <SoftTypography color="text" sx={{ fontSize : '16px'}} variant="h6" fontWeight="regular" mb="8px">
                           {companyData?.micCode}
                         </SoftTypography>
                       </Grid>
@@ -360,3 +361,4 @@ WelcomeMark.propTypes = {
 };
 
 export default WelcomeMark;
+

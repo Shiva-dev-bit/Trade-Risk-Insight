@@ -358,6 +358,7 @@ function Emails({ username, email, stocks }) {
               </SoftTypography>
               <SoftTypography
                 variant="h5"
+                color="dark"
                 sx={{
                   color: metric.color,
                   fontSize: '1.25rem',

@@ -28,7 +28,7 @@ export default function data() {
       const response = await axios.post(
         api,
         {
-          stock_name: stockData?.company_name || "stock news",
+          stock_name: stockData?.company_name || "NIFTY 50",
         },
         {
           headers: { "Content-Type": "application/json" }, // Explicit header
@@ -60,27 +60,67 @@ export default function data() {
     rows: newsData.map((item) => ({
       headline: (
         <>
-          <SoftTypography variant="button" fontWeight="medium" color="black">
-            <a href={item.link} target="_blank" rel="noreferrer" style={{ color: "inherit", textDecoration: "none" }}>
+          <SoftTypography 
+            variant="button" 
+            fontWeight="medium" 
+            color="text" 
+            sx={{ fontSize: "14px" }} // Adjust font size here
+          >
+            <a 
+              href={item.link} 
+              target="_blank" 
+              rel="noreferrer" 
+              style={{ color: "inherit", textDecoration: "none" }}
+            >
               {item.headline.substring(0, 50)}
             </a>
           </SoftTypography>
-          <SoftTypography variant="body2" color="black">
-            <a href={item.link} target="_blank" rel="noreferrer" style={{ color: "inherit" }}>{item.summary.substring(0, 50)}... </a>
+          <SoftTypography 
+            variant="body2" 
+            color="text" 
+            sx={{ fontSize: "12px" }} // Adjust font size here
+          >
+            <a 
+              href={item.link} 
+              target="_blank" 
+              rel="noreferrer" 
+              style={{ color: "inherit" }}
+            >
+              {item.summary.substring(0, 50)}...
+            </a>
           </SoftTypography>
         </>
       ),
       datetime: (
-        <SoftTypography variant="caption" fontWeight="regular" color="black">
+        <SoftTypography 
+          variant="caption" 
+          fontWeight="regular" 
+          color="text" 
+          sx={{ fontSize: "12px" }} // Adjust font size here
+        >
           {format(new Date(item.datePublished), "dd-MM-yyyy, HH:mm:ss")}
         </SoftTypography>
       ),
       sentiment: (
-        <SoftTypography variant="button" fontWeight="bold" sx={{color: item.sentiment === "positive" ? "#24fc03" : (item.sentiment === "negative" ? "#db2c40" : "#f7a800")}}>
-          {item.sentiment === "positive" ? "+" + item.confidence.toFixed(2) : (item.sentiment === "negative" ? "-" + item.confidence.toFixed(2) : item.confidence.toFixed(2))}
+        <SoftTypography 
+          variant="button" 
+          fontWeight="bold" 
+          sx={{
+            color: item.sentiment === "positive" ? "#24fc03" : 
+                   item.sentiment === "negative" ? "#db2c40" : "#f7a800",
+            fontSize: "14px" // Adjust font size here
+          }}
+        >
+          {item.sentiment === "positive" 
+            ? "+" + item.confidence.toFixed(2) 
+            : item.sentiment === "negative" 
+              ? "-" + item.confidence.toFixed(2) 
+              : item.confidence.toFixed(2)}
         </SoftTypography>
       ),
     })),
+    
   };
   
 }
+

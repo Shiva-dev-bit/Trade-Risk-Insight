@@ -100,7 +100,7 @@ const OrdersOverview = () => {
   return (
     <Card className="h-100" style={{ padding: '14px' , color : 'rgb(103, 116, 142)' , height : '100%' }}>
       <SoftBox mb="16px" display="flex" justifyContent="space-between">
-        <SoftTypography variant="lg" fontWeight="bold" mb="5px">
+        <SoftTypography variant="lg" fontWeight="bold" mb="5px" color="text">
           Quarterly Results
         </SoftTypography>
         <SoftTypography
@@ -108,6 +108,7 @@ const OrdersOverview = () => {
           fontWeight="bold"
           mb="5px"
           sx={{ fontSize: "14px" }}
+          color="text"
         >
           {stockData?.symbol}
         </SoftTypography>
@@ -145,12 +146,12 @@ const OrdersOverview = () => {
             holder.fiscal_date && ( // Ensure fiscal_date exists
               <React.Fragment key={index}>
                 <TimelineItem
-                  icon={<FaCoins size="20px" color="black" />}
+                  icon={<FaCoins size="20px" color="dark" />}
                   title={
                     <SoftTypography
                       variant="subtitle1"
                       sx={{ fontSize: "15px", lineHeight: "1.2" }}
-                      color="black"
+                      color="text"
                     >
                       {new Date(holder.fiscal_date).toLocaleDateString("en-US", {
                         day: "2-digit",
@@ -169,7 +170,7 @@ const OrdersOverview = () => {
                             lineHeight: "1.5",
                             textAlign: "justify",
                           }}
-                          color="black"
+                          color="dark"
                         >
                           {`Total Revenue: ${formatNumber(holder.sales)} `}
                           {holder.comparison.sales}
@@ -184,7 +185,7 @@ const OrdersOverview = () => {
                             lineHeight: "1.5",
                             textAlign: "justify",
                           }}
-                          color="black"
+                          color="dark"
                         >
                           {`Cost of Goods Sold: ${formatNumber(
                             holder.cost_of_goods
@@ -201,7 +202,7 @@ const OrdersOverview = () => {
                             lineHeight: "1.5",
                             textAlign: "justify",
                           }}
-                          color="black"
+                          color="dark"
                         >
                           {`Gross Profit: ${formatNumber(holder.gross_profit)} `}
                           {holder.comparison.gross_profit}
@@ -216,7 +217,7 @@ const OrdersOverview = () => {
                             lineHeight: "1.5",
                             textAlign: "justify",
                           }}
-                          color="black"
+                          color="dark"
                         >
                           {`Operating Income: ${formatNumber(
                             holder.operating_income
@@ -233,7 +234,7 @@ const OrdersOverview = () => {
                             lineHeight: "1.5",
                             textAlign: "justify",
                           }}
-                          color="black"
+                          color="dark"
                         >
                           {`Net Income: ${formatNumber(holder.net_income)} `}
                           {holder.comparison.net_income}
@@ -248,7 +249,7 @@ const OrdersOverview = () => {
                             lineHeight: "1.5",
                             textAlign: "justify",
                           }}
-                          color="black"
+                          color="dark"
                         >
                           {`EBITDA: ${formatNumber(holder.ebitda)} `}
                           {holder.comparison.ebitda}
