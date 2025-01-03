@@ -16,7 +16,7 @@ Coded by www.creative-tim.com
 import { useState, useEffect, useMemo, useContext } from "react";
 
 // react-router components
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 
 // @mui material components
 import { ThemeProvider } from "@mui/material/styles";
@@ -46,7 +46,7 @@ import routes from "./routes";
 import { useSoftUIController, setMiniSidenav, setOpenConfigurator } from "./context";
 
 // Images
-import brand from "./assets/images/logo-ct.png";
+import brand from "./assets/images/image.png";
 import { Snackbar, SnackbarContent, Switch } from "@mui/material";
 import DashboardNavbar from "./examples/Navbars/DashboardNavbar";
 import DashboardLayout from "./examples/LayoutContainers/DashboardLayout";
@@ -62,6 +62,7 @@ export default function App() {
   const { pathname } = useLocation();
   const { session, storeStockData } = useContext(AuthContext);
   const { fetchUserStocks } = useStockContext();
+  const navigate = useNavigate();
 
   // Cache for the rtl
   useMemo(() => {
@@ -154,6 +155,7 @@ export default function App() {
   const handleClickStock = (getStock) => {
     // console.log("getStock before storing:", getStock); 
     if (getStock) {
+      navigate(`/dashboard/${getStock?.symbol || 'NSEI'}`);
       storeStockData(getStock);
     } else {
       console.log("getStock is null or undefined");

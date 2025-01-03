@@ -316,7 +316,7 @@ function Dashboard() {
     fetchIndicators();
     fetchPreviousClose();
 
-    navigate(`/dashboard/${stockData?.stockData?.symbol || 'NSEI'}`);
+    // navigate(`/dashboard/${stockData?.stockData?.symbol || 'NSEI'}`);  
   }, [stockData, stockData?.stockData?.symbol, stockData?.stockData?.exchange]);
 
 

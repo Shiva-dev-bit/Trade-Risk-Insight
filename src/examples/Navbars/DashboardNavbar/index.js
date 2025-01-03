@@ -1,5 +1,5 @@
 import "./loader.css";
-import { useState, useEffect, useContext, use } from "react";
+import { useState, useEffect, useContext, useRef, use } from "react";
 import { useLocation, Link, useNavigate, useParams } from "react-router-dom";
 import PropTypes from "prop-types";
 import AppBar from "@mui/material/AppBar";
@@ -60,7 +60,7 @@ import axios from "axios";
 import './loader.css';
 import moment from "moment-timezone";
 import { dark } from "@mui/material/styles/createPalette";
-
+import { useCallback } from 'react';
 function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPortfolio }) {
   const [navbarType, setNavbarType] = useState();
   const [controller, dispatch] = useSoftUIController();
@@ -72,7 +72,8 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
   const { session } = useContext(AuthContext); // Session context
   const userEmail = session?.user?.email; // Get user email from session
   // const { symbol } = useParams();
-  const symbol = useLocation().pathname.split("/").slice(2,3)
+  const symbolFromUrl = useLocation().pathname.split("/").slice(2,3)
+  const hasRunEffect = useRef(false);
 
 
 
@@ -462,9 +463,39 @@ function DashboardNavbar({ absolute, light, isMini, handleClickStock, addStockPo
 
 
   useEffect(() => {
-    console.log('urlsymbol', symbol)
-    fetchSearchData(symbol[0])
-  }, [symbol]);
+    if(!hasRunEffect.current){
+    fetchSearchData(symbolFromUrl[0]);
+    hasRunEffect.current = true;
+    }
+  }, [symbolFromUrl]);
+
+  useEffect(() => {
+    let item = filteredData.find(
+      (data) => data.symbol === symbolFromUrl[0] && data.exchange === "NSE"
+    );
+    handleClickStock(item);
+  }, [filteredData]);
+
+  // const handleKeyPress = useCallback((event) => {
+  //   event.preventDefault();
+  //   event.stopPropagation();
+  //   if (event.key === 'Enter') {
+  //     console.log('urlsymbol', symbolFromUrl[0]);
+  //     fetchSearchData(symbolFromUrl[0]);
+      
+  //   }
+  //   let item = filteredData.find(
+  //   (data) => data.symbol === symbolFromUrl[0] && data.exchange === "NSE"
+  // );
+  //   handleClickStock(item);
+  // }, [symbolFromUrl,filteredData]);
+  
+  // useEffect(() => {
+  //   document.addEventListener('keydown', handleKeyPress);
+  //   return () => {
+  //     document.removeEventListener('keydown', handleKeyPress);
+  //   };
+  // }, [handleKeyPress]);
 
   // On component mount, fetch user location and set default filters
   useEffect(() => {
